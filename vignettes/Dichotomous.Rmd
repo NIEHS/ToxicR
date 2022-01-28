@@ -1,0 +1,315 @@
+---
+title: "Dichotomous Data Example"
+author: "Matt Wheeler Ph.D."
+date: "12/05/2021"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Dichotomous}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+# output:
+  # html_document:
+  #   toc: yes
+  #   toc_float: yes
+  # word_document:
+  #   toc: yes
+  # pdf_document:
+  #   toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Basics of Toxic R Dichotomous run. 
+
+This file shows ToxicR for dichotomous benchmark dose analyses using both single model and multiple model fits. The first thing we need to do is load the data.  From an excel file this can be done using the following R commands:
+
+
+```{r load_data, echo=TRUE}
+library(readxl)
+dich_data           <- matrix(0,nrow=5,ncol=3)
+colnames(dich_data) <- c("Dose","N","Incidence")
+dich_data[,1] <- c(0,50,100,200,400)
+dich_data[,2] <- c(20,20,20,20,20)
+dich_data[,3] <- c(0,1,2,10,19)
+```
+### Weibull fit
+Now suppose we want to fit a Weibull model to the data that is we have the dose-response
+function $f(dose) = g + (1-g)\times(1-\exp[-b\times dose^a])$, and want to estimate
+the probability of adverse response given the data. How do we do this in ToxicR?
+
+ToxicR has two main functions for fitting dichotomous dose-response models 'single_dichotomous_fit' and ma_dichotomous_fit.' To fit any individual model, we use the same interface and use 'single_dichotomous_fit'.   This function takes several parameters, but to start, all we will do is specify the necessary ones. Here, 
+the first argument is a vector of doses, the second is a vector of observed adverse events, and the third 
+is a vector containing the number of animals in a given dose group.  
+
+```{r run_laplace_weibul}
+library(ToxicR)
+library(ggplot2)
+weibull_fit <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="weibull")
+```
+### Object Extraction
+The previous line fits the Weibull Bayesian Laplace model and puts all of the information one needs 
+in the `weibull_fit' object variable. Say we want to get the BMD and associated 95% confidence 
+interval on the BMD. All we need to do is look in the object. 
+```{r run_laplace_weibul2}
+weibull_fit$bmd
+```
+
+Here, we see the BMD is estimated to be $86.77$ with a $95\%$ BMDL of $54.43,$ which matches
+the Bayesian Laplace fits in the US-EPA's software. The `weibull_fit' object contains all of the information you are used to and some information not in the standard BMDS analysis. Here are just three different options. 
+
+```{r run_laplace_weibul3}
+# Model Parameters
+weibull_fit$parameters
+# Covariance estimate on those parameters
+weibull_fit$covariance
+# The prior used
+weibull_fit$prior
+```
+The prior information also gives you the information on the parameter interpretation.  Notice that
+the $g$ parameter is parameterized using the logit transform, i.e. $logit(g) = \frac{g}{1-g},$ which
+implies $g = \frac{1}{1+exp(-logit[g])}.$ To get the value as the background probability, we can run 
+the following code. 
+```{r run_laplace_weibul4}
+# Model Parameters
+logit_g = weibull_fit$parameters[1]
+1/(1+exp(-logit_g))
+```
+
+### Plotting
+ToxicR is equipped with a powerful graphics engine using `ggplot2' graphics, and to print
+any fit, all one needs to do is type `plot( xxx )', where xxx is the variable name. This
+command will return a ggplot object that can either be plotted immediately or customized
+with further ggplot commands.
+ 
+```{r run_laplace_weibul6, fig.height = 5, fig.width = 6}
+library(ggplot2) # This is needed to make changes
+# Plot immediately
+plot(weibull_fit)
+# Save fit and modify
+ggplot_fit <- plot(weibull_fit)
+# Transform the x axis
+ggplot_fit + scale_x_continuous(trans = "pseudo_log")
+# Change labels
+ggplot_fit + xlab("log(Dose) mg/kg/day") + ylab("Tumor Probability") + 
+             scale_x_continuous(trans = "pseudo_log") + ggtitle("Weibull Fit") + theme_classic()
+
+```
+
+We do not have time to go over all 'ggplot' commands, but the figure can be modified 
+to your specifications. 
+ 
+### Changing Fit Types
+ 
+ In the above, we used the Bayesian Maximum A-Posteriori Laplace method, which is the default if you do not specify the type of fit. ToxicR allows for Laplace MAP, Maximum Likelihood, and MCMC fitting. Below, we fit 
+ all three options and then compare them in one plot. 
+ 
+```{r run_laplace_weibul7, fig.height = 5, fig.width = 6}
+
+# Laplace Explicitly Specified
+weibull_fit_MAP <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="weibull",fit_type="laplace")
+# Maximum Likelihood Estimation
+weibull_fit_MLE <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="weibull",fit_type="mle")
+# MCMC Estimation
+weibull_fit_MCMC <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="weibull",fit_type="mcmc")
+library(ggpubr)
+figure <- ggarrange(plot(weibull_fit_MAP)+ggtitle(""), plot(weibull_fit_MLE)+ggtitle(""), 
+                    plot(weibull_fit_MCMC)+ggtitle(""),
+                    labels = c("MAP", "MLE", "MCMC"),
+                    ncol = 2, nrow = 2)
+figure
+```
+
+Here, the fits are essentially the same. This is not always the case. Notice how the mcmc
+fit has additional graphics.  These additions are because of the nature of MCMC sampling. Here, 
+we add the uncertainty in the curve estimation and BMD distribution information. This plot shows
+$90\%$ bounds and the estimated posterior BMD  distribution. For dichotomous models,
+there are three additional things you can specify. 
+The most important of which is the benchmark response (BMR). By default it is set to $10\%,$ but
+it can be any value between zero and 1, i.e., $0 < BMR < 1.$
+
+```{r run_laplace_weibul8, fig.height = 5, fig.width = 6}
+
+# Laplace Explicitly Specified
+weibull_fit_MCMC_1 <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="weibull",fit_type="mcmc",samples = 75000)
+# Maximum Likelihood Estimation
+weibull_fit_MCMC_2<- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="weibull",fit_type="mcmc", BMR=0.05,samples = 7500)
+# MCMC Estimation
+weibull_fit_MCMC_3 <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="weibull",fit_type="mcmc", BMR =0.01,samples = 7500)
+
+fig_1 <- plot(weibull_fit_MCMC_1) + ggtitle("") + scale_x_continuous(trans="pseudo_log")
+fig_2 <- plot(weibull_fit_MCMC_2) + ggtitle("") + scale_x_continuous(trans="pseudo_log")
+fig_3 <- plot(weibull_fit_MCMC_3) + ggtitle("") + scale_x_continuous(trans="pseudo_log")
+figure <- ggarrange(fig_1, fig_2, fig_3, 
+                    labels = c("BMR=0.1", "BMR=0.05", "BMR=0.01"),
+                    ncol = 2, nrow = 2)
+figure
+```
+
+## Bayesian Priors 
+### Prior specification
+In the above code, notice `samples = 75000,' which specifies $75,000$ MCMC samples instead of the default $25,000.$ Of the remaining options, the last one allows the user to change the default prior.  Here, we give the user freedom, but this is given with the warning: "USE AT YOUR OWN RISK!" To specify a prior, you use several functions 'normprior,' 'lnormprior,'  'create_prior list,' and 'create_dichotomous_prior.' The functions 'normprior' and 'lnormprior' define the individual parameter priors to be normal or log-normal, respectively. The first argument is the mean/log-mean and the second function argument is the standard deviation / log-standard deviation. The final two give the parameter bounds, e.g., the lower and upper bounds.  If you do not want the parameter to be bounded, we recommend placing -1e6 and 1e6 on the parameter.  For estimation, this is essentially numerically unbounded. 
+
+```{r run_laplace_weibul9}
+
+# Laplace Explicitly Specified
+prior <- create_prior_list(normprior(0,10,-100,100),
+                           lnormprior(0,1,0,100),
+                           lnormprior(0,1,0,100));
+
+PR1    <- create_dichotomous_prior(prior,"weibull")
+
+prior <- create_prior_list(normprior(0,10,-100,100),
+                           lnormprior(0,0.1,0,100),
+                           lnormprior(0,0.1,0,100));
+
+PR2    <- create_dichotomous_prior(prior,"weibull")
+
+PR1
+PR2 
+
+weibull_fit_prior1 <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                            dich_data[,"N"],model_type="weibull",fit_type="mcmc", 
+                                            BMR=0.05,samples = 75000,prior=PR1)
+weibull_fit_prior2 <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                            dich_data[,"N"],model_type="weibull",fit_type="mcmc", 
+                                            BMR=0.05,samples = 75000,prior=PR2)
+```
+
+### Prior Sensitivity Analysis
+We can then compare the two fits. Here, it is seen how the tight prior on $a$ constrains
+the fit and causes an esitmate very different than the maximum likelihood estimate. This second 
+estimate is very similar to the quantal linear model $g + (1-g)(1-exp[b\times dose]).$
+
+```{r run_laplace_weibul10, fig.height = 5, fig.width = 6}
+library(ggpubr)
+figure <- ggarrange(plot(weibull_fit_prior1)+ggtitle(""), 
+                    plot(weibull_fit_prior2)+ggtitle(""),
+                    plot(weibull_fit_MLE)+ggtitle(""),
+                    labels = c("Prior-1", "Prior-2","MLE"),
+                    ncol = 2, nrow = 2)
+figure 
+```
+
+Given that one can change priors and look at the MLE estimate simultaneously, 
+we can analyze prior choice in relation to BMD estimates.  Here, we stress that 
+the MLE or a diffuse prior is not always 'the most objective .' We are currently 
+finishing up research on prior development to guide researchers and practitioners alike. 
+
+```{r run_laplace_weibul11}
+library(ggpubr)
+#Compare the BMDs
+rbind(weibull_fit_prior1$bmd,weibull_fit_prior2$bmd)
+#Extract the BMD CDF and remove possible infinities
+#that may occur because of asymptotes etc.
+#Note ecdf() is the emperical CDF function in R
+temp <- ecdf(weibull_fit_prior1$mcmc_result$BMD_samples)
+           
+plot(temp,col=1,main="BMD prior comparison",xlab="BMD mg/kg/day",xlim=c(0,200),lwd=2)
+
+temp <- ecdf(weibull_fit_prior2$mcmc_result$BMD_samples)
+lines(temp,col=2,lwd=2)
+## The default MCMC fit
+
+temp <- ecdf(weibull_fit_MCMC$mcmc_result$BMD_samples)
+lines(temp,col=3,lwd=2)
+
+#For the MLE comparison
+#The information is in the MLE/MAP objects object, though it is 
+# a little different.
+library(tidyverse)
+temp <- as.data.frame(weibull_fit_MLE$bmd_dist)
+names(temp) <- c("BMD","PROB")
+temp <- temp %>% filter(!is.infinite(BMD))
+lines(temp$BMD,temp$PROB,col=4,lwd=2)
+```
+
+In the last plot, we see the impacts different prior information
+has on the BMD distributions. The red line is the most conservative prior, the green line is the default prior, and the blue line represents the approximate BMD distribution produced by MLE.  Note how similar the blue and green lines are.  In general, the default priors will produce behavior similar to the MLE
+when the data support estimation of all parameters. The estimates will diverge when specific parameters are weakly informed by the data, e.g., $a$ in the Weibull model. 
+
+## Other Models
+
+Everything above can be done with a suite of models, and is callable
+using the function call 'single_dichotomous_fit.' To change the model, 
+simply change the model_type.  The following models are possible in ToxicR
+
+
+\begin{align}
+ \textrm{Weibull:}&  & f(dose\mid a,b,g) &= g +(1-g)(1-\exp[-b\times dose^a]) \\  \\
+ \textrm{Gamma:}  &  & f(dose\mid a,b,g) &= g+(1-g)\int_0^{b\times dose}       \frac{1}{\Gamma(a)}t^{a-1}\exp(-t) dt \\ \\
+ \textrm{Logistic:}&  & f(dose\mid a,b)   &= \frac{1}{1+\exp(-a-b\times dose)} \\ \\
+ \textrm{Log-logistic:}& & f(dose \mid a,b,g) &= g + \frac{1-g}{1+\exp(-a-b\times\log[dose])}\\ \\
+ \textrm{Probit:}& &  f(dose\mid a,b) &= \Phi(a + b \times dose) \\ \\
+ \textrm{Log-probit:} & & f(dose \mid a,b,g) &= g + (1-g)\times \Phi (a + b \times \log[dose]) \\ \\
+ \textrm{Multistage:} & & f(dose \mid b_1,\ldots b_k, g)&= g + (1-g)(1-\exp[-\sum_{i=1}^{k}b_i \times dose^i]) \\ \\
+ \textrm{Quantal Linear:}& & f(dose \mid b, g) &= g + (1-g)(1-\exp[-b\times dose]) \\ \\
+ \textrm{Quantal Hill:} & & f(dose \mid a, b, c, g)  &= g + \frac{c(1-g)}{1+\exp(-a-b\times\log[dose]),}
+\end{align}
+
+and these models can be fit by setting the 'model_type' parameter to 'weibull','gamma','logistic',
+'log-logistic','probit','log-probit','multistage','qlinear', and 'hill' respectively. 
+For the multistage model the degree parameter, specified as  $k$ above, defaults to 2, but can be modified by specifying the 'degree' in the function call.  For example, if one wants a 3 degree multistage  model, one would specify 'degree = 3'.  Finally the background parameter $g$ is \textbf{always} 
+parameterized as $\mbox{logit}(g),$ which implies if you want the probability it represents you need
+to transform it as $\frac{1}{1+\exp(-g)}.$
+
+### Examples
+The following code runs the same data using different models
+using Bayesian MAP-Laplace methods and then them. 
+
+```{r run_m_models, fig.height = 5, fig.width = 6}
+qlinear_fit <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="qlinear" )
+gamma_fit <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="gamma" )
+hill_fit <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="hill" )
+lprobit_fit <- single_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                      dich_data[,"N"],model_type="log-probit" )
+
+library(ggpubr)
+figure <- ggarrange(plot(qlinear_fit)+ggtitle(""), 
+                    plot(gamma_fit)+ggtitle(""),
+                    plot(hill_fit)+ggtitle(""),
+                    plot(lprobit_fit)+ggtitle(""),
+                    labels = c("Quantal Linear", "Gamma","Hill","Log-Probit"),
+                    ncol = 2, nrow = 2)
+figure
+```
+
+## Model Averaging 
+Now this is the 'old way.' The new way is model averaging. Here, Toxic R supports
+this framework. Model averaging is much like the above framework, and by default, 
+will use all nine models, their default priors, and Bayesian MAP-Laplace estimation
+(the other option is 'mcmc'). 
+For MA estimation, we use multiple CPU cores (except on MacOS). Thus, if one has 8+
+cores, MA will take about the same time as a single model fit. 
+
+````{r MA1, fig.height = 5, fig.width = 6}
+ma_fit  <- ma_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                  dich_data[,"N"] )
+plot(ma_fit)
+
+ma_fit_mcmc  <- ma_dichotomous_fit(dich_data[,"Dose"],dich_data[,"Incidence"],
+                                  dich_data[,"N"],fit_type='mcmc' )
+plot(ma_fit_mcmc)
+````
+
+### Additional Plots
+In addition to the standard plots we  give additional plots, so one
+can compare BMDs. For MA-Laplace, we can call a 'cleveland_plot()'. 
+For MCMC, one can call 'MAdensity_plot().'
+````{r MA2, fig.height = 5, fig.width = 6}
+library(ggplot2)
+cleveland_plot(ma_fit)+ggtitle("Cleveland Plot MA-Laplace")
+
+MAdensity_plot(ma_fit_mcmc)+ggtitle("Density Plot MCMC")
+````

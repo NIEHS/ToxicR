@@ -1,0 +1,15 @@
+
+# $topdir is set by the involking batch script
+PKG_CPPFLAGS =  -I"./code_base" -I"./include"   -ftree-vectorize -Os #-O3 -mavx2
+PKG_CPPFLAGS += -fopenmp -DR_COMPILATION -Wno-ignored-attributes -DEIGEN_NO_DEBUG -DNDEBUG $(shell pkg-config --cflags nlopt gsl)
+#PKG_CPPFLAGS += -I"$(topdir)$(R_ARCH)/include/"
+MAKEFLAGS = -j4
+#PKG_LIBS = -fopenmp -L"$(topdir)/$(R_ARCH)/lib/" -fabi-version=2 -lgsl
+PKG_LIBS = $(shell pkg-config --libs nlopt gsl) -fopenmp -fabi-version=2
+PKG_LIBS += -lnlopt -lRblas -lRlapack  -fPIC 
+
+POLYK        = $(wildcard polyK/*.cpp)
+MAIN         = $(wildcard *.cpp)
+MAIN_CODE    = $(wildcard code_base/*.cpp)
+OBJECTS      = $(MAIN:.cpp=.o) $(MAIN_CODE:.cpp=.o) $(POLYK:.cpp=.o)
+
