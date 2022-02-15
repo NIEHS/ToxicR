@@ -16,9 +16,7 @@
 #HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 #CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 #OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-NTP <- modules::module({
 
-export("jonckeere","williams","dunn","dunnett","shirley","polyk")
 polyk <- function(dose,tumor,daysOnStudy){
      if ( sum(tumor>1) > 0){
           stop("Tumors need to be a 0 or 1")
@@ -57,7 +55,7 @@ polyk <- function(dose,tumor,daysOnStudy){
 ## formula. To do this, we assume that data is a data frame. 
 ## As a default, "dose_name", is set to the column header "dose"
 ## -----------------------------------------------------------
-jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
+ntp_jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
 {
   if (!is.data.frame(data)){
     stop("The data do not appear to be in the data frame format.")
@@ -108,10 +106,10 @@ jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
     if(nrow(tempdata) > 1)
     {
       ## make sure variance is not zero (creates error) and control is present
-      if((length(unique(tempdata$numeric_value)) > 1) & (0 %in% as.numeric(tempdata[,tidx])))
+      if((length(unique(tempdata[,analysis_var])) > 1) & (0 %in% as.numeric(tempdata[,tidx])))
       {
         
-        stat <- cor.test(as.numeric(tempdata[,tidx]), tempdata$numeric_value, method="kendall", exact=FALSE)
+        stat <- cor.test(as.numeric(tempdata[,tidx]), tempdata[,analysis_var], method="kendall", exact=FALSE)
         jline <- c(temp_names, stat$estimate, stat$p.value)
         jonck <- rbind(jonck, jline)
         
@@ -231,7 +229,7 @@ jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
 #' @examples
 #' add(1, 1)
 #' add(10, 1)
-williams <- function(formula, data,dose_name = "dose")
+ntp_williams <- function(formula, data,dose_name = "dose")
 {
   
   data[,c(dose_name)] = as.numeric(data[,c(dose_name)])
@@ -247,14 +245,14 @@ williams <- function(formula, data,dose_name = "dose")
     stop(sprintf("Dose name %s does not appear in the data frame.",dose_name))
   }
   
-  jonck_data =  jonckeere( formula,dose_name = dose_name,
+  jonck_data =  ntp_jonckeere( formula,dose_name = dose_name,
                                data = data, pair = "Williams")
   
   ## loop through all groups flagged as WILLIAM in jonck
   william       <- subset(jonck_data, mult_comp_test=='WILLIAMS')
   will_results  <- NULL
   will_results2 <- NULL
-  
+  temp_resp_name <- unlist(formula[[2]])
   temp_colnames <- unlist(c(unlist(colnames(william)),dose_name,as.character(unlist(formula[[2]]))))
   temp <-   colnames(data) %in% temp_colnames
   temp_d <- as.data.frame(data[,temp==TRUE])
@@ -289,8 +287,12 @@ williams <- function(formula, data,dose_name = "dose")
       wmeans  <- summaryBy(as.formula(formula_temp), data=datatemp, FUN=c(mean,length))
       temp_idx2 <- which(colnames(wmeans) == dose_name)
       wmeans  <- wmeans[order(wmeans[,temp_idx2]),]
-      smeans  <- wmeans$numeric_value.mean
-      slength <- wmeans$numeric_value.length
+      temp_value <- paste(temp_resp_name,".mean",sep="")
+      smeans <- wmeans[,temp_value]
+      temp_value <- paste(temp_resp_name,".length",sep="")
+      slength <- wmeans[,temp_value]
+      #smeans  <- wmeans$numeric_value.mean
+      #slength <- wmeans$numeric_value.length
       
       smeans  <- smeans[-1] 	## remove control group
       slength <- slength[-1] 	## remove control group
@@ -431,8 +433,10 @@ williams <- function(formula, data,dose_name = "dose")
           }
         }	
       }
+      temp_value <- paste(temp_resp_name,".mean",sep="")
+      smeans <- c(wmeans[1,temp_value],smeans)
       
-      smeans <- c(wmeans$numeric_value.mean[1], smeans)	## pre-pend control mean to beginning of smoothed means
+      #smeans <- c(wmeans$numeric_value.mean[1], smeans)	## pre-pend control mean to beginning of smoothed means
       wmeans <- cbind(wmeans, smeans)				## combine with means info
       
       ##
@@ -535,7 +539,7 @@ dunn <- function(formula,data, dose_name = "dose")
   }
   
   #first do Jonckheere's Test and subset all the 'DUNN' tests
-  jonck_data =  jonckeere( formula,dose_name = dose_name,
+  jonck_data =  ntp_jonckeere( formula,dose_name = dose_name,
                                data = data,pair="Shirley")
   dunn <- subset(jonck_data, mult_comp_test=='DUNN')
   dunn_results <- NULL
@@ -757,7 +761,7 @@ dunnett <- function(formula, data,dose_name = "dose"){
     stop(sprintf("Dose name %s does not appear in the data frame.",dose_name))
   }
   
-  jonck_data =  jonckeere( formula,dose_name = dose_name,
+  jonck_data =  ntp_jonckeere( formula,dose_name = dose_name,
                                data = data,pair="Williams")
   
   
@@ -855,7 +859,7 @@ shirley <- function(formula, data, dose_name = "dose")
   
   
   ## loop through all groups flagged as SHIRLEY in jonck
-  jonck_data =  jonckeere( formula,dose_name = dose_name,
+  jonck_data =  ntp_jonckeere( formula,dose_name = dose_name,
                                data = data,pair="Shirley")
   shirley_results <- NULL
   shirley <- subset(jonck_data, mult_comp_test=='SHIRLEY')
@@ -1094,4 +1098,4 @@ shirley <- function(formula, data, dose_name = "dose")
   return(shirley_results)
 }
 
-})
+

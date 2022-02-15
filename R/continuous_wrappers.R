@@ -88,7 +88,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       #specify variance of last parameter to variance of response
       if(distribution == "lognormal"){
            if (ncol(Y)>1){
-               PR$priors[nrow(PR$priors),2]= log(log(mean(Y[,3])^2))
+               PR$priors[nrow(PR$priors),2]= log(mean(Y[,3])^2)
            }else{
                PR$priors[nrow(PR$priors),2] = log(var(log(Y[,1])))
            }

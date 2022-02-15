@@ -357,7 +357,7 @@ MLE_bounds_continuous  <- function(model,variance,degree=2, is_increasing){
       } else {
         prior <- combine_prior_lists(prior,normprior(0,2,-100,0))
       }
-      prior <- combine_prior_lists(prior,lnormprior(0,1,0,18))
+      prior <- combine_prior_lists(prior,lnormprior(0,1,0,5))
       prior <- combine_prior_lists(prior,lnormprior(1,1.2,1,18))
       prior <- combine_prior_lists(prior,normprior(0,1,-18,18))
     } else if(dvariance == 2){ #normal ncv
@@ -367,7 +367,7 @@ MLE_bounds_continuous  <- function(model,variance,degree=2, is_increasing){
       } else {
         prior <- combine_prior_lists(prior,normprior(0,2,-100,0))
       }
-      prior <- combine_prior_lists(prior,normprior(0,1,0,18))
+      prior <- combine_prior_lists(prior,normprior(0,1,0,5))
       prior <- combine_prior_lists(prior,lnormprior(log(1.2),1,1,18))
       prior <- combine_prior_lists(prior,normprior(0,2,-18,18))
       prior <- combine_prior_lists(prior,normprior(0,2,-18,18))
@@ -378,7 +378,7 @@ MLE_bounds_continuous  <- function(model,variance,degree=2, is_increasing){
       } else {
         prior <- combine_prior_lists(prior,normprior(0,2,-100,0))
       }
-      prior <- combine_prior_lists(prior,lnormprior(0 ,1,0,18))
+      prior <- combine_prior_lists(prior,lnormprior(0 ,1,0,5))
       prior <- combine_prior_lists(prior,lnormprior(0,1,0,18))
       prior <- combine_prior_lists(prior,normprior(0,1,-18,18))
     }
