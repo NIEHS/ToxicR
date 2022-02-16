@@ -15,7 +15,7 @@ Version 1.0.0 is the most recent release. For precompiled binaries, this release
 For Windows, the .zip file is compiled in R 4.1.2. 
 For macOS, the .tgz file is compiled in R 4.1.2. 
 For Linux, the package must be compiled. 
-For more information, please visit the instructions on the Wiki. 
+For more information, please visit the instructions on the [Wiki](https://github.com/NIEHS/ToxicR/wiki). 
 
 ## Citing ToxicR
 
