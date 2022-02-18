@@ -328,10 +328,10 @@ optimizationResult cfindMAX_W_EQUALITY( cBMDModel<LL, PR>  *M,
 		nlopt::opt local_opt(nlopt::LD_LBFGS, M->nParms()); //BOBYQA
 		nlopt::opt local_opt2(nlopt::LN_SBPLX, M->nParms());
 		/////////////////////////////////////////////////////////
-		local_opt.set_xtol_abs(1e-4); 
-		local_opt2.set_xtol_abs(1e-4);
-		local_opt.set_initial_step(1e-4);
-		local_opt2.set_initial_step(1e-4);
+		local_opt.set_xtol_abs(1e-5); 
+		local_opt2.set_xtol_abs(1e-5);
+		local_opt.set_initial_step(1e-5);
+		local_opt2.set_initial_step(1e-5);
 		local_opt.set_maxeval(10000);
 		local_opt2.set_maxeval(10000);
 		/////////////////////////////////////////////////////////
@@ -347,7 +347,7 @@ optimizationResult cfindMAX_W_EQUALITY( cBMDModel<LL, PR>  *M,
 		opt.set_min_objective(neg_pen_likelihood<LL, PR>, M);
 		opt.set_lower_bounds(lb);
 		opt.set_upper_bounds(ub);
-		opt.set_xtol_abs(1e-4);
+		opt.set_xtol_abs(1e-5);
 		opt.set_maxeval(20000);
 		///////////////////////////////////////////////
 		

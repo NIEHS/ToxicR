@@ -1,8 +1,8 @@
 ---
 title: "Continuous Data Example"
 author: "Matt Wheeler Ph.D."
-date: "12/05/2021"
-# bibliography: "biblo.bib" 
+date: "2/15/2021"
+#bibliography: "biblo.bib" 
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Continuous}
