@@ -123,6 +123,15 @@ void log_normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   }
   IDcontinuousPrior a2Init(a2Priors);
   Eigen::MatrixXd startV2(nParms,1);
+
+  for (unsigned int i = 0; i < nParms/2; i++ ){
+    startV2(i,0) = InitA(i,0); 
+  } 
+  
+  for (unsigned int i = 0;  i < nParms/2; i++ ){
+    startV2(i+nParms/2,0) = log(InitA(i,1)*InitA(i,1)); 
+  }
+
   for (unsigned int i = 0; i < nParms; i++) {
     a2Priors.row(i) << 0, 0, 1, -1e8, 1e8;
   }
@@ -135,6 +144,8 @@ void log_normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   optimizationResult a2Result = findMAP<lognormalLLTESTA2, IDcontinuousPrior>(&a2Model,startV2,0);
   CD->A2 = a2Result.functionV;
   CD->N2 = a2Result.max_parms.rows();
+  CD->A3 = 0.0; 
+  CD->N3 = 0.0; 
   /////////////////////////////////////////////////////////////////////////////////////
   // Test R
   lognormalLLTESTR rTest(Y, X, bSuffStat);

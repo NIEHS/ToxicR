@@ -27,6 +27,11 @@ S3method(print, BMD_Bayes_continuous_model, .print.BMD_Bayes_model)
 S3method(print, BMD_CDF, .print.BMD_CDF)
 S3method(print, BMDdich_fit, .print.BMDdich_fit)
 
+# Summary Methods
+S3method(summary, BMDcont_fit_maximized ,.summary_continuous_max)
+S3method(print,summary_continuous_max  ,.print_summary_continuous_max)
+S3method(summary, BMDdich_fit_maximized ,.summary_dichotomous_max)
+S3method(print,summary_dichotomous_max  ,.print_summary_dichotomous_max)
 
 # Base plot for single case
 

@@ -2282,7 +2282,7 @@ void estimate_sm_laplace(continuous_analysis *CA ,
 
      DOF =  compute_lognormal_dof(orig_Y_LN,X, b.MAP_ESTIMATE, 
                                  CA->isIncreasing, CA->suff_stat, tprior, 
-                                 CA->model); 
+                                 CA->model)+1; 
     
   }else{
 
@@ -2839,19 +2839,31 @@ void continuous_expectation( const continuous_analysis *CA, const continuous_mod
   normalEXPONENTIAL_BMD_NC likelihood_nexp5D(orig_Y , X, suff_stat, bConstVar, NORMAL_EXP5_DOWN);
   normalEXPONENTIAL_BMD_NC likelihood_nexp3D(orig_Y , X, suff_stat, bConstVar, NORMAL_EXP3_DOWN);
   
-  lognormalHILL_BMD_NC  likelihood_lnhill(Y_LN, X, suff_stat, 0);
-  lognormalEXPONENTIAL_BMD_NC likelihood_lnexp5U(Y_LN, X, suff_stat, NORMAL_EXP5_UP);
-  lognormalEXPONENTIAL_BMD_NC likelihood_lnexp3U(Y_LN, X, suff_stat, NORMAL_EXP3_UP);
-  lognormalEXPONENTIAL_BMD_NC likelihood_lnexp5D(Y_LN, X, suff_stat, NORMAL_EXP5_DOWN);
-  lognormalEXPONENTIAL_BMD_NC likelihood_lnexp3D(Y_LN, X, suff_stat, NORMAL_EXP3_DOWN);
+  lognormalHILL_BMD_NC  likelihood_lnhill(orig_Y_LN, X, suff_stat, 0);
+  lognormalEXPONENTIAL_BMD_NC likelihood_lnexp5U(orig_Y_LN, X, suff_stat, NORMAL_EXP5_UP);
+  lognormalEXPONENTIAL_BMD_NC likelihood_lnexp3U(orig_Y_LN, X, suff_stat, NORMAL_EXP3_UP);
+  lognormalEXPONENTIAL_BMD_NC likelihood_lnexp5D(orig_Y_LN, X, suff_stat, NORMAL_EXP5_DOWN);
+  lognormalEXPONENTIAL_BMD_NC likelihood_lnexp3D(orig_Y_LN, X, suff_stat, NORMAL_EXP3_DOWN);
   
   Eigen::MatrixXd mean; 
   Eigen::MatrixXd var; 
-  Eigen::MatrixXd theta(MR->nparms,1); 
-  for (int i=0; i < MR->nparms; i++){
-    theta(i,0) = MR->parms[i];  
+  int temp_nparms =  MR->nparms; 
+  if (cont_model::exp_3 == CA->model){
+    temp_nparms++; 
   }
- 
+  Eigen::MatrixXd theta(temp_nparms,1); 
+  if (cont_model::exp_3 == CA->model){
+    int j = 0; 
+    for (int i=0; i < temp_nparms; i++){
+      theta(i,0) = MR->parms[j];
+      if (i != 2) j++;   
+    }
+
+  }else{
+    for (int i=0; i < MR->nparms; i++){
+      theta(i,0) = MR->parms[i];  
+    }
+  }
   if (CA->disttype == distribution::log_normal){
     switch (CA->model){
       case cont_model::hill:
@@ -2860,6 +2872,8 @@ void continuous_expectation( const continuous_analysis *CA, const continuous_mod
           neg_like = likelihood_lnhill.negLogLikelihood(theta); 
           break; 
       case cont_model::exp_3:
+      
+
         if (CA->isIncreasing){
           mean = likelihood_lnexp3U.mean(theta,myX); 
           var  = likelihood_lnexp3U.variance(theta,myX);
@@ -2871,10 +2885,11 @@ void continuous_expectation( const continuous_analysis *CA, const continuous_mod
         }
         break; 
       case cont_model::exp_5:
+     
         if (CA->isIncreasing){
           mean = likelihood_lnexp5U.mean(theta,myX); 
           var  = likelihood_lnexp5U.variance(theta,myX);
-          neg_like = likelihood_lnexp5U.negLogLikelihood(theta); 
+          neg_like = likelihood_lnexp5U.negLogLikelihood(theta);   
         }else{
           mean = likelihood_lnexp5D.mean(theta,myX); 
           var  = likelihood_lnexp5D.variance(theta,myX);
