@@ -119,7 +119,7 @@ ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
       temp_prior = model_list[[ii]]
       
       
-      if (class(temp_prior) != "BMD_Bayes_continuous_model"){
+      if (!( "BMD_Bayes_continuous_model" %in% class(temp_prior))){
         stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
       }
       result <- .parse_prior(temp_prior)
@@ -398,14 +398,14 @@ ma_dichotomous_fit <- function(D,Y,N,model_list=integer(0), fit_type = "laplace"
       model_i[ii]  = .dichotomous_model_type(model_list[ii])
     }
   }else{
-    if(class(model_list) != "list"){
+    if(!("list" %in% class(model_list))){
       stop("Please pass a list of priors.")
     }
     tmodel_list = model_list
     model_list =  rep("",length(model_list))
     model_i = rep(0,length(model_list))
     for (ii in 1:length(model_list)){
-      if (class(tmodel_list[[ii]]) != "BMD_Bayes_dichotomous_model"){
+      if (!("BMD_Bayes_dichotomous_model" %in% class(tmodel_list[[ii]]))){
         stop("One of the specified models is not a 'BMD_Bayes_dichotomous_model.'")
       }
         temp_prior_l   = tmodel_list[[ii]]

@@ -6,6 +6,7 @@ rm -f src/polyK/*.o
 rm -f src/code_base/*.o
 rm -f src/Makevars
 rm -f config.*
+rm -rf src/nlopt-build
 rm -rf src/nlopt-src
 rm -rf autom4te.cache
 rm -fr src/nlopt config.log config.status

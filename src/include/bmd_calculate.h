@@ -549,7 +549,7 @@ bmd_analysis bmd_fast_BMD_cont(LL likelihood, PR prior,
    * Calculate the Gradient for the delta Method
    */
 
-  double g[parms.rows()];
+  double *g = new double[parms.rows()];
 
   gradient(parms, g, &data, bmd); // get the gradient vector
   Eigen::MatrixXd grad = parms*0;  
@@ -628,6 +628,7 @@ bmd_analysis bmd_fast_BMD_cont(LL likelihood, PR prior,
   rVal.type    = BMDType; 
   rVal.MAP_ESTIMATE = oR.max_parms; 
   rVal.MAP = oR.functionV; 		
+  delete []g; 
   return rVal; 
   
 }

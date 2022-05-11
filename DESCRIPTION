@@ -8,7 +8,7 @@ Maintainer: Matt Wheeler <matt.wheeler@nih.gov>
 Description:  Toxicology routines for analyzing dose-response data include dose-response analysis and trend tests.
     These methods are based upon the US EPA's benchmark dose software 3.  Methods have
     been extended to include additional functionality based on World Health Organization 
-    ECH 240 guidelines.  It further supports the European Food Safety Authority's 
+    guidelines.  It further supports the European Food Safety Authority's 
     draft guidance.  For more information, go to the website <https://github.com/NIEHS/ToxicR>. 
 Depends:
     R (>= 4.1.0)

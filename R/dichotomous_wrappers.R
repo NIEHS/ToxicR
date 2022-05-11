@@ -44,7 +44,7 @@ single_dichotomous_fit <- function(D,Y,N,model_type, fit_type = "laplace",
     prior =  .bayesian_prior_dich(model_type,degree);
     
   }else{
-    if (class(prior) !="BMD_Bayes_dichotomous_model"){
+    if (!("BMD_Bayes_dichotomous_model" %in% class(prior) )){
       stop("Prior is not correctly specified.")
     }
     model_type = prior$mean

@@ -52,7 +52,7 @@
 #'
 create_continuous_prior <- function( prior_list,model,distribution,deg=2){
 
-  if (class(prior_list) != "BMDmodelprior"){
+  if (!("BMDmodelprior" %in% class(prior_list))){
     stop("Prior is not of a 'BMDmodelprior' class. A probable solution is to 
           define the prior using function `create_prior_list`.")
   }
@@ -408,7 +408,7 @@ create_continuous_prior <- function( prior_list,model,distribution,deg=2){
 #'
 create_dichotomous_prior <- function(prior,model){
   
-  if (class(prior) != "BMDmodelprior"){
+  if (!("BMDmodelprior" %in% class(prior))){
     stop("Prior is not of a 'BMDmodelprior' class. A probable solution is to 
           define the prior using function `create_prior_list`.")
   }
