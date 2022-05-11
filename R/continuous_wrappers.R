@@ -24,18 +24,21 @@
 #' @title single_continuous_fit - Fit a single continuous BMD model.
 #' @param D doses matrix
 #' @param Y response matrix
+#' @param model_type Mean model. 
 #' @param fit_type the method used to fit (laplace, mle, or mcmc)
+#' @param prior Prior / model for the continuous fit. If this is specified, it overrides the parameters 'model_type' and 'distribution.' 
 #' @param BMD_TYPE BMD_TYPE specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used. \cr
 #' -	Standard deviation is the default option, but it can be explicitly specified with 'BMR_TYPE = "sd"' This definition defines the BMD as the dose associated with the mean/median changing a specified number of standard deviations from the mean at the control dose., i.e., it is the dose, BMD, that solves \eqn{\mid f(dose)-f(0) \mid = BMR \times \sigma} \cr
 #' -	Relative deviation can be specified with 'BMR_TYPE = "rel"'. This defines the BMD as the dose that changes the control mean/median a certain percentage from the background dose, i.e. it is the dose, BMD that solves \eqn{\mid f(dose) - f(0) \mid = (1 \pm BMR) f(0)} \cr
 #' -	Hybrid deviation can be specified with 'BMR_TYPE = "hybrid"'.  This defines the BMD that changes the probability of an adverse event by a stated amount relitive to no exposure (i.e 0).  That is, it is the dose, BMD, that solves \eqn{\frac{Pr(X > x| dose) - Pr(X >x|0)}{Pr(X < x|0)} = BMR}. For this definition, \eqn{Pr(X < x|0) = 1 - Pr(X > X|0) = \pi_0}, where \eqn{0 \leq \pi_0 < 1} is defined by the user as "point_p," and it defaults to 0.01.  Note: this discussion assumed increasing data.  The fitter determines the direction of the data and inverts the probability statements for decreasing data. \cr
-#' -	Absolute deviation can be specified with 'BMR_TYPE="abs"'. This defines the BMD as an absolute change from the control dose of zero by a specified amount. That is the BMD is the dose that solves the equation \eqn{\mid f(dose) - f(0) \mid = BMR}  
-#' @param BRM This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."
-#' @param point_p This option is only used for hybrid BMD calculations. It defines a probability that is the cutpoint for observations.  It is the probability that observations have this probability, or less, of being observed at the background dose.
-#' @param alpha Alpha is the specified nominal coverage rate for computation of the lower bound on the BMDL and BMDU, i.e., one computes a \eqn{100\times(1-\alpha)% confidence interval}.  For the interval (BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)% confidence interval}.  By default, it is set to 0.05.
+#' -	Absolute deviation can be specified with 'BMR_TYPE="abs"'. This defines the BMD as an absolute change from the control dose of zero by a specified amount. That is the BMD is the dose that solves the equation \eqn{\mid f(dose) - f(0) \mid = BMR}.   
+#' @param BMR This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."\cr
+#' @param point_p This option is only used for hybrid BMD calculations. It defines a probability that is the cutpoint for observations.  It is the probability that observations have this probability, or less, of being observed at the background dose. \cr
+#' @param alpha Alpha is the specified nominal coverage rate for computation of the lower bound on the BMDL and BMDU, i.e., one computes a \eqn{100\times(1-\alpha)\%} confidence interval.  For the interval (BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)\%} confidence interval.  By default, it is set to 0.05.
 #' @param samples the number of samples to take (MCMC only)
 #' @param degree the number of degrees of a polynomial model. Only used for polynomial models. 
 #' @param burnin the number of burnin samples to take (MCMC only)
+#' @param distribution The underlying distribution used as the data distribution. 
 #' @param ewald perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)
 #' @param transform Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.
 #' @return a model object
@@ -47,7 +50,7 @@
 #' M2[,2] <- c(6,5.2,2.4,1.1,0.75)
 #' M2[,3] <- c(20,20,19,20,20)
 #' M2[,4] <- c(1.2,1.1,0.81,0.74,0.66)
-#' model = single_continuous_fit(M2[,1,drop=F], M2[,2:4], BMD_TYPE="sd", BMR=1, ewald = T,
+#' model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMD_TYPE="sd", BMR=1, ewald = TRUE,
 #'                              distribution = "normal",fit_type="laplace",model_type = "hill")
 #' 
 #' @export
@@ -59,7 +62,23 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                                    transform = FALSE){
     Y <- as.matrix(Y) 
     D <- as.matrix(D) 
-
+    
+    dis_type = which(distribution  == c("normal","normal-ncv","lognormal"))
+    
+    if (dis_type == 3){
+       is_neg = .check_negative_response(Y)
+       if (is_neg){
+         stop("Can't fit a negative response to the log-normal distribution.")
+       }
+    }
+    
+    DATA <- cbind(D,Y);
+    test <-  .check_for_na(DATA)
+    Y = Y[test==TRUE,,drop=F]
+    D = D[test==TRUE,,drop=F]
+    DATA <- cbind(D,Y);
+   
+    
     myD = Y; 
     sstat = F # set sufficient statistics to false if there is only one column
     if (ncol(Y) > 1){
@@ -71,7 +90,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       if (class(prior) != "BMD_Bayes_continuous_model"){
         stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
       }
-      t_prior_result <- parse_prior(prior)
+      t_prior_result <- .parse_prior(prior)
       distribution <- t_prior_result$distribution
       model_type   <- t_prior_result$model
       prior = t_prior_result$prior
@@ -84,7 +103,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
             "hill","exp-3","exp-5","power","FUNL","polynomial"')
       }
 
-      PR    = bayesian_prior_continuous_default(model_type,distribution,degree)
+      PR    = .bayesian_prior_continuous_default(model_type,distribution,degree)
       #specify variance of last parameter to variance of response
       if(distribution == "lognormal"){
            if (ncol(Y)>1){
@@ -122,16 +141,14 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
     if (rt == 4){
       rt = 6; 
     }
-    dis_type = which(distribution  == c("normal","normal-ncv","lognormal"))
-    
 
     
     if(identical(dis_type,integer(0))){
       stop('Please specify the distribution as one of the following:\n
             "normal","normal-ncv","lognormal"')
     }
-    
-    DATA <- cbind(D,Y); 
+
+
     if (ncol(DATA)==4){
       colnames(DATA) =  c("Dose","Resp","N","StDev")
     }else if (ncol(DATA) == 2){
@@ -175,7 +192,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
 
     #For MLE 
     if (type_of_fit == 2){
-      PR = MLE_bounds_continuous(model_type,distribution,degree, is_increasing)
+      PR = .MLE_bounds_continuous(model_type,distribution,degree, is_increasing)
       PR = PR$priors
     }
 
@@ -219,7 +236,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
   # // return(PR)
     if (fit_type == "mcmc"){
       
-      rvals <- run_continuous_single_mcmc(fitmodel,model_data$SSTAT,model_data$X,
+      rvals <- .run_continuous_single_mcmc(fitmodel,model_data$SSTAT,model_data$X,
                                           PR ,options, is_log_normal, sstat) 
    
       if (model_type == "exp-3"){
@@ -264,7 +281,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
     }else{
       
       options[7] <- (ewald == TRUE)*1
-      rvals   <- run_continuous_single(fitmodel,model_data$SSTAT,model_data$X,
+      rvals   <- .run_continuous_single(fitmodel,model_data$SSTAT,model_data$X,
   						                          PR,options, dist_type)
      
       rvals$bmd_dist = rvals$bmd_dist[!is.infinite(rvals$bmd_dist[,1]),,drop=F]
@@ -296,45 +313,47 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       return (rvals)
     }
 }
+# 
+# print.BMDcont_fit_MCMC<-function(x,...){
+#   p = x
+#   BMDtype <- c('Absolute Deviation','Standard Deviation','Relative Deviation','Hybrid')
+#   
+#   
+#   cat ("Benchmark Dose Estimates using MCMC. \n")
+#   cat (sprintf("Continuous %s BMD: BMRF-%1.2f\n",BMDtype[p$options[1]],p$options[2]))
+#   cat (sprintf("Model Type: %s\n",p$model))
+#   cat ("BMD  (BMDL,BMDU) \n")
+#   cat ("---------------------\n")
+#   m <- mean(p$BMD)
+#   x <- quantile(p$BMD,c(p$options[4],1-p$options[4]))
+#   cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",m,x[1],x[2],100*(1-2*p$options[4]),"% 2-sided Confidence Interval"))
+# }
+# 
+# print.BMDcont_fit_laplace<-function(x,...){
+#   p = x
+#   BMDtype <- c('Absolute Deviation','Standard Deviation','Relative Deviation','Hybrid')
+#   
+#   cat ("Benchmark Dose Estimates using Laplace \n")
+#   cat ("approximation to the Posterior\n")
+#   cat (sprintf("Continuous %s BMD: BMRF-%1.2f\n",BMDtype[p$options[1]],p$options[2]))
+#   cat (sprintf("Model Type: %s\n",p$model))
+#   cat ("BMD  (BMDL,BMDU) \n")
+#   cat ("---------------------\n")
+#   cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",p$bmd[1],p$bmd[2],p$bmd[3],100*(1-2*p$options[4]),"% 2-sided Confidence Interval"))
+# }
 
-print.BMDcont_fit_MCMC<-function(p){
-  
-  BMDtype <- c('Absolute Deviation','Standard Deviation','Relative Deviation','Hybrid')
-  
-  
-  cat ("Benchmark Dose Estimates using MCMC. \n")
-  cat (sprintf("Continuous %s BMD: BMRF-%1.2f\n",BMDtype[p$options[1]],p$options[2]))
-  cat (sprintf("Model Type: %s\n",p$model))
-  cat ("BMD  (BMDL,BMDU) \n")
-  cat ("---------------------\n")
-  m <- mean(p$BMD)
-  x <- quantile(p$BMD,c(p$options[4],1-p$options[4]))
-  cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",m,x[1],x[2],100*(1-2*p$options[4]),"% 2-sided Confidence Interval"))
-}
-
-print.BMDcont_fit_laplace<-function(p){
-  BMDtype <- c('Absolute Deviation','Standard Deviation','Relative Deviation','Hybrid')
-  
-  cat ("Benchmark Dose Estimates using Laplace \n")
-  cat ("approximation to the Posterior\n")
-  cat (sprintf("Continuous %s BMD: BMRF-%1.2f\n",BMDtype[p$options[1]],p$options[2]))
-  cat (sprintf("Model Type: %s\n",p$model))
-  cat ("BMD  (BMDL,BMDU) \n")
-  cat ("---------------------\n")
-  cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",p$bmd[1],p$bmd[2],p$bmd[3],100*(1-2*p$options[4]),"% 2-sided Confidence Interval"))
-}
-
-print.BMDcont_fit_mle<-function(p){
-  BMDtype <- c('Absolute Deviation','Standard Deviation','Relative Deviation','Hybrid')
-  
-  cat ("Benchmark Dose Estimates using MLE \n")
-  cat (sprintf("Continuous %s BMD: BMRF-%1.2f\n",BMDtype[p$options[1]],p$options[2]))
-  
-  cat (sprintf("Model Type: %s\n",p$model))
-  cat ("BMD  (BMDL,BMDU) \n")
-  cat ("---------------------\n")
-  cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",p$bmd[1],p$bmd[2],p$bmd[3],100*(1-2*p$options[4]),"% 2-sided Confidence Interval"))
-}
+# print.BMDcont_fit_mle<-function(x,...){
+#   p = x
+#   BMDtype <- c('Absolute Deviation','Standard Deviation','Relative Deviation','Hybrid')
+#   
+#   cat ("Benchmark Dose Estimates using MLE \n")
+#   cat (sprintf("Continuous %s BMD: BMRF-%1.2f\n",BMDtype[p$options[1]],p$options[2]))
+#   
+#   cat (sprintf("Model Type: %s\n",p$model))
+#   cat ("BMD  (BMDL,BMDU) \n")
+#   cat ("---------------------\n")
+#   cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",p$bmd[1],p$bmd[2],p$bmd[3],100*(1-2*p$options[4]),"% 2-sided Confidence Interval"))
+# }
 
 
 

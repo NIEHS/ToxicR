@@ -17,7 +17,92 @@
 #CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 #OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-polyk <- function(dose,tumor,daysOnStudy){
+
+#' 733 unique dose-response datasets
+#'
+#' A dataset containing 733 dichotomous dose-response studies that were involved in 
+#' regulatory risk assessment. 
+#'
+#' @format A data frame with 2727 rows and 11 variables:
+#' \describe{
+#'   \item{ID}{-The study ID in the database.}
+#'   \item{chemical}{-Name of the Chemical in the study.}
+#'   \item{data.source}{-Source of the risk assessment data.}
+#'   \item{CASRN}{-Chemical's CASRN}
+#'   \item{dose}{-Dose spacing of the study using the original study.}
+#'   \item{r.dose}{-Doses of the experiment relative to 1 being the maximum dose tested.}
+#'   \item{n}{-Number of animals on test.}
+#'   \item{obs}{-Number of adverse events.}
+#'   \item{organ}{-Organ impacted.}
+#'   \item{effect}{-Type of adverse effect.}
+#'   \item{study.source}{-Publication related to the experiment.}
+#' }
+#' More information at: \doi{10.1111/risa.13218}
+"dichotomousDR"
+
+#' Short term terminal body-weight data from NTP Report 599 
+#'
+#' This dataset contains terminal body-weight data for male and 
+#' female rats for the technical report TR-599: Sodium Tungstate Dihydrate.
+#'
+#' @format A data frame with 120 rows and 4 variables:
+#' \describe{
+#'   \item{Dose_Group}{-The dose group for the observation.}
+#'   \item{dose}{-The dose in mg/L }
+#'   \item{sex}{-Animal's Sex}
+#'   \item{weight}{-Terminal body-weight}
+#' }
+#' For more information see: \doi{10.22427/NTP-DATA-TR-599}
+"ntp_weight_data"
+
+#' Long term Thyroid Adenoma data from NTP Report 599 
+#'
+#' This dataset contains Thyroid Adenoma data  for  
+#' female rats for the technical report TR-599: Sodium Tungstate Dihydrate.
+#'
+#' @format A data frame with 200 rows and 4 variables:
+#' \describe{
+#'   \item{treatment}{-The dose group for the observation.}
+#'   \item{days_on_study}{-Number of days on the study 730 is the max.}
+#'   \item{adenoma}{- Thyroid Adenoma (Yes/No) (1/0).}
+#'   \item{dose}{-The dose in mg/L}
+#' }
+#' For more information see: \doi{10.22427/NTP-DATA-TR-599}
+"ntp_599_female"
+
+#' Clinical Chemistry data from NTP Report 599 
+#'
+#' This dataset contains clinical chemistry data  for  
+#' all rats in the short term 90-day study.
+#'
+#' @format A data frame with 200 rows and 4 variables:
+#' \describe{
+#'   \item{concentration}{-The dose group for the observation.}
+#'   \item{sex}{- Male/Female.}
+#'   \item{response}{- Response variable}
+#'   \item{response_type}{- The type of response measured}
+#' }
+#' For more information see: \doi{10.22427/NTP-DATA-TR-599}
+"ntp_599_hemotology"
+
+## ----------------------
+## 	POLYK-TEST
+## ----------------------
+#' @title Poly-k trend test
+#' This function implements the NTP's polyK trend test.
+#' @param dose An equation of the form \eqn{Y \sim X.} Here the variable
+#' \eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
+#' conditions. For example, if weight is the dependent variable, and you are
+#' interested in looking at the trend across sex one would have 'weight ~ sex'.
+#' @param tumor A data frame with column names in the formula.
+#' @param daysOnStudy The name of the variable containing the doses in the data frame \eqn{data}.
+#' It is expected multiple doses for each of the experimental conditions \eqn{X}.
+#' @return The results of a Williams trend test for each level in dose_name.
+#' More information on this procedure at: \doi{10.2307/2531856} and \doi{10.2307/2532200}
+
+#' @examples
+#' ntp_polyk(ntp_599_female$dose,ntp_599_female$adenoma,ntp_599_female$days_on_study)
+ntp_polyk <- function(dose,tumor,daysOnStudy){
      if ( sum(tumor>1) > 0){
           stop("Tumors need to be a 0 or 1")
      }
@@ -36,6 +121,7 @@ polyk <- function(dose,tumor,daysOnStudy){
         stop("There is an NA in the data.")
      }
      result <- .polykCPP(dose,tumor,daysOnStudy)
+
      message("The results of the Poly-K test for trend.\n")
      cat(sprintf("Poly-1.5 P-value = %1.4f\n",result[1]))
      cat(sprintf("Poly-3   P-value = %1.4f\n",result[2]))
@@ -44,6 +130,7 @@ polyk <- function(dose,tumor,daysOnStudy){
      row.names(result)<-c("Poly 1.5","Poly-3", "Poly-6")
      return(result)
 }
+
 ## -----------------------------------------------------------
 ## JONCKHEERE'S TEST 
 ## ----------------Changelog----------------------------------
@@ -55,6 +142,21 @@ polyk <- function(dose,tumor,daysOnStudy){
 ## formula. To do this, we assume that data is a data frame. 
 ## As a default, "dose_name", is set to the column header "dose"
 ## -----------------------------------------------------------
+#' @title ntp_jonckeere 
+#' Jonckherre's test for significant differences from background dose
+#' @param formula An equation of the form \eqn{Y \sim X.} Here the variable
+#' \eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
+#' conditions. For example, if weight is the dependent variable, and you are
+#' interested in looking at the trend across sex one would have 'weight ~ sex'.
+#' @param data A data frame with column names in the formula.
+#' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
+#' It is expected multiple doses for each of the experimental conditions \eqn{X}.
+#' @param pair  The type of test used for pairwise comparison. It can either be
+#' "Williams" or "Shirley"
+#' @return The results of a global test for difference from background. 
+#' @examples
+#'
+#' ntp_jonckeere(response ~ sex + response_type,data=ntp_599_hemotology,dose_name="concentration")
 ntp_jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
 {
   if (!is.data.frame(data)){
@@ -141,7 +243,7 @@ ntp_jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
 }
 
 .compute_crit_williams <- function(william_test_data,dose_name,formulaV){
-  
+  dof <- NULL
   
   t_idx = which(colnames(william_test_data) == dose_name)
   william_test_data[,t_idx] = as.numeric(william_test_data[,t_idx])
@@ -151,20 +253,20 @@ ntp_jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
   for(k in 1:nrow(william_test_data)){
     ## CONTROL GROUP
     if(william_test_data[k,t_idx]==0)		## should this be datatemp or datatemp?
-    { 
+    { rm
       william_test_data$crit05 <- FALSE
       william_test_data$crit01 <- FALSE
       
-    } else if(william_test_data[k,t_idx] != 0 & (william_test_data$dof[k] %in% will005$dof)){
+    } else if(william_test_data[k,t_idx] != 0 & (william_test_data$dof[k] %in% .will005$dof)){
       col1 <- paste('w1crit', k, sep='')
       col5 <- paste('w5crit', k, sep='')
       adj1 <- paste('w1adj', k, sep='')
       adj5 <- paste('w5adj', k, sep='')
       
-      w1crit <- subset(will005, dof==william_test_data$dof[k])[,c(col1)]
-      w1adj  <- subset(will005, dof==william_test_data$dof[k])[,c(adj1)]
-      w5crit <- subset(will025, dof==william_test_data$dof[k])[,c(col5)]
-      w5adj  <- subset(will025, dof==william_test_data$dof[k])[,c(adj5)]
+      w1crit <- subset(.will005, dof==william_test_data$dof[k])[,c(col1)]
+      w1adj  <- subset(.will005, dof==william_test_data$dof[k])[,c(adj1)]
+      w5crit <- subset(.will025, dof==william_test_data$dof[k])[,c(col5)]
+      w5adj  <- subset(.will025, dof==william_test_data$dof[k])[,c(adj5)]
       
       dofactor <- ((william_test_data$dof[k] - lowdof) / (highdof - lowdof))	
       temp_name <- sprintf("%s.length",formulaV)
@@ -176,7 +278,7 @@ ntp_jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
       
       william_test_data$crit01[k] <- w1crit - (.1 * w1adj * (1 - (trt_num / con_num)))
       william_test_data$crit05[k] <- w5crit - (.1 * w5adj * (1 - (trt_num / con_num)))
-    } else if(william_test_data[k,t_idx] != 0 & !(william_test_data$dof[k] %in% will005$dof))  
+    } else if(william_test_data[k,t_idx] != 0 & !(william_test_data$dof[k] %in% .will005$dof))  
     {
       col1 <- paste('w1crit', k, sep='')
       col5 <- paste('w5crit', k, sep='')
@@ -184,20 +286,20 @@ ntp_jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
       adj5 <- paste('w5adj', k, sep='')
       
       ## get lower bound from table
-      lowdof <- max(will005$dof[william_test_data$dof[k] > will005$dof])
+      lowdof <- max(.will005$dof[william_test_data$dof[k] > .will005$dof])
       
-      low.w1crit <- subset(will005, dof==lowdof)[,c(col1)]
-      low.w1adj  <- subset(will005, dof==lowdof)[,c(adj1)]
-      low.w5crit <- subset(will025, dof==lowdof)[,c(col5)]
-      low.w5adj  <- subset(will025, dof==lowdof)[,c(adj5)]
+      low.w1crit <- subset(.will005, dof==lowdof)[,c(col1)]
+      low.w1adj  <- subset(.will005, dof==lowdof)[,c(adj1)]
+      low.w5crit <- subset(.will025, dof==lowdof)[,c(col5)]
+      low.w5adj  <- subset(.will025, dof==lowdof)[,c(adj5)]
       
       ## get upper bound from table
-      highdof <- min(will005$dof[william_test_data$dof[k] < will005$dof])
+      highdof <- min(.will005$dof[william_test_data$dof[k] < .will005$dof])
       
-      high.w1crit <- subset(will005, dof==highdof)[,c(col1)]
-      high.w1adj  <- subset(will005, dof==highdof)[,c(adj1)]
-      high.w5crit <- subset(will025, dof==highdof)[,c(col5)]
-      high.w5adj  <- subset(will025, dof==highdof)[,c(adj5)]
+      high.w1crit <- subset(.will005, dof==highdof)[,c(col1)]
+      high.w1adj  <- subset(.will005, dof==highdof)[,c(adj1)]
+      high.w5crit <- subset(.will025, dof==highdof)[,c(col5)]
+      high.w5adj  <- subset(.will025, dof==highdof)[,c(adj5)]
       
       dofactor <- ((william_test_data$dof[k] - lowdof) / (highdof - lowdof))	
       temp_name <- sprintf("%s.length",formulaV)
@@ -217,26 +319,30 @@ ntp_jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
 ## 	WILLIAM'S TEST
 ## ----------------------
 #' Williams Trend test for 
-#' 
-#' @param formula An 'R' of the form \code{Y ~ X.} Here the variable
-#' \{Y} is the response of interest, and \{X} represents discrete experimental 
+#' @title Wiliam's trend test
+#' @param formula An equation of the form \eqn{Y \sim X.} Here the variable
+#' \eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
 #' conditions. For example, if weight is the dependent variable, and you are
 #' interested in looking at the trend across sex one would have 'weight ~ sex'.
 #' @param data A data frame with column names in the formula.
-#' @param dose_name The name of the variable containing the doses in the data frame \code{data}.
-#' It is expected multiple doses for each of the experimental conditions \{X}.
-#' @return The results of a Williams trend test for each level in \code{dose_name}.
+#' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
+#' It is expected multiple doses for each of the experimental conditions \eqn{X}.
+#' @return The results of a Williams trend test for each level in \eqn{dose_name}.
+#' For more information on the Williams trend test: \doi{10.2307/2528930}
 #' @examples
-#' add(1, 1)
-#' add(10, 1)
+#'
+#' a = ntp_williams(weight ~ sex, data=ntp_weight_data) 
+#' summary(a)
 ntp_williams <- function(formula, data,dose_name = "dose")
 {
-  
-  data[,c(dose_name)] = as.numeric(data[,c(dose_name)])
+
+  mult_comp_test <- NULL
+  data[,c(dose_name)] = as.numeric(unlist(data[,c(dose_name)]))
+
   temp_str = strsplit(as.character(formula)[3], " ")[[1]]
   temp_str = temp_str[temp_str != "+"]
   data = data[order(data[,c(dose_name)]),]
-  
+
   for (ii in 1:length(temp_str)){
     data = data[order(data[,temp_str[ii]]),]
   }
@@ -244,19 +350,21 @@ ntp_williams <- function(formula, data,dose_name = "dose")
   if (!(dose_name %in% colnames(data))){
     stop(sprintf("Dose name %s does not appear in the data frame.",dose_name))
   }
-  
+
   jonck_data =  ntp_jonckeere( formula,dose_name = dose_name,
                                data = data, pair = "Williams")
-  
+
   ## loop through all groups flagged as WILLIAM in jonck
   william       <- subset(jonck_data, mult_comp_test=='WILLIAMS')
   will_results  <- NULL
   will_results2 <- NULL
+
   temp_resp_name <- unlist(formula[[2]])
+
   temp_colnames <- unlist(c(unlist(colnames(william)),dose_name,as.character(unlist(formula[[2]]))))
   temp <-   colnames(data) %in% temp_colnames
   temp_d <- as.data.frame(data[,temp==TRUE])
-  
+
   if(nrow(william) > 0){
     
     for(w in 1:nrow(william)){
@@ -516,16 +624,32 @@ ntp_williams <- function(formula, data,dose_name = "dose")
     will_results2 = will_results2[,t_idx]
     
   }
-  
+
+  class(will_results2) <- "ntp.williams"
   return(will_results2)
 }
 
 ##------------------------
 ## DUNN'S TEST
 ##------------------------
-dunn <- function(formula,data, dose_name = "dose")
+#' @title ntp_dunn Dunn's test
+#' @param formula An equation of the form \eqn{Y \sim X.} Here the variable
+#' \eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
+#' conditions. For example, if weight is the dependent variable, and you are
+#' interested in looking at the trend across sex one would have 'weight ~ sex'.
+#' @param data A data frame with column names in the formula.
+#' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
+#' It is expected multiple doses for each of the experimental conditions \eqn{X}.
+#' @return The results of a Dunn's  test for each level in \eqn{dose_name}.
+#' @examples
+#'
+#' a = ntp_dunn(response ~ sex + response_type,data=ntp_599_hemotology,
+#'                                              dose_name="concentration")
+#' summary(a)
+ntp_dunn <- function(formula,data, dose_name = "dose")
 {
-  data[,c(dose_name)] = as.numeric(data[,c(dose_name)])
+  mult_comp_test <- numTies <- NULL
+  data[,c(dose_name)] = as.numeric(unlist(data[,c(dose_name)]))
   temp_str = strsplit(as.character(formula)[3], " ")[[1]]
   temp_str = temp_str[temp_str != "+"]
   data = data[order(data[,c(dose_name)]),]
@@ -544,11 +668,13 @@ dunn <- function(formula,data, dose_name = "dose")
   dunn <- subset(jonck_data, mult_comp_test=='DUNN')
   dunn_results <- NULL
   
-  
+
   temp_colnames <- unlist(c(unlist(colnames(dunn)),dose_name,as.character(unlist(formula[[2]]))))
   temp <-   colnames(data) %in% temp_colnames
   temp_d <- as.data.frame(data[,temp==TRUE])
-  
+  if (nrow(dunn)==0){
+    warning("The Jonckherre test did not suggest the test be performed. Returning a NULL dataset.")
+  }
   ## loop through all groups flagged as DUNN in jonck
   if(nrow(dunn) > 0){
     
@@ -738,7 +864,7 @@ dunn <- function(formula,data, dose_name = "dose")
     dunn_results = dunn_results[,c(dose_idx,remain_idx,test_idx,p_value_idx)]
     dunn_results = dunn_results[,-which(names_to_drop %in% c("rank.mean",temp,"DUNSIGN","num"))]
   }
-  
+  class(dunn_results) <- "ntp.dunn"
   return(dunn_results)
   
 }
@@ -746,9 +872,21 @@ dunn <- function(formula,data, dose_name = "dose")
 ##------------------------
 ## DUNNETT'S TEST
 ##------------------------
-dunnett <- function(formula, data,dose_name = "dose"){
-  
-  data[,c(dose_name)] = as.numeric(data[,c(dose_name)])
+#' @title ntp_dunett Dunnett's test
+#' @param formula An equation of the form \eqn{Y \sim X.} Here the variable
+#' \eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
+#' conditions. For example, if weight is the dependent variable, and you are
+#' interested in looking at the trend across sex one would have 'weight ~ sex'.
+#' @param data A data frame with column names in the formula.
+#' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
+#' It is expected multiple doses for each of the experimental conditions \eqn{X}.
+#' @return The results of Dunnet's  test for each level in \eqn{dose_name}
+#' @examples
+#' a = ntp_dunnett(response ~ sex + response_type,data=ntp_599_hemotology,dose_name="concentration")
+#' summary(a)
+ntp_dunnett <- function(formula, data,dose_name = "dose"){
+  mult_comp_test <- NULL
+  data[,c(dose_name)] = as.numeric(unlist(data[,c(dose_name)]))
   temp_str = strsplit(as.character(formula)[3], " ")[[1]]
   temp_str = temp_str[temp_str != "+"]
   data = data[order(data[,c(dose_name)]),]
@@ -774,6 +912,9 @@ dunnett <- function(formula, data,dose_name = "dose"){
   temp <-   colnames(data) %in% temp_colnames
   temp_d <- as.data.frame(data[,temp==TRUE])
   
+  if (nrow(dunnett)==0){
+    warning("The Jonckherre test did not suggest the test be performed. Returning a NULL dataset.")
+  }
   
   if(nrow(dunnett) > 0){
     for(d in 1:nrow(dunnett)){
@@ -835,16 +976,31 @@ dunnett <- function(formula, data,dose_name = "dose"){
       dunnett_results[,temp_idx3] =  as.numeric(dunnett_results[,temp_idx3])
     } 
   } 
-  
+  class(dunnett_results) <- "ntp.dunnett"
   return(dunnett_results)
 }
 
 ## ----------------------
 ## SHIRLEY'S TEST
 ## ----------------------
-shirley <- function(formula, data, dose_name = "dose")
+#' @title ntp_shirley Shirley's test as programmed at the NTP
+#' @param formula An equation of the form \eqn{Y \sim X.} Here the variable
+#' \eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
+#' conditions. For example, if weight is the dependent variable, and you are
+#' interested in looking at the trend across sex one would have 'weight ~ sex'.
+#' @param data A data frame with column names in the formula.
+#' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
+#' It is expected multiple doses for each of the experimental conditions \eqn{X}.
+#' @return The results of a non-parametric Shirley's isotone test for trend on
+#' each level in \eqn{dose_name}. For more information see: \doi{10.2307/2529789}
+#' 
+#' @examples 
+#' a = ntp_shirley(weight ~ sex, data=ntp_weight_data)
+#' summary(a)
+ntp_shirley <- function(formula, data, dose_name = "dose")
 {
-  data[,c(dose_name)] = as.numeric(data[,c(dose_name)])
+  mult_comp_test <- numTies <- NULL
+  data[,c(dose_name)] = as.numeric(unlist(data[,c(dose_name)]))
   temp_str = strsplit(as.character(formula)[3], " ")[[1]]
   temp_str = temp_str[temp_str != "+"]
   data = data[order(data[,c(dose_name)]),]
@@ -857,21 +1013,18 @@ shirley <- function(formula, data, dose_name = "dose")
     stop(sprintf("Dose name %s does not appear in the data frame.",dose_name))
   }
   
-  
   ## loop through all groups flagged as SHIRLEY in jonck
   jonck_data =  ntp_jonckeere( formula,dose_name = dose_name,
                                data = data,pair="Shirley")
   shirley_results <- NULL
   shirley <- subset(jonck_data, mult_comp_test=='SHIRLEY')
   
-  
-  
   temp_colnames <- unlist(c(unlist(colnames(shirley)),dose_name,as.character(unlist(formula[[2]]))))
   temp <-   colnames(data) %in% temp_colnames
   temp_d <- as.data.frame(data[,temp==TRUE])
   
   if(nrow(shirley) > 0)
-  {
+  { 
     for(s in 1:nrow(shirley))
     {
       testStats <- NULL
@@ -884,7 +1037,7 @@ shirley <- function(formula, data, dose_name = "dose")
         temp_names[j] <- unlist(shirley[s,j])
       }
       
-      
+
       ##KRS - changed "phase" to "phasetype"
       temp_dd <- temp_d
       temp_dd[is.na(temp_dd)] = ''
@@ -905,6 +1058,7 @@ shirley <- function(formula, data, dose_name = "dose")
       ## make sure there are multiple doses to compare, and control is present
       if((length(unique(ex[,dose_idx])) > 1) & (0 %in% unique(ex[,dose_idx]))){
         exLoop <- ex
+
         for(g in (length(unique(ex[,dose_idx]))-1):1 ){
           ## get ties for use in correction formula
           ties <- as.data.frame(table(table(exLoop[,nval_idx])))
@@ -958,7 +1112,7 @@ shirley <- function(formula, data, dose_name = "dose")
               
             }
           }
-          
+
           ranks2 <- cbind(ranks, weights)
           names(ranks2) <- c('value', 'count', 'rank')
           
@@ -1006,7 +1160,7 @@ shirley <- function(formula, data, dose_name = "dose")
           }
           
           T <- shrl_num * (V * (1/Ri + 1/C))^-.5		## shirlstat in SAS code
-          
+         
           testStats <- c(testStats, T)
           doseCount <- c(doseCount, g)
           
@@ -1017,17 +1171,22 @@ shirley <- function(formula, data, dose_name = "dose")
           exLoop <- exLoop[exLoop[,td]!= unique(exLoop[,td])[length(unique(exLoop[,td]))],]
           ## remove latest dosage before returning to top of loop
         }
-        tshirl <- shirley[,-which(colnames(shirley)%in% c("tau","pvalue","mult_comp_test")),drop=F][s,]
+
+  
+        tshirl <- shirley[,-which(colnames(shirley)%in% c("tau","pvalue","mult_comp_test")),drop=F][s,,drop=F]
+
         results <- as.data.frame(cbind(dose,  num, doseCount, testStats))		
-        
+     
         real_temp <- as.data.frame(matrix(NA,nrow=nrow(results),ncol=ncol(tshirl)))
+
         for (ii in 1:ncol(tshirl)){
           real_temp[,ii] = tshirl[ii]
-        }			
+        }	
+  	
         names(real_temp) = colnames(tshirl)
         results <- cbind(real_temp,results)
         
-        
+  
         ## add SAS crit values
         C01 <- c(0, 2.575, 2.607, 2.615, 2.618, 2.620, 2.621, 2.622)
         C05 <- c(0, 1.96, 2.015, 2.032, 2.040, 2.044, 2.047, 2.0485)
@@ -1039,6 +1198,7 @@ shirley <- function(formula, data, dose_name = "dose")
         ## find crit values, generate number of stars
         results$mult_comp_signif <- 0
         nonsignif_flag <- 'NO'			## to match Laura's version force all doses after first non-signif dose to zero
+
         if(length(doseCount) <= 7){		## cannot handle more than 7 non control groups ... no crit values to compare to
           for(i in 1:nrow(results))
           {
@@ -1077,6 +1237,7 @@ shirley <- function(formula, data, dose_name = "dose")
     }
   }
   ## check for existence
+
   if(!is.null(shirley_results)){
     
     
@@ -1093,9 +1254,82 @@ shirley <- function(formula, data, dose_name = "dose")
     shirley_results[is.na(shirley_results)] <- ''
   }
   
-  
+  class(shirley_results) <- "ntp.shirley"
   
   return(shirley_results)
 }
 
+.summary_ntpwilliams <- function(object, ...){
+  class(object) <- "data.frame"
+  cat("Williams Trend Test: Monotone Change from control?\n")
+  cat("--------------------------------------------------\n")
+  loc <- which(names(object) %in% c("willStat","mult_comp_signif","mult_comp_test") )
+  data_one <- object[,-loc]
+  data_two <- object[,c("mult_comp_signif")]
+  data_a   <- rep("No",length(data_two))
+  data_a[data_two == 1] = "<0.05"
+  data_a[data_two == 2] = "<0.01"
+  output        <- data.frame(data_one,data_a)
+  names(output) <- c(names(data_one),"Significant")
+  
+  print(output,row.names=F)
+}
 
+.summary_ntpdunn <- function(object, ...){
+  class(object) <- "data.frame"
+  loc    <- which(names(object) == "TEST")
+  object <- object[,-loc]
+  pv_loc <- which(names(object) == "pvalue")
+  data_two     <- object[,pv_loc]
+  data_one <- object[,-c(loc,pv_loc)]
+
+  
+  cat("Dunn Trend Test: Significant Change from control? \n")
+  cat("--------------------------------------------------\n")
+  
+  data_a   <- rep("No",length(data_two))
+  data_a[data_two  <0.05] = "<0.05"
+  data_a[data_two  <0.01] = "<0.01"
+  output        <- data.frame(data_one,data_a)
+  names(output) <- c(names(data_one),"Significant")
+  print(output,row.names=FALSE)
+}
+
+.summary_ntpdunnett <- function(object, ...){
+  class(object) <- "data.frame"
+  loc    <- which(names(object) %in% c("TEST","tstat","mult_comp_test","tstat","mult_comp_signif"))
+  object <- object[,-loc]
+  pv_loc <- which(names(object) == "pvalue")
+  data_two     <- object[,pv_loc]
+  data_one <- object[,-c(loc,pv_loc)]
+
+  cat("Dunnett Trend Test: Significant Change from control? \n")
+  cat("---------------------------------------------------  \n")
+  
+  data_a   <- rep("No",length(data_two))
+  data_a[data_two  <0.10] = "<0.10"
+  data_a[data_two  <0.05] = "<0.05"
+  data_a[data_two  <0.01] = "<0.01"
+  output        <- data.frame(data_one,data_a)
+  names(output) <- c(names(data_one),"Significant")
+  print(output,row.names=FALSE)
+}
+
+.summary_ntpshirley <- function(object, ...){
+  class(object) <- "data.frame"
+  loc    <- which(names(object) %in% c("testStats","mult_comp_test"))
+  object <- object[,-loc]
+  pv_loc <- which(names(object) == "mult_comp_signif")
+  data_two     <- object[,pv_loc]
+  data_one <- object[,-c(loc,pv_loc)]
+  
+  cat("Shriley's Trend Test: Monotone Change from control?  \n")
+  cat("---------------------------------------------------  \n")
+  
+  data_a   <- rep("No",length(data_two))
+  data_a[data_two  == 1] = "<0.05"
+  data_a[data_two  == 2] = "<0.01"
+  output        <- data.frame(data_one,data_a)
+  names(output) <- c(names(data_one),"Significant")
+  print(output,row.names=FALSE)
+}

@@ -22,6 +22,22 @@
 #OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+#' Specify a normal prior for a ToxicR Bayesian model fit. 
+#' @title normprior - create a normal prior object
+#' @param mean mean of the prior
+#' @param sd sd of the prior distribution. 
+#' @param lb lower bound on the distribution. Necessary for the optimization algorithms, 
+#' To make sure it is a fully normal prior, make lb small relative to the mean/sd. 
+#' @param ub  Upper bound on the distribution. Necessary for the optimization algorithms, 
+#' To make sure it is a fully normal prior, make ub large relative to the mean/sd.
+#' @return a normal prior model object
+#' @examples
+#'  # Normal Prior with mean 0,sd-1
+#'  normprior(mean = 0, sd = 1, lb = -1e4, ub=1e4)
+#' 
+#'  # Truncated Normal prior, Truncated below at 0
+#'  normprior(mean = 0, sd = 1, lb = 0, ub=1e4)
+#'
 normprior<-function(mean = 0, sd = 1, lb = -100,ub=100){
       if (ub < lb){
         stop("Upper Bound must be greater than lower bound")
@@ -31,6 +47,22 @@ normprior<-function(mean = 0, sd = 1, lb = -100,ub=100){
       return(retValue)
 }
 
+#' Specify a log-normal prior for a ToxicR Bayesian model fit. 
+#' @title lnormprior - create a lognormal prior. 
+#' @param mean log-mean of the prior distribution.
+#' @param sd log-sd of the prior distribution. 
+#' @param lb lower bound on the distribution. Necessary for the optimization algorithms, 
+#' To make sure it is a fully normal prior, make lb small relative to the mean/sd. 
+#' @param ub  Upper bound on the distribution. Necessary for the optimization algorithms, 
+#' To make sure it is a fully normal prior, make ub large relative to the mean/sd.
+#' @return a normal prior model object
+#' @examples
+#'  # Log-Normal Prior with mean 0,sd-1
+#'  lnormprior(mean = 0, sd = 1, lb = -1e4, ub=1e4)
+#' 
+#'  # Truncated Log-Normal prior, Truncated below at 1
+#'  lnormprior(mean = 0, sd = 1, lb = 1, ub=1e4)
+#'  
 lnormprior<-function(mean = 0, sd = 1, lb = -100,ub=100){
   if (lb < 0){
     lb = 0
@@ -45,21 +77,35 @@ lnormprior<-function(mean = 0, sd = 1, lb = -100,ub=100){
   return(retValue)
 }
 
-print.BMDprior<-function(prior){
-  
-  if(prior[1] == 1){
-    cat(sprintf("Prior: Normal(mu = %1.2f, sd = %1.3f) 1[%1.2f,%1.2f]\n",prior[2],
-                prior[3],prior[4],prior[5]))
-    return();
-  }
-  if (prior[1] == 2){
-    cat(sprintf("Prior: Log-Normal(log-mu = %1.2f, log-sd = %1.3f) 1[%1.2f,%1.2f]\n",prior[2],
-                prior[3],prior[4],prior[5]))
-    return();
-  }
-  cat("Distribution not specified.")
-}
+# print.BMDprior<-function(x, ...){
+#   prior = x
+#   if(prior[1] == 1){
+#     cat(sprintf("Prior: Normal(mu = %1.2f, sd = %1.3f) 1[%1.2f,%1.2f]\n",prior[2],
+#                 prior[3],prior[4],prior[5]))
+#     return();
+#   }
+#   if (prior[1] == 2){
+#     cat(sprintf("Prior: Log-Normal(log-mu = %1.2f, log-sd = %1.3f) 1[%1.2f,%1.2f]\n",prior[2],
+#                 prior[3],prior[4],prior[5]))
+#     return();
+#   }
+#   cat("Distribution not specified.")
+# }
 
+#' @title create_prior_lists .. Given priors 
+#'        created using the ToxicR prior functions, create a list of priors
+#'        for a model. 
+#' @param x1 First Prior
+#' @param x2 Second Prior
+#' @param ... Aditional arguments
+#' @return new BMDprior list. 
+#' 
+#' @examples 
+#' plist<- create_prior_list(normprior(0,0.1,-100,100), # a
+#'                           normprior(0,1,  -1e2,1e2),     # b
+#'                           lnormprior(1,0.2,0,18),  #k
+#'                           normprior(0,1,-18,18))
+#'
 create_prior_list <- function(x1,x2,...){
   cl <- match.call()
   mf <- as.list(match.call(expand.dots = TRUE))[-1]
@@ -75,7 +121,8 @@ create_prior_list <- function(x1,x2,...){
   return(Y)
 }
 
-combine_prior_lists<-function(p1,p2){
+                     
+.combine_prior_lists<-function(p1,p2){
   if (as.character(class(p1)) == "BMDprior"){
     x1 <- as.matrix(p1[ ,,drop=F])
   
@@ -96,7 +143,8 @@ combine_prior_lists<-function(p1,p2){
   return(retval)
 }
 
-.print.BMD_Bayes_model <- function(priors){
+.print.BMD_Bayes_model <- function(x, ...){
+  priors = x
   X = priors[[1]]
   if (!is.null(priors$model)){
     cat(priors$model," Parameter Priors\n")
@@ -125,10 +173,9 @@ combine_prior_lists<-function(p1,p2){
 }
 
 
-#################################################33
-# bayesian_prior_dich(model,variance)
-##################################################
-bayesian_prior_continuous_default <- function(model,variance,degree=2){
+
+.bayesian_prior_continuous_default <- function(model,distribution,degree=2){
+  variance = distribution
   dmodel = which(model==c("hill","exp-3","exp-5","power","polynomial"))
   dvariance = which(variance == c("normal","normal-ncv","lognormal"))
   
@@ -210,17 +257,17 @@ bayesian_prior_continuous_default <- function(model,variance,degree=2){
     if (dvariance == 1){
       prior <- create_prior_list(normprior(0,5,-100,100))
       for (ii in 1:degree){
-        prior <- combine_prior_lists(prior,
+        prior <- .combine_prior_lists(prior,
                                      normprior(0,5,-100,100))
       }
-      prior <- combine_prior_lists(prior, create_prior_list(normprior (0,1,-18,18)))
+      prior <- .combine_prior_lists(prior, create_prior_list(normprior (0,1,-18,18)))
     } else if (dvariance == 2){
       prior <- create_prior_list(normprior(0,5,-100,100))
       for (ii in 1:degree){
-        prior <- combine_prior_lists(prior,
+        prior <- .combine_prior_lists(prior,
                                      normprior(0,5,-100,100))
       }
-      prior <- combine_prior_lists(prior, 
+      prior <- .combine_prior_lists(prior, 
                                    create_prior_list(lnormprior(0,1,0,100),
                                                      normprior (0,1,-18,18)))
     } else if (dvariance == 3){
@@ -234,7 +281,7 @@ bayesian_prior_continuous_default <- function(model,variance,degree=2){
 ##############################################################
 #Standard Dichtomous 
 ##############################################################
-bayesian_prior_dich  <- function(model,degree=2){
+.bayesian_prior_dich  <- function(model,degree=2){
   dmodel = which(model==c("hill","gamma","logistic", "log-logistic",
                           "log-probit"  ,"multistage"  ,"probit",
                           "qlinear","weibull"))
@@ -275,7 +322,7 @@ bayesian_prior_dich  <- function(model,degree=2){
     degree = floor(degree)
     if (degree >= 2){#make sure it is a positive degree
       for (ii in (2:degree)){
-        startP <- combine_prior_lists(startP,lnormprior(0,1,0,1e6))
+        startP <- .combine_prior_lists(startP,lnormprior(0,1,0,1e6))
       }
     }
     prior <- startP
@@ -304,7 +351,7 @@ bayesian_prior_dich  <- function(model,degree=2){
 #################################################33
 # bayesian_prior_dich(model,variance)
 ##################################################
-MLE_bounds_continuous  <- function(model,variance,degree=2, is_increasing){
+.MLE_bounds_continuous  <- function(model,variance,degree=2, is_increasing){
   
   dmodel = which(model==c("hill","exp-3","exp-5","power","polynomial"))
   dvariance = which(variance == c("normal","normal-ncv","lognormal"))
@@ -317,13 +364,13 @@ MLE_bounds_continuous  <- function(model,variance,degree=2, is_increasing){
       
       for (ii in 1:degree){
         if(is_increasing){
-          prior <- combine_prior_lists(prior, normprior(0,5,0,18))
+          prior <- .combine_prior_lists(prior, normprior(0,5,0,18))
         } else{
-          prior <- combine_prior_lists(prior, normprior(0,5,-18,0))
+          prior <- .combine_prior_lists(prior, normprior(0,5,-18,0))
         }
       }
       
-      prior <- combine_prior_lists(prior, create_prior_list(normprior (0,1,-18,18)))
+      prior <- .combine_prior_lists(prior, create_prior_list(normprior (0,1,-18,18)))
       prior[[1]][,1] = 0
       return(prior)
     }
@@ -332,9 +379,9 @@ MLE_bounds_continuous  <- function(model,variance,degree=2, is_increasing){
       prior <- create_prior_list(normprior(0,5,0,1000))
       
       for (ii in 1:degree){
-        prior <- combine_prior_lists(prior,normprior(0,5,-10000,10000))
+        prior <- .combine_prior_lists(prior,normprior(0,5,-10000,10000))
       }
-      prior <- combine_prior_lists(prior, 
+      prior <- .combine_prior_lists(prior, 
                                    create_prior_list(lnormprior(0,1,0,100),
                                                      normprior (0,1,-18,18)))
       prior[[1]][,1] = 0
@@ -353,34 +400,34 @@ MLE_bounds_continuous  <- function(model,variance,degree=2, is_increasing){
     if (dvariance == 1){ #normal
       prior <- create_prior_list(normprior(0,1,-100,100))
       if(is_increasing){
-        prior <- combine_prior_lists(prior,normprior(0,2,0,100))
+        prior <- .combine_prior_lists(prior,normprior(0,2,0,100))
       } else {
-        prior <- combine_prior_lists(prior,normprior(0,2,-100,0))
+        prior <- .combine_prior_lists(prior,normprior(0,2,-100,0))
       }
-      prior <- combine_prior_lists(prior,lnormprior(0,1,0,5))
-      prior <- combine_prior_lists(prior,lnormprior(1,1.2,1,18))
-      prior <- combine_prior_lists(prior,normprior(0,1,-18,18))
+      prior <- .combine_prior_lists(prior,lnormprior(0,1,0,5))
+      prior <- .combine_prior_lists(prior,lnormprior(1,1.2,1,18))
+      prior <- .combine_prior_lists(prior,normprior(0,1,-18,18))
     } else if(dvariance == 2){ #normal ncv
       prior <- create_prior_list(normprior(0,1,-100,100))
       if(is_increasing){
-        prior <- combine_prior_lists(prior,normprior(0,2,0,100))
+        prior <- .combine_prior_lists(prior,normprior(0,2,0,100))
       } else {
-        prior <- combine_prior_lists(prior,normprior(0,2,-100,0))
+        prior <- .combine_prior_lists(prior,normprior(0,2,-100,0))
       }
-      prior <- combine_prior_lists(prior,normprior(0,1,0,5))
-      prior <- combine_prior_lists(prior,lnormprior(log(1.2),1,1,18))
-      prior <- combine_prior_lists(prior,normprior(0,2,-18,18))
-      prior <- combine_prior_lists(prior,normprior(0,2,-18,18))
+      prior <- .combine_prior_lists(prior,normprior(0,1,0,5))
+      prior <- .combine_prior_lists(prior,lnormprior(log(1.2),1,1,18))
+      prior <- .combine_prior_lists(prior,normprior(0,2,-18,18))
+      prior <- .combine_prior_lists(prior,normprior(0,2,-18,18))
     } else if (dvariance == 3){ #log normal
       prior <- create_prior_list(normprior(0,1,-100,100))
       if(is_increasing){
-        prior <- combine_prior_lists(prior,normprior(0,2,0,100))
+        prior <- .combine_prior_lists(prior,normprior(0,2,0,100))
       } else {
-        prior <- combine_prior_lists(prior,normprior(0,2,-100,0))
+        prior <- .combine_prior_lists(prior,normprior(0,2,-100,0))
       }
-      prior <- combine_prior_lists(prior,lnormprior(0 ,1,0,5))
-      prior <- combine_prior_lists(prior,lnormprior(0,1,0,18))
-      prior <- combine_prior_lists(prior,normprior(0,1,-18,18))
+      prior <- .combine_prior_lists(prior,lnormprior(0 ,1,0,5))
+      prior <- .combine_prior_lists(prior,lnormprior(0,1,0,18))
+      prior <- .combine_prior_lists(prior,normprior(0,1,-18,18))
     }
   }
   

@@ -300,6 +300,13 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
 
 	}
 	// m = m.inverse();
+  Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(m);
+  auto rank = lu_decomp.rank();
+  // matrix is less than full rank
+  // so we add an epsolon error to fix it
+  if (rank < m.rows()){
+      m = m + 1e-4*Eigen::MatrixXd::Identity(m.rows(),m.cols());
+  }
 
 	return m.inverse();
 }
@@ -391,8 +398,8 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   gsl_rng * r;
   
   gsl_rng_env_setup();
-  T = gsl_rng_default;
-  r = gsl_rng_alloc (T);
+ // T = gsl_rng_default;
+  r = gsl_rng_alloc (gsl_rng_mt19937);
   gsl_rng_set(r, 8675309); // set the same seed for every GA run
   
   population.push_back(startV); 
@@ -747,11 +754,11 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: invalid arg: " << exc.what());
       
     } // catch
-    catch (nlopt::roundoff_limited) {
+    catch (nlopt::roundoff_limited &exec) {
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
       //  cout << "bogo" << endl; 
     } // catch
-    catch (nlopt::forced_stop) {
+    catch (nlopt::forced_stop &exec) {
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: forced_stop");
       //  cout << "there" << endl; 
     } // catch

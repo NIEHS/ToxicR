@@ -17,11 +17,10 @@
 #CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 #OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-.summary_dichotomous_max<-function(model,alpha=0.05){
+.summary_dichotomous_max<-function(object,...){
+  model <- object
   returnV <- list()
-  if (alpha < 0 || alpha > 0.5){
-    warning("Specified BMD alpha-level is outside of [0,0.5] defaulting to 0.05")
-  }
+  alpha = .evaluate_alpha(...)
   if (is.null(model$prior)){
     returnV$fit_method <- "MLE"
     returnV$prior <- NA
@@ -43,15 +42,16 @@
   return(returnV)
 }
 
-.print_summary_dichotomous_max<-function(s_fit){
-  
+
+.print_summary_dichotomous_max<-function(x, ...){ # nolint
+  s_fit <- x 
   
   if (grepl("MLE",s_fit$fit_method)){
     cat(sprintf("Summary of single model fit (%s) using ToxicR\n","MLE"))
     cat(s_fit$fit,"\n")
   }else{
     cat(sprintf("Summary of single model fit (%s) using ToxicR\n\n","Bayesian-MAP"))
-    print(s_fit$prior)
+ #  print(s_fit$prior)
   }
   cat("\n")
   

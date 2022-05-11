@@ -7,14 +7,6 @@ vignette: >
   %\VignetteIndexEntry{Dichotomous}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-# output:
-  # html_document:
-  #   toc: yes
-  #   toc_float: yes
-  # word_document:
-  #   toc: yes
-  # pdf_document:
-  #   toc: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -27,7 +19,6 @@ This file shows ToxicR for dichotomous benchmark dose analyses using both single
 
 
 ```{r load_data, echo=TRUE}
-library(readxl)
 dich_data           <- matrix(0,nrow=5,ncol=3)
 colnames(dich_data) <- c("Dose","N","Incidence")
 dich_data[,1] <- c(0,50,100,200,400)

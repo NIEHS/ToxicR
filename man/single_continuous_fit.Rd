@@ -27,15 +27,25 @@ single_continuous_fit(
 
 \item{Y}{response matrix}
 
+\item{model_type}{Mean model.}
+
 \item{fit_type}{the method used to fit (laplace, mle, or mcmc)}
+
+\item{prior}{Prior / model for the continuous fit. If this is specified, it overrides the parameters 'model_type' and 'distribution.'}
 
 \item{BMD_TYPE}{BMD_TYPE specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used. \cr
 -    Standard deviation is the default option, but it can be explicitly specified with 'BMR_TYPE = "sd"' This definition defines the BMD as the dose associated with the mean/median changing a specified number of standard deviations from the mean at the control dose., i.e., it is the dose, BMD, that solves \eqn{\mid f(dose)-f(0) \mid = BMR \times \sigma} \cr
 -    Relative deviation can be specified with 'BMR_TYPE = "rel"'. This defines the BMD as the dose that changes the control mean/median a certain percentage from the background dose, i.e. it is the dose, BMD that solves \eqn{\mid f(dose) - f(0) \mid = (1 \pm BMR) f(0)} \cr
 -    Hybrid deviation can be specified with 'BMR_TYPE = "hybrid"'.  This defines the BMD that changes the probability of an adverse event by a stated amount relitive to no exposure (i.e 0).  That is, it is the dose, BMD, that solves \eqn{\frac{Pr(X > x| dose) - Pr(X >x|0)}{Pr(X < x|0)} = BMR}. For this definition, \eqn{Pr(X < x|0) = 1 - Pr(X > X|0) = \pi_0}, where \eqn{0 \leq \pi_0 < 1} is defined by the user as "point_p," and it defaults to 0.01.  Note: this discussion assumed increasing data.  The fitter determines the direction of the data and inverts the probability statements for decreasing data. \cr
--    Absolute deviation can be specified with 'BMR_TYPE="abs"'. This defines the BMD as an absolute change from the control dose of zero by a specified amount. That is the BMD is the dose that solves the equation \eqn{\mid f(dose) - f(0) \mid = BMR}}
+-    Absolute deviation can be specified with 'BMR_TYPE="abs"'. This defines the BMD as an absolute change from the control dose of zero by a specified amount. That is the BMD is the dose that solves the equation \eqn{\mid f(dose) - f(0) \mid = BMR}.}
 
-\item{point_p}{This option is only used for hybrid BMD calculations. It defines a probability that is the cutpoint for observations.  It is the probability that observations have this probability, or less, of being observed at the background dose.}
+\item{BMR}{This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."\cr}
+
+\item{point_p}{This option is only used for hybrid BMD calculations. It defines a probability that is the cutpoint for observations.  It is the probability that observations have this probability, or less, of being observed at the background dose. \cr}
+
+\item{distribution}{The underlying distribution used as the data distribution.}
+
+\item{alpha}{Alpha is the specified nominal coverage rate for computation of the lower bound on the BMDL and BMDU, i.e., one computes a \eqn{100\times(1-\alpha)\%} confidence interval.  For the interval (BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)\%} confidence interval.  By default, it is set to 0.05.}
 
 \item{samples}{the number of samples to take (MCMC only)}
 
@@ -46,8 +56,6 @@ single_continuous_fit(
 \item{ewald}{perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)}
 
 \item{transform}{Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.}
-
-\item{BRM}{This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."}
 }
 \value{
 a model object
@@ -62,7 +70,7 @@ M2[,1] <- c(0,25,50,100,200)
 M2[,2] <- c(6,5.2,2.4,1.1,0.75)
 M2[,3] <- c(20,20,19,20,20)
 M2[,4] <- c(1.2,1.1,0.81,0.74,0.66)
-model = single_continuous_fit(M2[,1,drop=F], M2[,2:4], BMD_TYPE="sd", BMR=1, ewald = T,
+model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMD_TYPE="sd", BMR=1, ewald = TRUE,
                              distribution = "normal",fit_type="laplace",model_type = "hill")
 
 }

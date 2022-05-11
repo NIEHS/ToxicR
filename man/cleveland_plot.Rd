@@ -4,7 +4,7 @@
 \alias{cleveland_plot}
 \title{cleveland_plot - Create a Cleveland plot from a model averaged model.}
 \usage{
-cleveland_plot(A, ...)
+cleveland_plot(A)
 }
 \arguments{
 \item{A}{the model averaged model to plot}
@@ -13,9 +13,8 @@ cleveland_plot(A, ...)
 Create a Cleveland plot from a model averaged model.
 }
 \examples{
-
-...
+\dontrun{
 model = ma_dichotomous_fit(D,Y,N)
 cleveland_plot(model)
-
+} 
 }

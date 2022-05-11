@@ -7,13 +7,20 @@ importFrom(forcats,fct_reorder)
 # Necessary Packages
 ###############################
 import(tidyverse)
-#importFrom(doBy, summaryBy)
-import(doBy)
+
+importFrom(doBy, summaryBy)
+#import(doBy)
 import(multcomp)
 import(shiny)
 import(scales)
 import(ggplot2)
-import(dplyr)
+importFrom(dplyr,"filter","%>%","select","mutate")
+
+
+
+importFrom("stats", "aov", "as.formula", "coefficients", "cor.test",
+             "density", "lm", "pchisq", "pgamma", "pnorm", "qnorm",
+             "quantile", "sd", "splinefun", "var")
 
 # Added two additional package 2012/12/08 SL
 import(ggridges)
@@ -22,16 +29,36 @@ import(ggridges)
 #register all of the S3 methods for the print commands
 #and the plot commands etc. 
 
-S3method(print, BMD_Bayes_dichotomous_model, .print.BMD_Bayes_model)
-S3method(print, BMD_Bayes_continuous_model, .print.BMD_Bayes_model)
-S3method(print, BMD_CDF, .print.BMD_CDF)
-S3method(print, BMDdich_fit, .print.BMDdich_fit)
+#S3method(print, BMD_Bayes_dichotomous_model, .print.BMD_Bayes_model)
+#S3method(print, BMD_Bayes_continuous_model, .print.BMD_Bayes_model)
+#S3method(print, BMD_CDF, .print.BMD_CDF)
+#S3method(print, BMDdich_fit, .print.BMDdich_fit)
 
 # Summary Methods
 S3method(summary, BMDcont_fit_maximized ,.summary_continuous_max)
 S3method(print,summary_continuous_max  ,.print_summary_continuous_max)
 S3method(summary, BMDdich_fit_maximized ,.summary_dichotomous_max)
 S3method(print,summary_dichotomous_max  ,.print_summary_dichotomous_max)
+
+S3method(summary,BMDcont_fit_MCMC , .summary_continuous_mcmc)
+S3method(summary,BMDdich_fit_MCMC , .summary_continuous_mcmc)
+S3method(print,summary_mcmc  , .print_summary_continuous_mcmc)
+
+S3method(summary,BMDcontinuous_MA_laplace , .summary_ma_max)
+S3method(summary,BMDdichotomous_MA_laplace , .summary_ma_max)
+S3method(print,ma_summary_max,.print_summary_ma_max )
+
+S3method(summary , ntp.shirley,  .summary_ntpshirley)
+S3method(summary , ntp.williams, .summary_ntpwilliams)
+S3method(summary , ntp.dunn,  .summary_ntpdunn)
+S3method(summary , ntp.dunnett, .summary_ntpdunnett)
+#Predict Methods
+
+S3method(predict,BMDdich_fit_maximized, .dichotomous_predict_model)
+S3method(predict,BMDcont_fit_maximized, .continuous_predict_model)
+S3method(predict,BMDcont_fit_MCMC, .continuous_predict_model_mcmc)
+S3method(predict,BMDdich_fit_MCMC, .dichotomous_predict_model_mcmc)
+
 
 # Base plot for single case
 

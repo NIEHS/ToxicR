@@ -821,8 +821,9 @@ void compute_dichotomous_pearson_GOF(dichotomous_PGOF_data *data, dichotomous_PG
      }
      res->n = data->n;        // total number of observations obs 
      res->test_statistic =   sqresid.array().sum();
+     
      if ( data->n-data->model_df > 0.0){
-      res->p_value        =   1.0 - gsl_cdf_chisq_P(sqresid.array().sum(),data->n-data->model_df); 
+       res->p_value        =   1.0 - gsl_cdf_chisq_P(sqresid.array().sum(),data->n-data->model_df); 
      }else{
        res->p_value       = 1.0; 
      }

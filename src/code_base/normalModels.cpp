@@ -170,10 +170,10 @@ Eigen::MatrixXd normalLLModel::starting_value(Eigen::MatrixXd theta, contbmd BMD
 	try{
 			result = opt.optimize(x, minf);
 			good_opt =  true;  
-	}catch (nlopt::roundoff_limited) {
+	}catch (nlopt::roundoff_limited &exec) {
 			good_opt = false; 
 	}
-	catch (nlopt::forced_stop) {
+	catch (nlopt::forced_stop &exec) {
 			good_opt = false;
 	}
 	catch (const std::exception &exc) {

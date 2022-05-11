@@ -5,20 +5,24 @@
 #' @param A the model averaged model to plot
 #' @examples 
 #' \dontrun{
-#' model <- ma_continuous_fit(doses,y,model_list=model_list,
+#' doses  <- cbind(c(0,25,50,100,200))
+#' y <- cbind(c(6,5.2,2.4,1.1,0.75),
+#'                 c(20,20,19,20,20),
+#'                 c(1.2,1.1,0.81,0.74,0.66))
+#' model <- ma_continuous_fit(doses,y,
 #'                         fit_type = "mcmc",BMD_TYPE = 'sd',BMR = 1)
 #' MAdensity_plot(model)
 #' }
 #' @export
-MAdensity_plot <- function (A, ...){
+MAdensity_plot <- function (A){
   #source("dicho_functions.R")
   UseMethod("MAdensity_plot")
 }
 
 # Sample Dichotomous Data set
-
 .plot.density.BMDdichotomous_MA_MCMC<-function(A){
 # Construct bmd sample plots for mcmc
+  X1 <- X2 <- X3 <- NULL
   class_list <- names(A)
   fit_idx    <- grep("Individual_Model",class_list)
   qprob=0.05
@@ -257,7 +261,7 @@ MAdensity_plot <- function (A, ...){
 # No we don't need this part
 
 .plot.density.BMDdichotomous_MA_maximized<-function(A){
-  
+  t_1 <- t_2 <- t_3 <- t_4 <- t_5 <- t_6 <- t_7 <- t_8 <- t_9 <- c3 <- X1 <- X2 <- X3 <- NULL
   class_list <- names(A)
   
   if (class(A)[2]=="BMDdichotomous_MA_maximized"){
@@ -384,6 +388,7 @@ MAdensity_plot <- function (A, ...){
 
 .plot.density.BMDcontinous_MA_MCMC<-function(A){
   # Construct bmd sample plots for mcmc
+  X1 <- X2 <- X3 <- NULL
   class_list <- names(A)
   fit_idx    <- grep("Individual_Model",class_list)
   qprob=0.05
@@ -406,23 +411,23 @@ MAdensity_plot <- function (A, ...){
     
     
     if (fit$model=="hill"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,cont_hill_f, d=test_doses)
+      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_hill_f, d=test_doses)
       
     }
     if (fit$model=="exp-3"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,cont_exp_3_f, d=test_doses)
+      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_exp_3_f, d=test_doses)
       
     }
     if (fit$model=="exp-5"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,cont_exp_5_f, d=test_doses)
+      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_exp_5_f, d=test_doses)
       
     }
     if (fit$model=="power"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,cont_power_f, d=test_doses)
+      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_power_f, d=test_doses)
       
     }
     if (fit$model=="FUNL"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,cont_FUNL_f, d=test_doses)
+      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_FUNL_f, d=test_doses)
       
     }
 

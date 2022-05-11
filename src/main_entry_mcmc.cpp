@@ -145,7 +145,7 @@ Eigen::MatrixXd fix_sample(Eigen::MatrixXd A, dich_model mtype, double max){
 // correctly by the R calling function), and then calls the library to
 // run the corresponding analysis. Does MCMC sample
 // output: BMD analysis with the model specified by NumericVector model
-// [[Rcpp::export]]
+// [[Rcpp::export(".run_dichotomous_single_mcmc")]]
 List run_dichotomous_single_mcmc(NumericVector model,
               				     Eigen::MatrixXd Y, Eigen::MatrixXd D,
 					                 Eigen::MatrixXd pr, NumericVector options){
@@ -227,7 +227,7 @@ List run_dichotomous_single_mcmc(NumericVector model,
 // correctly by the R calling function), and then calls the library to
 // run the corresponding analysis. Does MCMC sample
 // output: BMD analysis with the model specified by NumericVector model
-// [[Rcpp::export]]
+// [[Rcpp::export(".run_continuous_single_mcmc")]]
 List run_continuous_single_mcmc(NumericVector model,
                                 Eigen::MatrixXd Y, Eigen::MatrixXd D,
                                 Eigen::MatrixXd priors, NumericVector options,

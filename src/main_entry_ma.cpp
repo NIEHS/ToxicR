@@ -271,7 +271,7 @@ List convert_continuous_maresults_to_list(continuousMA_result *result){
 /////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////
-// [[Rcpp::export]]
+// [[Rcpp::export(".run_continuous_ma_laplace")]]
 List run_continuous_ma_laplace(List model_priors, NumericVector model_type, 
                                NumericVector dist_type,
       			                   Eigen::MatrixXd Y, Eigen::MatrixXd X,
@@ -392,7 +392,7 @@ List convert_mcmc_results(const ma_MCMCfits *a){
 //
 //
 /////////////////////////////////////////////////////////////////////////////
-// [[Rcpp::export]]
+// [[Rcpp::export(".run_continuous_ma_mcmc")]]
 List run_continuous_ma_mcmc(List model_priors, NumericVector model_type, 
                                NumericVector dist_type,
                                Eigen::MatrixXd Y, Eigen::MatrixXd X,
@@ -502,7 +502,7 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
 // function: List run_ma_dichotomous()
 // Purpose:  runs a model average based on the prior
 //
-// [[Rcpp::export]]
+// [[Rcpp::export(.run_ma_dichotomous)]]
 List run_ma_dichotomous(Eigen::MatrixXd data, List priors, NumericVector models,
                         NumericVector model_p, bool is_MCMC, 
                         NumericVector options1,  IntegerVector options2){

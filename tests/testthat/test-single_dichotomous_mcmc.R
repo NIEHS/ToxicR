@@ -36,11 +36,11 @@ test_that("Plots", {
         expect_identical(mcmc_plot$labels$x, "Dose")
         expect_identical(mcmc_plot$labels$y, "Proportion")
         #TODO should the title have the distribution name?
-        expect_identical(mcmc_plot$labels$title, "Model: Weibull,  Fit Type: MCMC")
+        expect_identical(mcmc_plot$labels$title, "Model: Weibull")
         c = single_dichotomous_fit(mData[,1],mData[,2],mData[,3],model_type = "hill", fit_type = "mcmc")
         mcmc_plot <- plot(c)
         expect_identical(mcmc_plot$labels$x, "Dose")
         expect_identical(mcmc_plot$labels$y, "Proportion")
         #TODO should the title have the distribution name?
-        expect_identical(mcmc_plot$labels$title, "Model:  Hill,  Fit Type: MCMC")
+        expect_identical(mcmc_plot$labels$title, "Model:  Hill")
 })

@@ -102,9 +102,15 @@ mcmcSamples MCMC_bmd_analysis_DNC(Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::M
 
   // now sample, samples, number of proposals for the
   // metropolis sampler.
-  
+  /*
+  FullPivLU<Matrix3f> lu_decomp(your_matrix);
+  auto rank = lu_decomp.rank();
+  */
+  double eps = 1.25; 
   Eigen::MatrixXd mu  = oR.max_parms;
-  Eigen::MatrixXd cov = 0.75*model.varMatrix(oR.max_parms);
+  Eigen::MatrixXd cov = pow(eps,2)*model.varMatrix(oR.max_parms);
+  
+ 
   Eigen::MatrixXd chol = cov.llt().matrixL();
   Eigen::MatrixXd nSamples  = chol*rNormal; // variance of each row
                                               // is is now L'L = cov
@@ -216,9 +222,9 @@ mcmcSamples mcmc_continuous(cBMDModel<LL, PR>  *model, int samples,
   }
  
   // now sample From a metropolis-Hastings sampler.
+  double eps = 1.25;
   Eigen::MatrixXd mu  = oR.max_parms;
-  
-  Eigen::MatrixXd cov = 0.625*model->varMatrix(oR.max_parms);
+  Eigen::MatrixXd cov = pow(eps,2)*model->varMatrix(oR.max_parms);
   Eigen::MatrixXd chol = cov.llt().matrixL();
   Eigen::MatrixXd nSamples  = chol*rNormal; // variance of each row
   // is is now LL' = cov

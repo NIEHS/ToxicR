@@ -18,7 +18,7 @@
 # 
 #   
 #################################################
-crutial_stat_constant <- function(param,y,doses,var,mean_function,decreasing,alpha=0){
+.crutial_stat_constant <- function(param,y,doses,var,mean_function,decreasing,alpha=0){
         expected  <- mean_function(param,doses,decreasing)
          sq_resid <- (y-expected)^2/(var*expected^alpha)
         return(sum(sq_resid))
@@ -31,32 +31,32 @@ crutial_stat_constant <- function(param,y,doses,var,mean_function,decreasing,alp
   pValue_return = NA; 
  
     if (model == "FUNL"){
-      func = cont_FUNL_f
+      func = .cont_FUNL_f
     }
     if (model == "exp-5"){
-      func = cont_exp_5_f
+      func = .cont_exp_5_f
     }
     if (model == "exp-3"){
-      func = cont_exp_3_f
+      func = .cont_exp_3_f
     }
     if (model == "hill"){
-      func = cont_hill_f
+      func = .cont_hill_f
     }
     if (model == "power"){
-      func = cont_power_f
+      func = .cont_power_f
     }
     if (model == "polynomial"){
       
     }
   if (distribution == "normal"){
-    q<- apply(mcmc_fit$mcmc_result$PARM_samples[1000:nrow(mcmc_fit$mcmc_result$PARM_samples),], 1,crutial_stat_constant,y=y,
+    q<- apply(mcmc_fit$mcmc_result$PARM_samples[1000:nrow(mcmc_fit$mcmc_result$PARM_samples),], 1,.crutial_stat_constant,y=y,
               doses=doses,var =exp(mcmc_fit$varOpt[1]),mean_function=func,decreasing=decreasing,alpha=0)
     temp <- pchisq(quantile(q,0.90),length(y)-1)
     pValue_return  = 1 - max(0,(temp*length(q)-0.90*length(q)+1)/(length(q)-0.90*length(q)+1))
   }
   
   if (distribution == "normal-ncv"){
-    q<- apply(mcmc_fit$mcmc_result$PARM_samples[1000:nrow(mcmc_fit$mcmc_result$PARM_samples),], 1,crutial_stat_constant,y=y,
+    q<- apply(mcmc_fit$mcmc_result$PARM_samples[1000:nrow(mcmc_fit$mcmc_result$PARM_samples),], 1,.crutial_stat_constant,y=y,
               doses=doses,var =exp(mcmc_fit$varOpt[2]),mean_function=func,decreasing=decreasing,alpha=mcmc_fit$varOpt[3])
     temp <- pchisq(quantile(q,0.90),length(y)-1)
     pValue_return  = 1 - max(0,(temp*length(q)-0.90*length(q)+1)/(length(q)-0.90*length(q)+1))

@@ -281,7 +281,7 @@ Eigen::MatrixXd rescale_parms(Eigen::MatrixXd parms, cont_model model, double ma
         COV = scaleMatrix*COV*scaleMatrix.transpose(); 
         break; 
       case cont_model::polynomial:
-
+      default:
         for (int i = 1; i <= degree; i++){
           scaleMatrix(i,i) *= pow(1/max_dose,i); 
         }

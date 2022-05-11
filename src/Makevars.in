@@ -1,0 +1,20 @@
+PKG_CXXFLAGS =  -I./code_base -I./include @OPENMP@ @NLOPT_CPPFLAGS@ @GSL_CPPFLAGS@ -DR_COMPILATION  
+PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) @NLOPT_LIBS@  @GSL_LIBS@ @OPENMP@
+
+# Include all C++ files in src/ and its subdirectories
+SOURCES=@SRC_SOURCES@ @SUBDIR_SOURCES@
+
+# Obtain the object files
+OBJECTS=$(SOURCES:.cpp=.o) 
+
+# Make the shared object
+all: $(SHLIB)
+
+# Provide recipe to remove all objects
+clean:
+	@rm -f $(OBJECTS)
+
+
+
+
+

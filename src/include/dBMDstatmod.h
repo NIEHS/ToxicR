@@ -480,10 +480,10 @@ optimizationResult findMAX_W_EQUALITY( dBMDModel<LL, PR>  *M,
 		try {
 			result = opt.optimize(x, minf);
 			good_opt = true; //optimization succeded
-		}catch (nlopt::roundoff_limited) {
+		}catch (nlopt::roundoff_limited &exec) {
 			good_opt = false;
 //cerr << "Round Off Limited" << endl;  
-		}catch (nlopt::forced_stop) {
+		}catch (nlopt::forced_stop &exec) {
 			good_opt = false;
 //cerr << "Forced Stop" << endl; 
 		}
@@ -738,7 +738,7 @@ std::list<Eigen::MatrixXd> fit_profileLogic(dBMDModel<LL, PR>  *M,
 							algorithm);
 	
 	}
-	catch (nlopt::roundoff_limited) {
+	catch (nlopt::roundoff_limited &exec) {
 		//TODO check to see if their is a roundoff limitation we 
 		// mark the failure and set the maximum function value to infinity. 
 		result(0, 0) = DBL_MAX; result(1, 0) = BMD; result(2, 0) = NLOPT_ROUNDOFF_LIMITED;
@@ -747,7 +747,7 @@ std::list<Eigen::MatrixXd> fit_profileLogic(dBMDModel<LL, PR>  *M,
 	//	cout << "AB" << endl;
 		return rV;
 	}
-	catch (nlopt::forced_stop) {
+	catch (nlopt::forced_stop &exec) {
 		result(0, 0) = DBL_MAX; result(1, 0) = BMD; result(2, 0) = NLOPT_FORCED_STOP;
 		bad_result = true;
 		rV.push_front(result);

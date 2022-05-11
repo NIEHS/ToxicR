@@ -37,7 +37,7 @@ bool PolyKPrepareClass::SetupStudy(std::vector<double> dose, std::vector<int> tu
        an.set(dose[i], tumor[i], daysOnStudy[i]);
        m_AnimalList.push_back(an);
      }
-   }catch (std::exception ex) {
+   }catch (std::exception &ex) {
      return false;
    }
    return true;

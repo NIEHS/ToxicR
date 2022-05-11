@@ -80,8 +80,15 @@
 }
 
 {
-  .plot.BMDdich_fit_MCMC <-function(fit,fit_type="MCMC",qprob=0.05,...){
-    
+  .plot.BMDdich_fit_MCMC <-function(x,...){
+    fit = x
+    temp_args = list(...)
+   
+    if (!exists("qprob",temp_args)){
+      qprob = 0.05
+    }else{
+      qprob = temp_args$qprob
+    }
     density_col="red"
     credint_col="azure2"
     BMD_DENSITY = T
@@ -168,7 +175,7 @@
     
     plot_gg <-ggplot()+
               geom_errorbar(aes(x=doses, ymin=lerror, ymax=uerror),color="grey")+
-              labs(x="Dose", y="Proportion",title=paste(fit$full_model, fit_type,sep=",  Fit Type: " ))+
+              labs(x="Dose", y="Proportion",title=paste(fit$full_model,sep=",  Fit Type: " ))+
               theme_minimal()+
               xlim(0-5*max(test_doses),5*max(test_doses))
     
@@ -226,8 +233,16 @@
    
   }
   
-.plot.BMDdich_fit_maximized <- function(fit,fit_type="Maximized",...){
-    
+.plot.BMDdich_fit_maximized <- function(x, ...){
+  fit = x
+  temp_args = list(...)
+  if (!exists("qprob",temp_args)){
+    qprob = 0.05
+  }else{
+    qprob = temp_args$qprob
+  }
+  
+  
     density_col="red"
     credint_col="azure2"
 
@@ -284,7 +299,7 @@
     plot_gg<-ggplot()+
       geom_errorbar(aes(x=doses, ymin=lerror, ymax=uerror),color="grey")+
       xlim(c(min(dose)-5*max(dose),max(dose)*5)) +
-      labs(x="Dose", y="Proportion",title=paste(fit$full_model, fit_type,sep=",  Fit Type: " ))+theme_minimal()
+      labs(x="Dose", y="Proportion",title=paste(fit$full_model,sep=",  Fit Type: " ))+theme_minimal()
     
     
     
@@ -309,7 +324,17 @@
     
 }
   
-.plot.BMDdichotomous_MA <- function(A,qprob=0.05,...){
+.plot.BMDdichotomous_MA <- function(x,...){
+  A = x
+  model_no <- x_axis <- y_axis <-cols <- NULL
+  temp_args = list(...)
+ 
+  if (!exists("qprob",temp_args)){
+    qprob = 0.05
+  }else{
+    qprob = temp_args$qprob
+  }
+  
     density_col="blueviolet"
     credint_col="azure2"
     fit_origin<-A #Updated SL
@@ -498,10 +523,10 @@
       
       return(plot_gg + coord_cartesian(xlim=c(min(doses),max(doses)),expand=F))
       
-    }else if ("BMDdichotomous_MA_maximized" %in% class(A)){ # mcmc run
+    }else if ("BMDdichotomous_MA_laplace" %in% class(A)){ # mcmc run
    
       class_list <- names(A)
-      fit_idx <- grep("Fitted_Model_",class_list)
+      fit_idx <- grep("Individual_Model",class_list)
       num_model<-length(A$posterior_probs)
       
       data_d   <-  A[[1]]$data
@@ -635,11 +660,9 @@
         
       }
       
-      
+    
       return(plot_gg+ coord_cartesian(xlim=c(min(doses),max(doses)),expand=F))
-      
-
-
+    
     }
 
   }  

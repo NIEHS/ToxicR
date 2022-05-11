@@ -344,7 +344,7 @@ double TDMSE_PolyK::polyk_mod(PolyKPrepareClass subsetVars,
     if(fabs(test_stat) < TESTSTAT_EPSILON) pvalue = 0.5;
     if(top < 0) pvalue = -1 * pvalue;
   }
-  catch (std::exception e)
+  catch (std::exception &e)
   {
   //  System.out.println("Exception in polyk_mod = " + e);
     pvalue = BAD_PVALUE;

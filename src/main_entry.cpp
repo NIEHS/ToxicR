@@ -73,7 +73,7 @@ using namespace Rcpp;
 // run the corresponding analysis.
 // output: BMD analysis with the model specified by NumericVector model
 //
-// [[Rcpp::export]]
+// [[Rcpp::export(".run_single_dichotomous")]]
 List run_single_dichotomous(NumericVector model,
                             Eigen::MatrixXd data, Eigen::MatrixXd pr,
                             NumericVector options1, IntegerVector options2) 
@@ -173,7 +173,7 @@ List run_single_dichotomous(NumericVector model,
 // correctly by the R calling function), and then calls the library to
 // run the corresponding analysis.
 // output: BMD analysis with the model specified by NumericVector model
-// [[Rcpp::export]]
+// [[Rcpp::export(".run_continuous_single")]]
 List run_continuous_single(IntegerVector model, 
                            Eigen::MatrixXd Y, Eigen::MatrixXd X,
                            Eigen::MatrixXd prior, NumericVector options,
@@ -244,21 +244,31 @@ List run_continuous_single(IntegerVector model,
                                                                   anal.parms,
                                                                   200); //have 200 equally spaced values
     ////////////////////////////////////
-    
-    estimate_sm_laplace(&anal,result,isFast);
-    
     continuous_deviance aod1; 
- 
-    if (anal.disttype == distribution::log_normal){
-     
-      estimate_log_normal_aod(&anal,
-                              &aod1);
-     
-    }else{
-      estimate_normal_aod(&anal,
-                             &aod1);
-    }
+    #pragma omp parallel
+    {
+      #pragma omp sections
+      {
+        #pragma omp section
+        {
+        estimate_sm_laplace(&anal,result,isFast);
+        }
 
+        #pragma omp section
+        {
+        
+        if (anal.disttype == distribution::log_normal){
+        
+          estimate_log_normal_aod(&anal,
+                                  &aod1);
+        
+        }else{
+          estimate_normal_aod(&anal,
+                                &aod1);
+        }
+        }
+    }
+    }
    continuous_expected_result exp_r; 
    exp_r.expected = new double[anal.n]; exp_r.n = anal.n; 
    exp_r.sd       = new double[anal.n];
@@ -269,7 +279,7 @@ List run_continuous_single(IntegerVector model,
    AOD(0,0) = aod1.A1; AOD(0,1) = aod1.N1; 
    AOD(1,0) = aod1.A2; AOD(1,1) = aod1.N2;
    AOD(2,0) = aod1.A3; AOD(2,1) = aod1.N3;
-   AOD(3,0) = aod1.R; AOD(3,1) = aod1.NR;
+   AOD(3,0) = aod1.R;  AOD(3,1) = aod1.NR;
    AOD(4,0) = exp_r.like; AOD(4,1) = result->model_df;
 
     List rV = convert_continuous_fit_to_list(result); 

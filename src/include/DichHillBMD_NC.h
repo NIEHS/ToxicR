@@ -80,7 +80,7 @@ public:
 		}
 		else {
 			Z = HILL_ADDED_Z(g,n, a, NULL, BMR);
-			temp = temp = (Z - ub * log(BMD))*1.1; // add a little extra so the constraint is satisfied
+			temp = (Z - ub * log(BMD))*1.1; // add a little extra so the constraint is satisfied
 			x[0] = theta(0, 0);
 			x[1] = theta(1, 0);
 			x[2] = theta(2, 0) - temp;

@@ -126,7 +126,7 @@ public:
 			mpoint = (max + min) / 2.0;
 			dose = XgivenD(mpoint);
 			a = mean(theta, dose)(0, 0);
-			test = test = (a - b) / (1 - b) - BMR;
+			test = (a - b) / (1 - b) - BMR;
 		}
 
 		return mpoint;

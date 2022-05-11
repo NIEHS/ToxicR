@@ -157,7 +157,7 @@ Eigen::MatrixXd X_gradient_cont( Eigen::MatrixXd theta,Eigen::MatrixXd Y,
     }
   }
   
-  delete grad; 
+  delete[] grad; 
   return rValue; 
   
 }

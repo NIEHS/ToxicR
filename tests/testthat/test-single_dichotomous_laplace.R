@@ -48,11 +48,11 @@ test_that("Plots", {
         laplace_plot <- plot(c)
         expect_identical(laplace_plot$labels$x, "Dose")
         expect_identical(laplace_plot$labels$y, "Proportion")
-        expect_identical(laplace_plot$labels$title, "Model:  Hill,  Fit Type: Maximized")
+        expect_identical(laplace_plot$labels$title, "Model:  Hill")
         
         c = single_dichotomous_fit(mData[,1],mData[,2],mData[,3],model_type = "weibull", fit_type = "laplace")
         laplace_plot <- plot(c)
         expect_identical(laplace_plot$labels$x, "Dose")
         expect_identical(laplace_plot$labels$y, "Proportion")
-        expect_identical(laplace_plot$labels$title, "Model: Weibull,  Fit Type: Maximized")
+        expect_identical(laplace_plot$labels$title, "Model: Weibull")
 })

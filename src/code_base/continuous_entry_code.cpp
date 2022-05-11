@@ -397,6 +397,7 @@ double compute_lognormal_dof(Eigen::MatrixXd Y,Eigen::MatrixXd X, Eigen::MatrixX
     }
     break;
   case cont_model::exp_5: 
+  default:
     if (is_increasing){
       Xd = X_gradient_cont<lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat,NORMAL_EXP5_UP);
       cv_t = X_cov_cont< lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat, NORMAL_EXP5_UP);
@@ -530,6 +531,7 @@ double compute_normal_dof(Eigen::MatrixXd Y,Eigen::MatrixXd X, Eigen::MatrixXd e
     
     break; 
   case cont_model::power: 
+  default:
     Xd = X_gradient_cont_norm<normalPOWER_BMD_NC>(estimate,Y,X,CV,suff_stat);
     cv_t = X_cov_cont_norm<normalPOWER_BMD_NC>(estimate,Y,X,CV,suff_stat);
     
@@ -929,6 +931,7 @@ bmd_analysis laplace_Normal(Eigen::MatrixXd Y,Eigen::MatrixXd X,
     }
     break; 
   case cont_model::polynomial:
+  default:
 #ifdef R_COMPILATION 
     if (bConstVar){
       //cout << "Running Polynomial Model Normality Assumption using Laplace." << endl;
@@ -2779,10 +2782,10 @@ void continuous_expectation( const continuous_analysis *CA, const continuous_mod
       Y_LN = cleanSuffStat(SSTAT_LN,UX,true); 
       orig_X = UX;  
       orig_Y = SSTAT; 
-      orig_Y_LN = SSTAT_LN;
+      orig_Y_LN = SSTAT;
       
     }else{
-      Y = Y; // scale the data with the divisor term.
+      //Y = Y; // scale the data with the divisor term.
       Y_N = Y; 
       Y_LN = Y; 
     }
@@ -2885,7 +2888,7 @@ void continuous_expectation( const continuous_analysis *CA, const continuous_mod
         }
         break; 
       case cont_model::exp_5:
-     
+      default:
         if (CA->isIncreasing){
           mean = likelihood_lnexp5U.mean(theta,myX); 
           var  = likelihood_lnexp5U.variance(theta,myX);
@@ -2933,6 +2936,7 @@ void continuous_expectation( const continuous_analysis *CA, const continuous_mod
         }
         break; 
       case cont_model::exp_5:
+      default:
         if (CA->isIncreasing){
           mean = likelihood_nexp5U.mean(theta,myX); 
           var  = likelihood_nexp5U.variance(theta,myX);

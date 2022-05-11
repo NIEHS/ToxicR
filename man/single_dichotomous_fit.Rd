@@ -10,7 +10,7 @@ single_dichotomous_fit(
   N,
   model_type,
   fit_type = "laplace",
-  prior = "default",
+  prior = NULL,
   BMR = 0.1,
   alpha = 0.05,
   degree = 2,
@@ -25,15 +25,22 @@ single_dichotomous_fit(
 
 \item{N}{A numeric vector or matrix of the number of replicates at a dose.}
 
+\item{model_type}{The mean model for the dichotomous model fit.  It can be one of the following: \cr
+"hill","gamma","logistic", "log-logistic", "log-probit"  ,"multistage"  ,"probit","qlinear","weibull"}
+
 \item{fit_type}{the method used to fit (laplace, mle, or mcmc)}
+
+\item{prior}{Used if you want to specify a prior for the data.}
+
+\item{BMR}{This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."}
+
+\item{alpha}{Alpha is the specified nominal coverage rate for computation of the lower bound on the BMDL and BMDU, i.e., one computes a \eqn{100\times(1-\alpha)\%} .  For the interval (BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)\% } confidence interval.  By default, it is set to 0.05.}
 
 \item{degree}{the number of degrees of a polynomial model. Only used for polynomial models.}
 
 \item{samples}{the number of samples to take (MCMC only)}
 
 \item{burnin}{the number of burnin samples to take (MCMC only)}
-
-\item{BRM}{This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."}
 }
 \value{
 a model object
@@ -47,7 +54,7 @@ mData <- matrix(c(0, 2,50,
                   3, 10, 50,
                   16, 18,50,
                   32, 18,50,
-                  33, 17,50),nrow=6,ncol=3,byrow=T)
+                  33, 17,50),nrow=6,ncol=3,byrow=TRUE)
 D <- mData[,1]
 Y <- mData[,2]
 N <- mData[,3]

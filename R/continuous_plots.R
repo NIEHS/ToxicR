@@ -1,5 +1,5 @@
 
-cont_polynomial_f <- function(A,doses,decrease=F){
+.cont_polynomial_f <- function(A,doses,decrease=F){
 
   B <- as.matrix(A,ncol=1)
   X <- matrix(1,nrow = length(doses),ncol=length(A))
@@ -10,13 +10,13 @@ cont_polynomial_f <- function(A,doses,decrease=F){
 }
 
 # FUNL
-cont_FUNL_f <- function(A,doses,decrease=F){
+.cont_FUNL_f <- function(A,doses,decrease=F){
      b <- A[1] + A[2]*exp(-exp(A[6])*(doses-A[5])^2)*(1/(1+exp(-(doses-A[3])/A[4])))
      return(b)
 }
 
 #dichotomous hill
-cont_hill_f <- function(parms,d,decrease=F){
+.cont_hill_f <- function(parms,d,decrease=F){
   g  <- parms[1] 
   nu <- parms[2]
   k  <- parms[3];
@@ -25,7 +25,7 @@ cont_hill_f <- function(parms,d,decrease=F){
   return (rval)
 }
 #dichotomous log-logistic
-cont_exp_5_f <- function(parms,d,decrease=F){
+.cont_exp_5_f <- function(parms,d,decrease=F){
   g <- parms[1]
   b <- parms[2];
   c <- parms[3];
@@ -35,7 +35,7 @@ cont_exp_5_f <- function(parms,d,decrease=F){
 }
 
 #
-cont_exp_3_f <-function(parms,d,decrease = TRUE){
+.cont_exp_3_f <-function(parms,d,decrease = TRUE){
   if (decrease){
     f_sign = -1; 
   }else{
@@ -48,7 +48,7 @@ cont_exp_3_f <-function(parms,d,decrease = TRUE){
   return (rval)
 }
 
-cont_power_f <-function(parms,d,decrease=F){
+.cont_power_f <-function(parms,d,decrease=F){
   g <- parms[1]; 
   b <- parms[2];
   a <- parms[3]; 
@@ -56,7 +56,15 @@ cont_power_f <-function(parms,d,decrease=F){
   return (rval)
 }
 
-.plot.BMDcont_fit_MCMC<-function(fit,qprob=0.05,...){
+.plot.BMDcont_fit_MCMC<-function(x,...){
+  fit = x
+  Dose <- NULL
+  temp_args = list(...)
+  if (!exists("qprob",temp_args)){
+    qprob = 0.05
+  }else{
+    qprob = temp_args$qprob
+  }
   
   isLogNormal = (grepl("Log-Normal",fit$full_model) == 1)
      
@@ -103,27 +111,27 @@ cont_power_f <-function(parms,d,decrease=F){
   }
   
   if (fit$model=="FUNL"){
-     Q <- apply(fit$mcmc_result$PARM_samples,1,cont_FUNL_f, d=test_doses,decrease=decrease)   
+     Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_FUNL_f, d=test_doses,decrease=decrease)   
   }
   if (fit$model=="hill"){
-    Q <- apply(fit$mcmc_result$PARM_samples,1,cont_hill_f, d=test_doses,decrease=decrease)
+    Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_hill_f, d=test_doses,decrease=decrease)
   }
   if (fit$model=="exp-3"){
-    Q <- apply(fit$mcmc_result$PARM_samples,1,cont_exp_3_f, d=test_doses,decrease=decrease)
+    Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_exp_3_f, d=test_doses,decrease=decrease)
     if (isLogNormal){
        Q <- exp(log(Q)+
         exp(fit$mcmc_result$PARM_samples[,ncol(fit$mcmc_result$PARM_samples)])/2)
     }
   }
   if (fit$model=="exp-5"){
-    Q <- apply(fit$mcmc_result$PARM_samples,1,cont_exp_5_f, d=test_doses,decrease=decrease)
+    Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_exp_5_f, d=test_doses,decrease=decrease)
     if (isLogNormal){
          Q <- exp(log(Q)+
                        exp(fit$mcmc_result$PARM_samples[,ncol(fit$mcmc_result$PARM_samples)])/2)
     }
   }
   if (fit$model=="power"){
-    Q <- apply(fit$mcmc_result$PARM_samples,1,cont_power_f, d=test_doses,decrease=decrease)
+    Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_power_f, d=test_doses,decrease=decrease)
   }
   if (fit$model=="polynomial"){
     if (length(grep(": normal-ncv", tolower(fit$full_model)))>0){
@@ -131,7 +139,7 @@ cont_power_f <-function(parms,d,decrease=F){
     }else{
       degree = ncol(fit$mcmc_result$PARM_samples) - 1
     }
-    Q <- apply(fit$mcmc_result$PARM_samples[,1:degree],1,cont_polynomial_f, 
+    Q <- apply(fit$mcmc_result$PARM_samples[,1:degree],1,.cont_polynomial_f, 
                d=test_doses,decrease=decrease)
     
   }
@@ -206,7 +214,14 @@ cont_power_f <-function(parms,d,decrease=F){
 }
   
 # This part matches with single_continous_fit part- SL 06/02/21 
-.plot.BMDcont_fit_maximized<-function(A,qprob=0.05,...){
+.plot.BMDcont_fit_maximized<-function(x,...){
+  A = x
+  temp_args = list(...)
+  if (!exists("qprob",temp_args)){
+    qprob = 0.05
+  }else{
+    qprob = temp_args$qprob
+  }
   
   isLogNormal = (grepl("Log-Normal",A$full_model) == 1)
   IS_tranformed = A$transformed
@@ -252,19 +267,19 @@ cont_power_f <-function(parms,d,decrease=F){
   }
   #Pre defined function- lm_fit can be used for fitting parameters?
   if (fit$model=="FUNL"){
-     me <- cont_FUNL_f(fit$parameters,test_doses)
+     me <- .cont_FUNL_f(fit$parameters,test_doses)
   }  
   if (fit$model=="hill"){
-    me <- cont_hill_f(fit$parameters,test_doses)
+    me <- .cont_hill_f(fit$parameters,test_doses)
   }
   if (fit$model=="exp-3"){
-    me <- cont_exp_3_f(fit$parameters,test_doses,decrease)
+    me <- .cont_exp_3_f(fit$parameters,test_doses,decrease)
   }
   if (fit$model=="exp-5"){
-    me <- cont_exp_5_f(fit$parameters,test_doses)
+    me <- .cont_exp_5_f(fit$parameters,test_doses)
   }
   if (fit$model=="power"){
-    me <- cont_power_f(fit$parameters,test_doses)
+    me <- .cont_power_f(fit$parameters,test_doses)
   }
   if (fit$model=="polynomial"){
     if (length(grep(": normal-ncv", tolower(fit$full_model)))>0){
@@ -273,7 +288,7 @@ cont_power_f <-function(parms,d,decrease=F){
       degree = length(fit$parameters) - 1
     }
    
-    me <- cont_polynomial_f(fit$parameters[1:degree],test_doses)
+    me <- .cont_polynomial_f(fit$parameters[1:degree],test_doses)
   }
   if (isLogNormal){
        var = exp(fit$parameters[length(fit$parameters)])
@@ -328,8 +343,15 @@ cont_power_f <-function(parms,d,decrease=F){
 }
 
 # Base plot- MCMC or BMD?
-.plot.BMDcontinuous_MA <- function(A,qprob=0.05,...){
-  
+.plot.BMDcontinuous_MA <- function(x,...){
+  A = x
+  model_no <- x_axis <- y_axis <-cols <- NULL
+  temp_args = list(...)
+  if (!exists("qprob",temp_args)){
+    qprob = 0.05
+  }else{
+    qprob = temp_args$qprob
+  }
   # Should be matched with BMD_MA plots
   # SL 06/02 Updated 
   # Later, we'll have it 
@@ -378,23 +400,23 @@ cont_power_f <-function(parms,d,decrease=F){
           for (ii in 1:n_samps){
                fit <- A[[fit_idx[ma_samps[ii]]]]
                if (fit$model=="FUNL"){
-                    temp_f[ii,] <- cont_FUNL_f(fit$mcmc_result$PARM_samples[ii,],test_doses)
+                    temp_f[ii,] <- .cont_FUNL_f(fit$mcmc_result$PARM_samples[ii,],test_doses)
                     temp_bmd[ii] <- fit$mcmc_result$BMD_samples[ii]
                }  
                if (fit$model=="hill"){
-                    temp_f[ii,] <- cont_hill_f(fit$mcmc_result$PARM_samples[ii,],test_doses)
+                    temp_f[ii,] <- .cont_hill_f(fit$mcmc_result$PARM_samples[ii,],test_doses)
                     temp_bmd[ii] <- fit$mcmc_result$BMD_samples[ii]
                }
                if (fit$model=="exp-3"){
-                    temp_f[ii,] <- cont_exp_3_f(fit$mcmc_result$PARM_samples[ii,],test_doses,decrease)
+                    temp_f[ii,] <- .cont_exp_3_f(fit$mcmc_result$PARM_samples[ii,],test_doses,decrease)
                     temp_bmd[ii] <- fit$mcmc_result$BMD_samples[ii]
                }
                if (fit$model=="exp-5"){
-                    temp_f[ii,] <- cont_exp_5_f(fit$mcmc_result$PARM_samples[ii,],test_doses)
+                    temp_f[ii,] <- .cont_exp_5_f(fit$mcmc_result$PARM_samples[ii,],test_doses)
                     temp_bmd[ii] <- fit$mcmc_result$BMD_samples[ii]
                }
                if (fit$model=="power"){
-                    temp_f[ii,] <- cont_power_f(fit$mcmc_result$PARM_samples[ii,],test_doses)
+                    temp_f[ii,] <- .cont_power_f(fit$mcmc_result$PARM_samples[ii,],test_doses)
                     temp_bmd[ii] <- fit$mcmc_result$BMD_samples[ii]
                }
           }
@@ -480,20 +502,20 @@ cont_power_f <-function(parms,d,decrease=F){
             if (A$posterior_probs[ii]>0.05){
                fit <- A[[fit_idx[ii]]]
                if (fit$model=="FUNL"){
-                    f <- cont_FUNL_f(fit$parameters,test_doses)
+                    f <- .cont_FUNL_f(fit$parameters,test_doses)
                }  
                if (fit$model=="hill"){
-                    f <- cont_hill_f(fit$parameters,test_doses)
+                    f <- .cont_hill_f(fit$parameters,test_doses)
                }
                if (fit$model=="exp-3"){
                    temp = fit$parameters
-                    f <- cont_exp_3_f(temp,test_doses,decrease)
+                    f <- .cont_exp_3_f(temp,test_doses,decrease)
                }
                if (fit$model=="exp-5"){
-                    f <- cont_exp_5_f(fit$parameters,test_doses)
+                    f <- .cont_exp_5_f(fit$parameters,test_doses)
                }
                if (fit$model=="power"){
-                    f <- cont_power_f(fit$parameters,test_doses)
+                    f <- .cont_power_f(fit$parameters,test_doses)
                }
                col = 'coral3'
                temp_df<-data.frame(x_axis=test_doses,y_axis=f,cols=col,model_no=ii, alpha_lev=A$posterior_probs[ii])
@@ -561,7 +583,7 @@ cont_power_f <-function(parms,d,decrease=F){
        for (ii in 1:length(fit_idx)){
          fit <- A[[fit_idx[ii]]]
          if (fit$model=="FUNL"){
-           t <- cont_FUNL_f(fit$parameters,test_doses)
+           t <- .cont_FUNL_f(fit$parameters,test_doses)
            if(A$posterior_probs[ii] > 0){
              me = t*A$posterior_probs[ii] + me
            }
@@ -569,7 +591,7 @@ cont_power_f <-function(parms,d,decrease=F){
          }  
          if (fit$model=="hill"){
             
-           t <- cont_hill_f(fit$parameters,test_doses)
+           t <- .cont_hill_f(fit$parameters,test_doses)
            
            # SL comment - why the name of object is BB? At the beginning it was declared as A-  05/28/21
            # I guess this part should be A as well 
@@ -578,20 +600,20 @@ cont_power_f <-function(parms,d,decrease=F){
            }
          }
          if (fit$model=="exp-3"){
-           t <- cont_exp_3_f(fit$parameters,test_doses,decrease)
+           t <- .cont_exp_3_f(fit$parameters,test_doses,decrease)
    
            if(A$posterior_probs[ii] > 0){
              me = t*A$posterior_probs[ii] + me
            }
          }
          if (fit$model=="exp-5"){
-           t <- cont_exp_5_f(fit$parameters,test_doses)
+           t <- .cont_exp_5_f(fit$parameters,test_doses)
            if(A$posterior_probs[ii] > 0){
              me = t*A$posterior_probs[ii] + me
            }
          }
          if (fit$model=="power"){
-           t <- cont_power_f(fit$parameters,test_doses)
+           t <- .cont_power_f(fit$parameters,test_doses)
            if(A$posterior_probs[ii] > 0){
              me = t*A$posterior_probs[ii] + me
            }
@@ -636,20 +658,20 @@ cont_power_f <-function(parms,d,decrease=F){
          if (A$posterior_probs[ii]>0.05){
            fit <- A[[fit_idx[ii]]]
            if (fit$model=="FUNL"){
-             f <- cont_FUNL_f(fit$parameters,test_doses)
+             f <- .cont_FUNL_f(fit$parameters,test_doses)
            }
            if (fit$model=="hill"){
-             f <- cont_hill_f(fit$parameters,test_doses)
+             f <- .cont_hill_f(fit$parameters,test_doses)
            }
            if (fit$model=="exp-3"){
              temp = fit$parameters
-             f <- cont_exp_3_f(temp,test_doses,decrease)
+             f <- .cont_exp_3_f(temp,test_doses,decrease)
            }
            if (fit$model=="exp-5"){
-             f <- cont_exp_5_f(fit$parameters,test_doses)
+             f <- .cont_exp_5_f(fit$parameters,test_doses)
            }
            if (fit$model=="power"){
-             f <- cont_power_f(fit$parameters,test_doses)
+             f <- .cont_power_f(fit$parameters,test_doses)
            }
 
            col = 'coral3'
@@ -674,7 +696,7 @@ cont_power_f <-function(parms,d,decrease=F){
                    annotate(geom = "point", x = A$bmd[1], y = ma_mean(A$bmd[1]),
                             size = 5, color="darkslategrey",shape=17, alpha=0.9)
      }
-     
+   
      return(plot_gg + 
               coord_cartesian(xlim=c(min(test_doses)-width,max(test_doses)+width),expand=F))
 }

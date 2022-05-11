@@ -269,9 +269,10 @@ private:
 class bmd_analysis {
 public:
 
-	bmd_cdf BMD_CDF;
+
 	Eigen::MatrixXd MAP_ESTIMATE;
 	Eigen::MatrixXd COV;
+	bmd_cdf BMD_CDF;
 	bool isExtra;
 	double BMR;
 	double MAP_BMD;
@@ -281,7 +282,7 @@ public:
 	std::vector<double> expected; 
 	
 	bmd_analysis() : MAP_ESTIMATE(), COV(), BMD_CDF() {
-
+  
 	}
 	bmd_analysis(const bmd_analysis &M) {
 		BMD_CDF = M.BMD_CDF;

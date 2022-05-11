@@ -1,15 +1,16 @@
 # Continuous functions are defined here
 
 # FUNL
-cont_FUNL_f <- function(parms,doses){
+.cont_FUNL_f <- function(parms,doses){
   b <- parms[1] + parms[2]*exp((doses-parms[5])^2*(-parms[6]))*(1/(1+exp(-(doses-parms[3])/parms[4])))
   return(b)
 }
 
 #dichotomous hill
-cont_hill_f <- function(parms,d){
+.cont_hill_f <- function(parms,d){
   g  <- parms[1] 
-  nu <- parms[2]
+  nu <- parms[2]  
+  
   k  <- parms[3];
   n  <- parms[4]; 
   rval <- g + nu*d^n/(k^n+d^n)
@@ -17,7 +18,7 @@ cont_hill_f <- function(parms,d){
 }
 
 #dichotomous log-logistic
-cont_exp_5_f <- function(parms,d){
+.cont_exp_5_f <- function(parms,d){
   g <- parms[1]
   b <- parms[2];
   c <- parms[3];
@@ -27,7 +28,7 @@ cont_exp_5_f <- function(parms,d){
 }
 
 #dichotomous log-probit
-cont_exp_3_f <-function(parms,d){
+.cont_exp_3_f <-function(parms,d){
   g <- parms[1]
   b <- parms[2]
   e <- parms[4] 
@@ -35,7 +36,7 @@ cont_exp_3_f <-function(parms,d){
   return (rval)
 }
 
-cont_power_f <-function(parms,d){
+.cont_power_f <-function(parms,d){
   g <- parms[1]; 
   b <- parms[2];
   a <- parms[3]; 
