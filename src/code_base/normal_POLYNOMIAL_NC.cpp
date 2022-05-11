@@ -726,7 +726,11 @@ double normalPOLYNOMIAL_BMD_NC::bmd_reldev(Eigen::MatrixXd theta, double BMRF, b
 }
 
 double normalPOLYNOMIAL_BMD_NC::bmd_point(Eigen::MatrixXd theta, double BMRF, bool isIncreasing){
-	double min, mid, max, mu_zero;
+	double min = 0.0; 
+	double mid = 0.0; 
+	double max = 0.0; 
+	double mu_zero =0.0;
+	
 	Eigen::MatrixXd d(3, 1); d << min, mid, max;
 	Eigen::MatrixXd t_mean = mean(theta, d);
 	mu_zero = t_mean(0, 0);
