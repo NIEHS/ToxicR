@@ -104,8 +104,8 @@
     
     
     doses = fit$data[,1,drop=T]
-    uerror <- apply(cbind(probs*0+1,probs+se),1,min)
-    lerror <- apply(cbind(probs*0,probs-se),1,max)
+    uerror <- apply(cbind(probs*0+1,probs+se),1,min,na.rm=TRUE)
+    lerror <- apply(cbind(probs*0,probs-se),1,max,na.rm=TRUE)
     
     dose = c(doses,doses)
     Response = c(uerror,lerror)
@@ -169,9 +169,9 @@
     
     Q <- t(Q)
     
-    me <- colMeans(Q)
-    lq <- apply(Q,2,quantile, probs = qprob)
-    uq <- apply(Q,2,quantile, probs = 1-qprob)
+    me <- colMeans(Q,,na.rm=TRUE)
+    lq <- apply(Q,2,quantile, probs = qprob,na.rm=TRUE)
+    uq <- apply(Q,2,quantile, probs = 1-qprob,na.rm=TRUE)
     
     plot_gg <-ggplot()+
               geom_errorbar(aes(x=doses, ymin=lerror, ymax=uerror),color="grey")+
@@ -212,7 +212,7 @@
     # Object 3 - Density object - In Shiny we can on / off this 
     # Density - Polygon/Other option?
     if (BMD_DENSITY ==TRUE){
-      Dens =  density(temp,cut=c(5*max(test_doses)), n=1000, from=0, to=max(test_doses))
+      Dens =  density(temp,cut=c(5*max(test_doses)), n=1000, from=0, to=max(test_doses),na.rm = TRUE)
       
       Dens$y = Dens$y/max(Dens$y) * (max(uerror)-min(lerror))*0.6
       temp = which(Dens$x < max(test_doses))

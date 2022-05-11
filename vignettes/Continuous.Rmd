@@ -1,5 +1,5 @@
 ---
-title: "Continuous Data Example"
+title: "ToxicR: Continuous Analysis"
 author: "Matt Wheeler Ph.D."
 date: "2/15/2022"
 output: rmarkdown::html_vignette
