@@ -9,10 +9,11 @@ Description:  Toxicology routines for analyzing dose-response data include dose-
     These methods are based upon the US EPA's benchmark dose software 3.  Methods have
     been extended to include additional functionality based on World Health Organization 
     guidelines.  It further supports the European Food Safety Authority's 
-    draft guidance.  For more information, go to the website <https://github.com/NIEHS/ToxicR>. 
+    draft guidance on model averaging. 
 Depends:
     R (>= 4.1.0)
 License: MIT + file LICENSE 
+URL:  https://github.com/NIEHS/ToxicR
 LazyData: true
 Imports: Rcpp (>= 1.0.0), ggplot2 (>= 3.3.2), shiny (>= 1.5.0),  coda (>= 0.19-4),
          scales (>= 1.1.1), tidyverse (>= 1.3.0), forcats, ggridges (>= 0.5.3), doBy (>= 4.6.11),
