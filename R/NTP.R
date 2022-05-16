@@ -122,15 +122,20 @@ ntp_polyk <- function(dose,tumor,daysOnStudy){
      }
      result <- .polykCPP(dose,tumor,daysOnStudy)
 
-     message("The results of the Poly-K test for trend.\n")
-     cat(sprintf("Poly-1.5 P-value = %1.4f\n",result[1]))
-     cat(sprintf("Poly-3   P-value = %1.4f\n",result[2]))
-     cat(sprintf("Poly-6   P-value = %1.4f\n",result[3]))
+    
      result <- as.matrix(result)
      row.names(result)<-c("Poly 1.5","Poly-3", "Poly-6")
+     class(result)    <- "ntp.polyk" 
      return(result)
 }
 
+.print_polyk_ntp <-function(x, ...){
+  result <- x
+   message("The results of the Poly-K test for trend.\n")
+   cat(sprintf("Poly-1.5 P-value = %1.4f\n",result[1]))
+   cat(sprintf("Poly-3   P-value = %1.4f\n",result[2]))
+   cat(sprintf("Poly-6   P-value = %1.4f\n",result[3]))
+}
 ## -----------------------------------------------------------
 ## JONCKHEERE'S TEST 
 ## ----------------Changelog----------------------------------

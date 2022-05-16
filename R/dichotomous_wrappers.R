@@ -139,42 +139,8 @@ single_dichotomous_fit <- function(D,Y,N,model_type, fit_type = "laplace",
   return(temp)
 }
 
-.print.BMD_CDF<-function(x, ...){
-  p = x
-  x <- splinefun(p[!is.infinite(p[,1]),2],p[!is.infinite(p[,1]),1],method="hyman")
-  cat("Approximate Quantiles for the BMD\n")
-  cat("--------------------------------------------------------------\n")
-  cat("1% \t 5% \t 10% \t 25% \t 50% \t 75% \t 90% \t 95% \t 99%\n")
-  cat("--------------------------------------------------------------\n")
 
-  cat(sprintf("%1.2f \t %1.2f \t %1.2f \t %1.2f \t %1.2f \t %1.2f \t %1.2f \t %1.2f \t %1.2f \t\n",
-              x(0.01),x(0.05),x(0.10),x(0.25),x(.5),x(0.75),x(0.90),x(0.95),x(0.99)))
-}
 
-# print.BMDdich_fit_MCMC<-function(x, ...){
-#   p = x 
-#   cat ("Benchmark Dose Estimates using MCMC. \n")
-#   cat (sprintf("Extra Risk: BMR:%1.2f\n",p$options[1]))
-#   cat (sprintf("Model Type: %s\n",p$model[1]))
-#   cat ("BMD  (BMDL,BMDU) \n")
-#   cat ("---------------------\n")
-#   m <- mean(p$BMD)
-#   x <- quantile(p$BMD,c(p$options[2],1-p$options[2]))
-#   cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",m,x[1],x[2],100*(1-2*p$options[2]),"% 2-sided Confidence Interval"))
-# }
-
-# .print.BMDdich_fit<-function(x, ...){
-#   p = x
-#   cat ("Benchmark Dose Estimates\n")
-#   cat ("Approximation to the Posterior\n")
-#   cat (sprintf("Model Type: %s\n",p$full_model))
-#   cat ("BMD  (BMDL,BMDU) \n")
-#   cat ("---------------------\n")
-#   temp = p$bmd_dist
-#   temp = temp[!is.infinite(temp[,1]),]
-#   spfun = splinefun(temp[,2],temp[,1],method = "hyman")
-#   cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",spfun(0.5),spfun(0.05),spfun(0.95),90,"% 2-sided Confidence Interval"))
-# }
 
 .bmd_default_frequentist_settings <- function(model,degree=2){
   dmodel = which(model==c("hill","gamma","logistic", "log-logistic",

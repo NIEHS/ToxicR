@@ -136,8 +136,7 @@
 .summary_ma_max<-function(object, ...){
   model = object
   alpha = .evaluate_alpha(...)
-  warn = getOption("warn")
-  options(warn=-1)
+
   returnV <- list()
  
   returnV$fit_method <- "Bayesian:MCMC"
@@ -177,12 +176,16 @@
   tmp_idx = order(returnV$fit_table$post_p,decreasing=T)
   returnV$fit_table = returnV$fit_table[tmp_idx,c(2,3,4,5,1)]
 
-  
-  temp_function <- splinefun(model$ma_bmd[,2],model$ma_bmd[,1],method="monoH.FC")
+  warnFunc <- function(w){
+    return()
+  }
+  tryCatch({temp_function <- splinefun(model$ma_bmd[,2],model$ma_bmd[,1],method="monoH.FC"))},
+  warning = warnFunc)
+
   returnV$BMD <- temp_function(1-c(1-alpha,0.5,alpha))
   names(returnV$BMD) <- c("BMDL","BMD","BMDU")
   returnV$alpha <- alpha
-  options(warn=warn)
+
   class(returnV) <- "ma_summary_max"
   return(returnV)
 }
