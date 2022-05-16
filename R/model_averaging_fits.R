@@ -15,25 +15,27 @@
 #' @param alpha Alpha is the specified nominal coverage rate for computation of the lower bound on the BMDL and BMDU, i.e., one computes a \eqn{100\times(1-\alpha)\%} confidence interval.  For the interval (BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)\% }.  By default, it is set to 0.05.
 #' @param samples the number of samples to take (MCMC only)
 #' @param burnin the number of burnin samples to take (MCMC only)
-#' @return a model object containing a list of single models
+#' @return This function model object containing a list of individual fits and model averaging fits
+#' \itemize{
+#'  \item
+#'  \item 
+#' }
 #' 
 #' @examples 
-#'\dontrun{
-#' Hill.p <- rbind(c(481,-250.3,70,3.3),
-#'                 c(481,-250.3,40,1.3),
-#'                 c(481,-250.2,15,1.1),
-#'                 c(481,-250.3,50,4) ,
-#'                 c(10.58,9.7,70,3.5),
-#'                 c(10.58,9.7,25,3),
-#'                 c(10.58,9.7,15,2),
-#'                 c(10.58,9.7,50,4))
-#' hill <- data.frame(a=Hill.p[,1],b=Hill.p[,2],c=Hill.p[,3],d=Hill.p[,4])
+#'
+#' hill_m <- function(doses){
+#'        returnV <-  481  -250.3*doses^1.3/(40^1.3 + doses^1.3)
+#'        return(returnV)
+#' }
 #' doses <- rep(c(0,6.25,12.5,25,50,100),each=10)
-#' mean <- ToxicR:::.cont_hill_f(as.numeric(hill[2,]),doses)
+#' mean <- hill_m(doses)
 #' y <- rnorm(length(mean),mean,20.14)
 #' model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMD_TYPE = 'sd', BMR = 1)
-#' }
-#' @export
+#' 
+
+
+
+
 ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
                                   BMD_TYPE = "sd", BMR = 0.1, point_p = 0.01, 
                                   alpha = 0.05,samples = 21000,

@@ -77,21 +77,6 @@ lnormprior<-function(mean = 0, sd = 1, lb = -100,ub=100){
   return(retValue)
 }
 
-# print.BMDprior<-function(x, ...){
-#   prior = x
-#   if(prior[1] == 1){
-#     cat(sprintf("Prior: Normal(mu = %1.2f, sd = %1.3f) 1[%1.2f,%1.2f]\n",prior[2],
-#                 prior[3],prior[4],prior[5]))
-#     return();
-#   }
-#   if (prior[1] == 2){
-#     cat(sprintf("Prior: Log-Normal(log-mu = %1.2f, log-sd = %1.3f) 1[%1.2f,%1.2f]\n",prior[2],
-#                 prior[3],prior[4],prior[5]))
-#     return();
-#   }
-#   cat("Distribution not specified.")
-# }
-
 #' @title create_prior_lists .. Given priors 
 #'        created using the ToxicR prior functions, create a list of priors
 #'        for a model. 

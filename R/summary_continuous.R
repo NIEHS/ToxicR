@@ -77,7 +77,6 @@
   }else{
     cat(sprintf("Summary of single model fit (%s) using ToxicR\n\n","Bayesian-MAP"))
     s_fit$GOF[,2] = round(s_fit$GOF[,2],2)
- #   print(s_fit$prior)
   }
   cat("\n")
 
@@ -179,8 +178,8 @@
   warnFunc <- function(w){
     return()
   }
-  tryCatch({temp_function <- splinefun(model$ma_bmd[,2],model$ma_bmd[,1],method="monoH.FC"))},
-  warning = warnFunc)
+  tryCatch({temp_function <- splinefun(model$ma_bmd[,2],model$ma_bmd[,1],method="monoH.FC")},
+            warning = warnFunc)
 
   returnV$BMD <- temp_function(1-c(1-alpha,0.5,alpha))
   names(returnV$BMD) <- c("BMDL","BMD","BMDU")

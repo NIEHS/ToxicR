@@ -13,7 +13,23 @@
 #' @param degree the number of degrees of a polynomial model. Only used for polynomial models. 
 #' @param samples the number of samples to take (MCMC only)
 #' @param burnin the number of burnin samples to take (MCMC only)
-#' @return a model object
+#'
+#' @return Returns a model object class with the following structure:
+#' \itemize{
+#'    \item \code{full_model}:  The model along with the likelihood distribution. 
+#'    \item \code{parameters}: The parameter estimates produced by the procedure, which are relative to the model '
+#'                             given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(\sigma^2)}.
+#'    \item \code{covariance}: The variance-covariance matrix for the parameters.  
+#'    \item \code{bmd_dist}:  Quantiles for the BMD distribution. 
+#'    \item \code{bmd}:  A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
+#'    \item \code{maximum}:  The maximum value of the likelihod/posterior. 
+#'    \item \code{gof_p_value}:  GOF p-value for the Pearson \eqn{\chi^2} GOF test. 
+#'    \item \code{gof_chi_sqr_statistic}: The GOF statistic. 
+#'    \item \code{prior}:     This value gives the prior for the Bayesian analysis. 
+#'    \item \code{model}:     Parameter specifies t mean model used. 
+#'    \item \code{data}:      The data used in the fit. 
+#' }
+#'                
 #' @examples
 #' mData <- matrix(c(0, 2,50,
 #'                   1, 2,50,
@@ -195,58 +211,3 @@ single_dichotomous_fit <- function(D,Y,N,model_type, fit_type = "laplace",
   
   return(prior)
 }
-# fix me - remove 
-# 
-# bmd_default_bayesian_prior <- function(model,degree=2){
-#   dmodel = which(model==c("hill","gamma","logistic", "log-logistic",
-#                           "log-probit"  ,"multistage"  ,"probit",
-#                           "qlinear","weibull"))
-#   if (dmodel==1){ #HILL
-#     prior <- matrix(c(1,	-1,	2,	-40,	40,
-#                       1,	 0,	3,	-40,	40,
-#                       1,	-3,	3.3,	-40,	40,
-#                       2,	0.693147,	0.5,	0,	40),nrow=4,ncol=5,byrow=T)
-#   }
-#   if (dmodel==2){ #GAMMA
-#     prior <- matrix(c(1,	0,	2,	-18,	18,
-#                       2,	0.693147180559945,	0.424264068711929,	0.2,	20,
-#                       2,	0,	1,	0,	1e4),nrow=3,ncol=5,byrow=T)
-#   }
-#   if (dmodel == 3){ #LOGISTIC
-#     prior <- matrix(c(1,	0,	2,	-20,	20,
-#                       2,	0.1,	1,	0,	40     ),nrow=2,ncol=5,byrow=T)
-#   }
-#   if (dmodel == 4){ #LOG-LOGISTIC
-#     prior <- matrix(c(1,	0,	2,	-20,	20,
-#                       1,	0,	1,	-40,	40,
-#                       2,	0.693147180559945,	0.5,	1.00E-04,	20),nrow=3,ncol=5,byrow=T)
-#   }
-#   if (dmodel == 5){ #LOG-PROBIT
-#     prior <- matrix(c(1,	0,	2,	-20,	20,
-#                       1,	0,	1,	-40,	40,
-#                       2,	0.693147180559945,	0.5,	1.00E-04,	40),nrow=3,ncol=5,byrow=T)
-#   }
-#   
-#   if (dmodel == 6){ #MULTISTAGE
-#     temp <- matrix(c(1,	0,	2,	-20,	20,
-#                      2,	0,	0.5,	1.00E-04,	100,
-#                      2,	0,	1,	  1.00E-04,	1.00E+06),nrow=3,ncol=5,byrow=T)
-#     prior <- matrix(c(2,	0,	1,	  1.00E-04,	1.00E+06),nrow=1+degree,ncol=5,byrow=T)
-#     prior[1:3,] <- temp; 
-#   }
-#   if (dmodel == 7){ #PROBIT
-#     prior <- matrix(c(1,	-2,	2,	-8,	8,
-#                       2,	0.1,	1,	1.00E-12,	40 ),nrow=2,ncol=5,byrow=T)
-#   }
-#   if (dmodel == 8){ #QLINEAR
-#     prior <- matrix(c(1,	0,  	2,-18,	18,
-#                       2,	0.15,  1,	0,	18),nrow=2,ncol=5,byrow=T)
-#   }
-#   if (dmodel == 9){ #WEIBULL
-#     prior <- matrix(c(1,	0,	2,	-20,	20,
-#                       2,	0.424264068711929,	0.5,	0,	40,
-#                       2,	0,	1.5,	0,	1e4),nrow=3,ncol=5,byrow=T)
-#   }  
-#   
-#   return(prior)
-# }

@@ -8,17 +8,23 @@ ToxicR is an R package that utilizes the core functionality of the US EPA's Benc
 
 ## Current Release
 
-Version 1.0.0 is the most recent release. For precompiled binaries of this release, go to [Release V.1.0.0](https://github.com/NIEHS/ToxicR/releases/tag/v1.0.0). 
+
+Version 1.0.1 is the most recent release. For precompiled binaries of this release, go to [Release V.1.0.0](https://github.com/NIEHS/ToxicR/releases/tag/v1.0.0). 
 
 ### Installation
 
-For Windows, the .zip file is compiled in R 4.1.2. 
-For macOS, the .tgz file is compiled in R 4.1.2. 
+For Windows, the .zip file is compiled in R 4.2. 
+For macOS, the .tgz file is compiled in R 4.2. 
 For Linux, the package must be compiled. 
 For more information, please visit the instructions on the [Wiki](https://github.com/NIEHS/ToxicR/wiki). 
 
 ## Citing ToxicR
 
+All dose-response methodologies used in ToxicR were developed in the following manuscripts: 
+
+Wheeler, M.W., Blessinger, T., Shao, K., Allen, B.C., Olszyk, L., Davis, J.A. and Gift, J.S. (2020), Quantitative Risk Assessment: Developing a Bayesian Approach to Dichotomous Dose–Response Uncertainty. Risk Analysis, 40: 1706-1722. https://doi.org/10.1111/risa.13537
+
+Wheeler, M. W., Cortiñas Abrahantes, J., Aerts, M., Gift, J. S., & Allen Davis, J. (2022). Continuous model averaging for benchmark dose analysis: Averaging over distributional forms. Environmetrics, e2728. https://doi.org/10.1002/env.2728
 
 <img src="https://github.com/wheelemw/ToxicRDocs/blob/main/NIEHS.png" width="100" height="100"> <img src="https://github.com/wheelemw/ToxicRDocs/blob/main/NTP.gif" width="200" height="100">
   

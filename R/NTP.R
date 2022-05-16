@@ -131,7 +131,7 @@ ntp_polyk <- function(dose,tumor,daysOnStudy){
 
 .print_polyk_ntp <-function(x, ...){
   result <- x
-   message("The results of the Poly-K test for trend.\n")
+   cat("The results of the Poly-K test for trend.\n")
    cat(sprintf("Poly-1.5 P-value = %1.4f\n",result[1]))
    cat(sprintf("Poly-3   P-value = %1.4f\n",result[2]))
    cat(sprintf("Poly-6   P-value = %1.4f\n",result[3]))

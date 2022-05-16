@@ -41,7 +41,22 @@
 #' @param distribution The underlying distribution used as the data distribution. 
 #' @param ewald perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)
 #' @param transform Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.
-#' @return a model object
+#' @return Returns a model object class with the following structure:
+#' \itemize{
+#'    \item \code{full_model}:  The model along with the likelihood distribution. 
+#'    \item \code{bmd}:  A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
+#'    \item \code{parameters}: The parameter estimates produced by the procedure, which are relative to the model '
+#'                             given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(sigma^2)}.
+#'    \item \code{covariance}: The variance-covariance matrix for the parameters.  
+#'    \item \code{bmd_dis}:  Quantiles for the BMD distribution. 
+#'    \item \code{maximum}:  The maximum value of the likelihod/posterior. 
+#'    \item \code{Deviance}:  An array used to compute the analysis of deviance table. 
+#'    \item \code{prior}:     This value gives the prior for the Bayesian analysis. 
+#'    \item \code{model}:     Parameter specifies t mean model used. 
+#'    \item \code{options}:   Options used in the fitting procedure.
+#'    \item \code{data}:     The data used in the fit. 
+#'    \item \code{transformed}: Are the data \eqn{\log(x+\sqrt{x^2+1})} transformed? 
+#' }
 #' 
 #' @examples 
 #' M2           <- matrix(0,nrow=5,ncol=4)
@@ -53,7 +68,7 @@
 #' model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMD_TYPE="sd", BMR=1, ewald = TRUE,
 #'                              distribution = "normal",fit_type="laplace",model_type = "hill")
 #' 
-#' @export
+#' 
 single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                                    prior=NA, BMD_TYPE = "sd", 
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",

@@ -51,7 +51,6 @@
     cat(s_fit$fit,"\n")
   }else{
     cat(sprintf("Summary of single model fit (%s) using ToxicR\n\n","Bayesian-MAP"))
- #  print(s_fit$prior)
   }
   cat("\n")
   

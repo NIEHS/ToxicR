@@ -43,7 +43,21 @@ single_dichotomous_fit(
 \item{burnin}{the number of burnin samples to take (MCMC only)}
 }
 \value{
-a model object
+Returns a model object class with the following structure:
+\itemize{
+   \item \code{full_model}:  The model along with the likelihood distribution. 
+   \item \code{parameters}: The parameter estimates produced by the procedure, which are relative to the model '
+                            given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(\sigma^2)}.
+   \item \code{covariance}: The variance-covariance matrix for the parameters.  
+   \item \code{bmd_dist}:  Quantiles for the BMD distribution. 
+   \item \code{bmd}:  A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
+   \item \code{maximum}:  The maximum value of the likelihod/posterior. 
+   \item \code{gof_p_value}:  GOF p-value for the Pearson \eqn{\chi^2} GOF test. 
+   \item \code{gof_chi_sqr_statistic}: The GOF statistic. 
+   \item \code{prior}:     This value gives the prior for the Bayesian analysis. 
+   \item \code{model}:     Parameter specifies t mean model used. 
+   \item \code{data}:      The data used in the fit. 
+}
 }
 \description{
 Fit a single dichotomous dose-response model to data.
