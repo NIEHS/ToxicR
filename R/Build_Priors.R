@@ -37,10 +37,12 @@
 #'        and a distribution. Create a prior for a given analysis. 
 #' @param prior_list First Prior
 #' @param model Model to be used
+#' one of \code{"hill","exp-3","exp-5","power","polynomial"}
 #' @param distribution - Normal "normal", Normal non-constant variance "normal-ncv", or
 #'                       log-normal "lognormal"
 #' @param deg - For polynomial models only, the degree of the polynomial. 
-#' @return new BMDprior list. 
+#' @return new BMDprior list. This object is essentially a prior list constructed by 
+#' \code{create_prior_lists} with a model type and variance type. 
 #' 
 #' @examples 
 #' plist<- create_prior_list(normprior(0,0.1,-100,100), # a

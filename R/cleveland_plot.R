@@ -4,11 +4,11 @@
 #'
 #' @title cleveland_plot - Create a Cleveland plot from a model averaged model.
 #' @param A the model averaged model to plot
+#' @return Returns a \code{ggplot2} graphics object. 
 #' @examples 
-#' \dontrun{
 #' model = ma_dichotomous_fit(D,Y,N)
 #' cleveland_plot(model)
-#' } 
+#' 
 #' @export
 cleveland_plot <- function (A){
   UseMethod("cleveland_plot")
