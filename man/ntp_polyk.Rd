@@ -2,7 +2,7 @@
 % Please edit documentation in R/NTP.R
 \name{ntp_polyk}
 \alias{ntp_polyk}
-\title{Poly-k trend test
+\title{Poly-k test
 This function implements the NTP's polyK trend test.}
 \usage{
 ntp_polyk(dose, tumor, daysOnStudy)
@@ -21,9 +21,11 @@ It is expected multiple doses for each of the experimental conditions \eqn{X}.}
 \value{
 The results of a Williams trend test for each level in dose_name.
 More information on this procedure at: \doi{10.2307/2531856} and \doi{10.2307/2532200}
+This procedure returns a vector of three p-values for the poly-1.5, poly-3, and poly-6 test
+respectively.
 }
 \description{
-Poly-k trend test
+Poly-k test
 This function implements the NTP's polyK trend test.
 }
 \examples{

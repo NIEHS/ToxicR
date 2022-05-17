@@ -20,6 +20,15 @@ It is expected multiple doses for each of the experimental conditions \eqn{X}.}
 \value{
 The results of a non-parametric Shirley's isotone test for trend on
 each level in \eqn{dose_name}. For more information see: \doi{10.2307/2529789}
+The returned list contains: 
+\itemize{
+ \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
+ \item \code{dose:} the dose groups relative to control. 
+ \item \code{testStats}: Value of the Shirley test statistic. 
+ \item \code{mult_comp_signif}: Test's significance as 0, 1, or 2 which is not-significant, 
+ significant at the 0.05% level and significant at the 0.01% level. 
+ \item \code{mult_comp_test}: The type of test, i.e. "SHIRLEY"
+}
 }
 \description{
 ntp_shirley Shirley's test as programmed at the NTP

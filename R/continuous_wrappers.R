@@ -15,16 +15,13 @@
 #*HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 #*CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 #*OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#* 
-#  * 
-#  */
-
 #' Fit a single continuous BMD model.
 #'
 #' @title single_continuous_fit - Fit a single continuous BMD model.
 #' @param D doses matrix
 #' @param Y response matrix
-#' @param model_type Mean model. 
+#' @param model_type Mean model. It should be one of 
+#'      \code{"hill","exp-3","exp-5","power","polynomial"}
 #' @param fit_type the method used to fit (laplace, mle, or mcmc)
 #' @param prior Prior / model for the continuous fit. If this is specified, it overrides the parameters 'model_type' and 'distribution.' 
 #' @param BMD_TYPE BMD_TYPE specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used. \cr

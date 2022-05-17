@@ -27,7 +27,8 @@ single_continuous_fit(
 
 \item{Y}{response matrix}
 
-\item{model_type}{Mean model.}
+\item{model_type}{Mean model. It should be one of 
+\code{"hill","exp-3","exp-5","power","polynomial"}}
 
 \item{fit_type}{the method used to fit (laplace, mle, or mcmc)}
 

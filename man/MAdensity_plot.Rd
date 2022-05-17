@@ -9,11 +9,14 @@ MAdensity_plot(A)
 \arguments{
 \item{A}{the model averaged model to plot}
 }
+\value{
+Returns a \code{ggplot2} graphics object.
+}
 \description{
 Create a density plot from a model averaged model fit with MCMC.
 }
 \examples{
-\dontrun{
+\donttest{
 doses  <- cbind(c(0,25,50,100,200))
 y <- cbind(c(6,5.2,2.4,1.1,0.75),
                 c(20,20,19,20,20),

@@ -30,7 +30,10 @@
 #' To make sure it is a fully normal prior, make lb small relative to the mean/sd. 
 #' @param ub  Upper bound on the distribution. Necessary for the optimization algorithms, 
 #' To make sure it is a fully normal prior, make ub large relative to the mean/sd.
-#' @return a normal prior model object
+#' @return a normal prior model object.  This object essentially a vector with
+#' the first element as 1 (for normal), the second element the mean, the third
+#' element the variance, the fourth and fifth elements the lower and upper bounds, respectively. 
+#' 
 #' @examples
 #'  # Normal Prior with mean 0,sd-1
 #'  normprior(mean = 0, sd = 1, lb = -1e4, ub=1e4)
@@ -56,6 +59,9 @@ normprior<-function(mean = 0, sd = 1, lb = -100,ub=100){
 #' @param ub  Upper bound on the distribution. Necessary for the optimization algorithms, 
 #' To make sure it is a fully normal prior, make ub large relative to the mean/sd.
 #' @return a normal prior model object
+#' This object essentially a vector with
+#' the first element as 2 (for log-normal), the second element the mean, the third
+#' element the log-variance, the fourth and fifth elements the lower and upper bounds, respectively. 
 #' @examples
 #'  # Log-Normal Prior with mean 0,sd-1
 #'  lnormprior(mean = 0, sd = 1, lb = -1e4, ub=1e4)
@@ -83,7 +89,8 @@ lnormprior<-function(mean = 0, sd = 1, lb = -100,ub=100){
 #' @param x1 First Prior
 #' @param x2 Second Prior
 #' @param ... Aditional arguments
-#' @return new BMDprior list. 
+#' @return new BMDprior list. This object is essentailly a matrix where each
+#' row is  an element defined by a prior object (e.g., normprior or lnormprior).
 #' 
 #' @examples 
 #' plist<- create_prior_list(normprior(0,0.1,-100,100), # a
