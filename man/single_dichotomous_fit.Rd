@@ -57,6 +57,12 @@ Returns a model object class with the following structure:
    \item \code{prior}:     This value gives the prior for the Bayesian analysis. 
    \item \code{model}:     Parameter specifies t mean model used. 
    \item \code{data}:      The data used in the fit. 
+   \itemize{
+       When MCMC is specified, an additional variable \code{mcmc_result} 
+       has the following two variables:
+       \item \code{PARM_samples}:  matrix of parameter samples. 
+       \item \code{BMD_samples}: vector of BMD sampled values. 
+   }
 }
 }
 \description{
@@ -73,5 +79,6 @@ D <- mData[,1]
 Y <- mData[,2]
 N <- mData[,3]
 model = single_dichotomous_fit(D, Y, N, model_type = "hill", fit_type = "laplace")
+summary(model)
 
 }

@@ -3,8 +3,9 @@
 #' @title ma_continuous_fit - Fit a model averaged continuous BMD model.
 #' @param D doses matrix
 #' @param Y response matrix
-#' @param model_list a list of configurations for the single models (priors, model type)
-#' @param fit_type the method used to fit (laplace, mle, or mcmc)
+#' @param model_list a list of configurations for the single models (priors, model type).  To create a model list, one creates a list of 
+#'                   continuous model priors using \code{create_continuous_prior}.
+#' @param fit_type the method used to fit ("laplace", "mle", or "mcmc")
 #' @param BMD_TYPE BMD_TYPE specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used. \cr
 #' -	Standard deviation is the default option, but it can be explicitly specified with 'BMR_TYPE = "sd"' This definition defines the BMD as the dose associated with the mean/median changing a specified number of standard deviations from the mean at the control dose., i.e., it is the dose, BMD, that solves \eqn{\mid f(dose)-f(0) \mid = BMR \times \sigma} \cr
 #' -	Relative deviation can be specified with 'BMR_TYPE = "rel"'. This defines the BMD as the dose that changes the control mean/median a certain percentage from the background dose, i.e. it is the dose, BMD that solves \eqn{\mid f(dose) - f(0) \mid = (1 \pm BMR) f(0)} \cr
@@ -17,10 +18,13 @@
 #' @param burnin the number of burnin samples to take (MCMC only)
 #' @return This function model object containing a list of individual fits and model averaging fits
 #' \itemize{
-#'  \item
-#'  \item 
+#'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
+#'         is the number of models in the model average.  For each \code{X}, this is an individual model
+#'         fit identical to what is returned in `\code{single_continuous_fit}.'
+#'  \item \code{ma_bmd}: The CDF of the model averaged BMD distribution. 
+#'  \item \code{posterior_probs}: The posterior model probabilities used in the MA. 
+#'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals. 
 #' }
-#' 
 #' @examples 
 #'
 #' hill_m <- function(doses){
@@ -31,11 +35,7 @@
 #' mean <- hill_m(doses)
 #' y <- rnorm(length(mean),mean,20.14)
 #' model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMD_TYPE = 'sd', BMR = 1)
-#' 
-
-
-
-
+#' summary(model)
 ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
                                   BMD_TYPE = "sd", BMR = 0.1, point_p = 0.01, 
                                   alpha = 0.05,samples = 21000,
@@ -359,9 +359,15 @@ ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
 #' @param samples the number of samples to take (MCMC only)
 #' @param burnin the number of burnin samples to take (MCMC only)
 #' @return a model object containing a list of single models
-#' 
+#' \itemize{
+#'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
+#'         is the number of models in the model average.  For each \code{X}, this is an individual model
+#'         fit identical to what is returned in `\code{single_continuous_fit}.'
+#'  \item \code{ma_bmd}: The CDF of the model averaged BMD distribution. 
+#'  \item \code{posterior_probs}: The posterior model probabilities used in the MA. 
+#'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals. 
+#' }
 #' @examples 
-#'\dontrun{
 #' mData <- matrix(c(0, 2,50,
 #'                   1, 2,50,
 #'                   3, 10, 50,
@@ -372,7 +378,7 @@ ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
 #' Y <- mData[,2]
 #' N <- mData[,3]
 #' model = ma_dichotomous_fit(D,Y,N)
-#' }
+#' summary(model)
 #' @export
 ma_dichotomous_fit <- function(D,Y,N,model_list=integer(0), fit_type = "laplace",
                               BMD_TYPE = "extra",

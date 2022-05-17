@@ -47,12 +47,19 @@ ma_dichotomous_fit(
 }
 \value{
 a model object containing a list of single models
+\itemize{
+ \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
+        is the number of models in the model average.  For each \code{X}, this is an individual model
+        fit identical to what is returned in `\code{single_continuous_fit}.'
+ \item \code{ma_bmd}: The CDF of the model averaged BMD distribution. 
+ \item \code{posterior_probs}: The posterior model probabilities used in the MA. 
+ \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals. 
+}
 }
 \description{
 Fit a model averaged dichotomous BMD model.
 }
 \examples{
-\dontrun{
 mData <- matrix(c(0, 2,50,
                   1, 2,50,
                   3, 10, 50,
@@ -63,5 +70,5 @@ D <- mData[,1]
 Y <- mData[,2]
 N <- mData[,3]
 model = ma_dichotomous_fit(D,Y,N)
-}
+summary(model)
 }

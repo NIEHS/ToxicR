@@ -56,6 +56,12 @@
 #'    \item \code{options}:   Options used in the fitting procedure.
 #'    \item \code{data}:     The data used in the fit. 
 #'    \item \code{transformed}: Are the data \eqn{\log(x+\sqrt{x^2+1})} transformed? 
+#'    \itemize{
+#'        When MCMC is specified, an additional variable \code{mcmc_result} 
+#'        has the following two variables:
+#'        \item \code{PARM_samples}:  matrix of parameter samples. 
+#'        \item \code{BMD_samples}: vector of BMD sampled values. 
+#'    }
 #' }
 #' 
 #' @examples 
@@ -68,7 +74,7 @@
 #' model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMD_TYPE="sd", BMR=1, ewald = TRUE,
 #'                              distribution = "normal",fit_type="laplace",model_type = "hill")
 #' 
-#' 
+#' summary(model)
 single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                                    prior=NA, BMD_TYPE = "sd", 
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
