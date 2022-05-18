@@ -15,16 +15,13 @@
 #*HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
 #*CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 #*OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#* 
-#  * 
-#  */
-
 #' Fit a single continuous BMD model.
 #'
 #' @title single_continuous_fit - Fit a single continuous BMD model.
 #' @param D doses matrix
 #' @param Y response matrix
-#' @param model_type Mean model. 
+#' @param model_type Mean model. It should be one of 
+#'      \code{"hill","exp-3","exp-5","power","polynomial"}
 #' @param fit_type the method used to fit (laplace, mle, or mcmc)
 #' @param prior Prior / model for the continuous fit. If this is specified, it overrides the parameters 'model_type' and 'distribution.' 
 #' @param BMD_TYPE BMD_TYPE specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used. \cr
@@ -41,7 +38,28 @@
 #' @param distribution The underlying distribution used as the data distribution. 
 #' @param ewald perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)
 #' @param transform Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.
-#' @return a model object
+#' @return Returns a model object class with the following structure:
+#' \itemize{
+#'    \item \code{full_model}:  The model along with the likelihood distribution. 
+#'    \item \code{bmd}:  A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
+#'    \item \code{parameters}: The parameter estimates produced by the procedure, which are relative to the model '
+#'                             given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(sigma^2)}.
+#'    \item \code{covariance}: The variance-covariance matrix for the parameters.  
+#'    \item \code{bmd_dis}:  Quantiles for the BMD distribution. 
+#'    \item \code{maximum}:  The maximum value of the likelihod/posterior. 
+#'    \item \code{Deviance}:  An array used to compute the analysis of deviance table. 
+#'    \item \code{prior}:     This value gives the prior for the Bayesian analysis. 
+#'    \item \code{model}:     Parameter specifies t mean model used. 
+#'    \item \code{options}:   Options used in the fitting procedure.
+#'    \item \code{data}:     The data used in the fit. 
+#'    \item \code{transformed}: Are the data \eqn{\log(x+\sqrt{x^2+1})} transformed? 
+#'    \itemize{
+#'        When MCMC is specified, an additional variable \code{mcmc_result} 
+#'        has the following two variables:
+#'        \item \code{PARM_samples}:  matrix of parameter samples. 
+#'        \item \code{BMD_samples}: vector of BMD sampled values. 
+#'    }
+#' }
 #' 
 #' @examples 
 #' M2           <- matrix(0,nrow=5,ncol=4)
@@ -53,7 +71,7 @@
 #' model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMD_TYPE="sd", BMR=1, ewald = TRUE,
 #'                              distribution = "normal",fit_type="laplace",model_type = "hill")
 #' 
-#' @export
+#' summary(model)
 single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                                    prior=NA, BMD_TYPE = "sd", 
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
@@ -313,47 +331,3 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       return (rvals)
     }
 }
-# 
-# print.BMDcont_fit_MCMC<-function(x,...){
-#   p = x
-#   BMDtype <- c('Absolute Deviation','Standard Deviation','Relative Deviation','Hybrid')
-#   
-#   
-#   cat ("Benchmark Dose Estimates using MCMC. \n")
-#   cat (sprintf("Continuous %s BMD: BMRF-%1.2f\n",BMDtype[p$options[1]],p$options[2]))
-#   cat (sprintf("Model Type: %s\n",p$model))
-#   cat ("BMD  (BMDL,BMDU) \n")
-#   cat ("---------------------\n")
-#   m <- mean(p$BMD)
-#   x <- quantile(p$BMD,c(p$options[4],1-p$options[4]))
-#   cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",m,x[1],x[2],100*(1-2*p$options[4]),"% 2-sided Confidence Interval"))
-# }
-# 
-# print.BMDcont_fit_laplace<-function(x,...){
-#   p = x
-#   BMDtype <- c('Absolute Deviation','Standard Deviation','Relative Deviation','Hybrid')
-#   
-#   cat ("Benchmark Dose Estimates using Laplace \n")
-#   cat ("approximation to the Posterior\n")
-#   cat (sprintf("Continuous %s BMD: BMRF-%1.2f\n",BMDtype[p$options[1]],p$options[2]))
-#   cat (sprintf("Model Type: %s\n",p$model))
-#   cat ("BMD  (BMDL,BMDU) \n")
-#   cat ("---------------------\n")
-#   cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",p$bmd[1],p$bmd[2],p$bmd[3],100*(1-2*p$options[4]),"% 2-sided Confidence Interval"))
-# }
-
-# print.BMDcont_fit_mle<-function(x,...){
-#   p = x
-#   BMDtype <- c('Absolute Deviation','Standard Deviation','Relative Deviation','Hybrid')
-#   
-#   cat ("Benchmark Dose Estimates using MLE \n")
-#   cat (sprintf("Continuous %s BMD: BMRF-%1.2f\n",BMDtype[p$options[1]],p$options[2]))
-#   
-#   cat (sprintf("Model Type: %s\n",p$model))
-#   cat ("BMD  (BMDL,BMDU) \n")
-#   cat ("---------------------\n")
-#   cat (sprintf("%1.2f (%1.2f,%1.2f)\n%1.2f%s\n",p$bmd[1],p$bmd[2],p$bmd[3],100*(1-2*p$options[4]),"% 2-sided Confidence Interval"))
-# }
-
-
-

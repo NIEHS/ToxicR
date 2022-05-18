@@ -16,7 +16,8 @@ create_prior_list(x1, x2, ...)
 \item{...}{Aditional arguments}
 }
 \value{
-new BMDprior list.
+new BMDprior list. This object is essentailly a matrix where each
+row is  an element defined by a prior object (e.g., normprior or lnormprior).
 }
 \description{
 create_prior_lists .. Given priors 

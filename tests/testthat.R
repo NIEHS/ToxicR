@@ -1,2 +1,2 @@
 library(testthat)
-test_check("ToxicR")
+test_check("ToxicR",dir = tempdir())

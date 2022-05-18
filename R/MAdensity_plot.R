@@ -3,8 +3,9 @@
 #'
 #' @title MAdensity_plot - Create a density plot from a model averaged model.
 #' @param A the model averaged model to plot
+#' @return Returns a \code{ggplot2} graphics object. 
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #' doses  <- cbind(c(0,25,50,100,200))
 #' y <- cbind(c(6,5.2,2.4,1.1,0.75),
 #'                 c(20,20,19,20,20),
@@ -31,7 +32,7 @@ MAdensity_plot <- function (A){
   data<-A$Individual_Model_1$data
   doses<-data[,1]
   
-  # Needs to be fixed the MA model fitting result print
+  
   
   t_combine<-NA
   
@@ -535,11 +536,6 @@ MAdensity_plot <- function (A){
   }
 
   
-  # for (i in 1:length(A$Individual_Model_1$mcmc_result$BMD_samples)){
-  #   j<-sample(nrow(df_samples), size=1, replace=TRUE)
-  #   print(i)
-  #   print(df_samples[j,idx[i]])
-  # }  
 
   BMD_MA<-data.frame(BMD_MA)
   
@@ -568,42 +564,7 @@ MAdensity_plot <- function (A){
   
   
   p2<-p+theme(legend.position="none", axis.text.y=element_text(size=12))
-  # stat_density_ridges(data=t_combine3, aes(x=X1, y=fct_reorder(X2,X3,.desc=T), group=X2,fill = factor(stat(quantile))),
-  #                     geom = "density_ridges_gradient",
-  #                     calc_ecdf = TRUE, quantiles = c(0.025, 0.975),scale=0.9
-  # )+ scale_fill_manual(
-  #   name = "factor(stat(quantile))",
-  #   values = c("#FF0000A0", "NA", "#FF0000A0"),
-  #   labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
-  # )+
   
-  
-  p2
-  # Return output
-  
-  # p<-ggplot()+
-  #   stat_density_ridges(data=t_combine3, aes(x=X1, y=fct_reorder(X2,X3,.desc=T),alpha=sqrt(X3)),
-  #                       calc_ecdf=TRUE,quantiles=c(0.025,0.975),na.rm=T,quantile_lines=T,fill="blue",scale=0.5)+
-  #   xlim(c(0,quantile(t_combine3$X1,0.999)))+
-  #   geom_vline(xintercept = A$bmd[1],linetype="longdash")+
-  #   scale_fill_manual(
-  #     name = "Probability",
-  #     values = c("#FF0000A0", "#A0A0A0A0", "#FF0000A0"),
-  #     labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
-  #   )+
-  #   labs(x="Dose Level (Dotted Line : MA BMD)",y="", title="Density plots for each fitted model (Fit type: MCMC)")+theme_classic()
-  # 
-  # 
-  # p2<-p+
-  #   stat_density_ridges(data=t_combine3, aes(x=X1, y=fct_reorder(X2,X3,.desc=T), fill = factor(stat(quantile))),
-  #                       geom = "density_ridges_gradient",
-  #                       calc_ecdf = TRUE, quantiles = c(0.025, 0.975), scale=0.5
-  #   )+ scale_fill_manual(
-  #     name = "Probability",
-  #     values = c("#FF0000A0", "NA", "#FF0000A0"),
-  #     labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
-  #   )+theme(legend.position="none")
-  # 
   
   return(p2) # Return output
   

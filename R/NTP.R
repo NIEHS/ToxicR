@@ -88,7 +88,7 @@
 ## ----------------------
 ## 	POLYK-TEST
 ## ----------------------
-#' @title Poly-k trend test
+#' @title Poly-k test
 #' This function implements the NTP's polyK trend test.
 #' @param dose An equation of the form \eqn{Y \sim X.} Here the variable
 #' \eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
@@ -99,7 +99,8 @@
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
 #' @return The results of a Williams trend test for each level in dose_name.
 #' More information on this procedure at: \doi{10.2307/2531856} and \doi{10.2307/2532200}
-
+#' This procedure returns a vector of three p-values for the poly-1.5, poly-3, and poly-6 test
+#' respectively.  
 #' @examples
 #' ntp_polyk(ntp_599_female$dose,ntp_599_female$adenoma,ntp_599_female$days_on_study)
 ntp_polyk <- function(dose,tumor,daysOnStudy){
@@ -121,16 +122,20 @@ ntp_polyk <- function(dose,tumor,daysOnStudy){
         stop("There is an NA in the data.")
      }
      result <- .polykCPP(dose,tumor,daysOnStudy)
-
-     message("The results of the Poly-K test for trend.\n")
-     cat(sprintf("Poly-1.5 P-value = %1.4f\n",result[1]))
-     cat(sprintf("Poly-3   P-value = %1.4f\n",result[2]))
-     cat(sprintf("Poly-6   P-value = %1.4f\n",result[3]))
+    
      result <- as.matrix(result)
      row.names(result)<-c("Poly 1.5","Poly-3", "Poly-6")
+     class(result)    <- "ntp.polyk" 
      return(result)
 }
 
+.print_polyk_ntp <-function(x, ...){
+  result <- x
+   cat("The results of the Poly-K test for trend.\n")
+   cat(sprintf("Poly-1.5 P-value = %1.4f\n",result[1]))
+   cat(sprintf("Poly-3   P-value = %1.4f\n",result[2]))
+   cat(sprintf("Poly-6   P-value = %1.4f\n",result[3]))
+}
 ## -----------------------------------------------------------
 ## JONCKHEERE'S TEST 
 ## ----------------Changelog----------------------------------
@@ -329,6 +334,14 @@ ntp_jonckeere <- function(formula, data, dose_name="dose", pair = 'Williams' )
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
 #' @return The results of a Williams trend test for each level in \eqn{dose_name}.
 #' For more information on the Williams trend test: \doi{10.2307/2528930}
+#' #' \itemize{
+#'  \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
+#'  \item \code{dose:} the dose groups relative to control. 
+#'  \item \code{willStat}: Value of the Shirley test statistic. 
+#'  \item \code{mult_comp_signif}: Test's significance as 0, 1, or 2 which is not-significant, 
+#'  significant at the 0.05% level and significant at the 0.01% level. 
+#'  \item \code{mult_comp_test}: The type of test, i.e. "William"
+#' }
 #' @examples
 #'
 #' a = ntp_williams(weight ~ sex, data=ntp_weight_data) 
@@ -993,7 +1006,15 @@ ntp_dunnett <- function(formula, data,dose_name = "dose"){
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
 #' @return The results of a non-parametric Shirley's isotone test for trend on
 #' each level in \eqn{dose_name}. For more information see: \doi{10.2307/2529789}
-#' 
+#' The returned list contains: 
+#' \itemize{
+#'  \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
+#'  \item \code{dose:} the dose groups relative to control. 
+#'  \item \code{testStats}: Value of the Shirley test statistic. 
+#'  \item \code{mult_comp_signif}: Test's significance as 0, 1, or 2 which is not-significant, 
+#'  significant at the 0.05% level and significant at the 0.01% level. 
+#'  \item \code{mult_comp_test}: The type of test, i.e. "SHIRLEY"
+#' }
 #' @examples 
 #' a = ntp_shirley(weight ~ sex, data=ntp_weight_data)
 #' summary(a)

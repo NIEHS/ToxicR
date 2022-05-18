@@ -27,7 +27,8 @@ single_continuous_fit(
 
 \item{Y}{response matrix}
 
-\item{model_type}{Mean model.}
+\item{model_type}{Mean model. It should be one of 
+\code{"hill","exp-3","exp-5","power","polynomial"}}
 
 \item{fit_type}{the method used to fit (laplace, mle, or mcmc)}
 
@@ -58,7 +59,28 @@ single_continuous_fit(
 \item{transform}{Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.}
 }
 \value{
-a model object
+Returns a model object class with the following structure:
+\itemize{
+   \item \code{full_model}:  The model along with the likelihood distribution. 
+   \item \code{bmd}:  A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
+   \item \code{parameters}: The parameter estimates produced by the procedure, which are relative to the model '
+                            given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(sigma^2)}.
+   \item \code{covariance}: The variance-covariance matrix for the parameters.  
+   \item \code{bmd_dis}:  Quantiles for the BMD distribution. 
+   \item \code{maximum}:  The maximum value of the likelihod/posterior. 
+   \item \code{Deviance}:  An array used to compute the analysis of deviance table. 
+   \item \code{prior}:     This value gives the prior for the Bayesian analysis. 
+   \item \code{model}:     Parameter specifies t mean model used. 
+   \item \code{options}:   Options used in the fitting procedure.
+   \item \code{data}:     The data used in the fit. 
+   \item \code{transformed}: Are the data \eqn{\log(x+\sqrt{x^2+1})} transformed? 
+   \itemize{
+       When MCMC is specified, an additional variable \code{mcmc_result} 
+       has the following two variables:
+       \item \code{PARM_samples}:  matrix of parameter samples. 
+       \item \code{BMD_samples}: vector of BMD sampled values. 
+   }
+}
 }
 \description{
 Fit a single continuous BMD model.
@@ -73,4 +95,5 @@ M2[,4] <- c(1.2,1.1,0.81,0.74,0.66)
 model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMD_TYPE="sd", BMR=1, ewald = TRUE,
                              distribution = "normal",fit_type="laplace",model_type = "hill")
 
+summary(model)
 }

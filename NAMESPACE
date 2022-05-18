@@ -29,10 +29,7 @@ import(ggridges)
 #register all of the S3 methods for the print commands
 #and the plot commands etc. 
 
-#S3method(print, BMD_Bayes_dichotomous_model, .print.BMD_Bayes_model)
-#S3method(print, BMD_Bayes_continuous_model, .print.BMD_Bayes_model)
-#S3method(print, BMD_CDF, .print.BMD_CDF)
-#S3method(print, BMDdich_fit, .print.BMDdich_fit)
+S3method(print, ntp.polyk, .print_polyk_ntp )
 
 # Summary Methods
 S3method(summary, BMDcont_fit_maximized ,.summary_continuous_max)

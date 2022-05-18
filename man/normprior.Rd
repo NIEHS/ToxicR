@@ -18,7 +18,9 @@ To make sure it is a fully normal prior, make lb small relative to the mean/sd.}
 To make sure it is a fully normal prior, make ub large relative to the mean/sd.}
 }
 \value{
-a normal prior model object
+a normal prior model object.  This object essentially a vector with
+the first element as 1 (for normal), the second element the mean, the third
+element the variance, the fourth and fifth elements the lower and upper bounds, respectively.
 }
 \description{
 Specify a normal prior for a ToxicR Bayesian model fit.
