@@ -1,12 +1,18 @@
 Package: ToxicR
 Type: Package
-Title: Analyzing Toxicology Dose-Response Data in R
+Title: Analyzing Toxicology Dose-Response Data
 Version: 22.5
 Date: 2022-05-31
-Author: NIEHS-BCBB 
+Author: Matt Wheeler [aut, cre] (Wrote all C++ code in ToxicR/src the majority of the R interface), 
+    Sooyeong Lim [aut] (Wrote plot functionality), Eric Wimberly [ctb] (Wrote test functionality in ToxicR/test),
+    Keith Shockley [com] (Helped compile NTP_ algorithms),
+    Jennifer Fostel [com] (Helped compile NTP_ algorithms),
+    Steven G. Johnson [aut] (author of the NLopt C library),
+    Aymeric Stamm [ctb] (Maintainer of nloptr Package Library 2.0.1 from which all nlopt compile scripts were taken, i.e., file in ToxicR/tools and ToxicR/src/scripts), 
+    United States Department of Health and Human Services [cph] (Holds  Copyright for all code in /R and /src directory except the nlopt code and /ToxicR/src/scripts)
 Maintainer: Matt Wheeler <matt.wheeler@nih.gov>
-Description:  Toxicology routines for analyzing dose-response data include dose-response analysis and trend tests.
-    These methods are based upon the US EPA's benchmark dose software 3.  Methods have
+Description:  Toxicology routines for analyzing dose-response data include dose-response analysis 
+    and trend tests. Dose-Response methods are based upon the US EPA's benchmark dose software 3.  Methods have
     been extended to include additional functionality based on World Health Organization 
     guidelines.  It further supports the European Food Safety Authority's 
     draft guidance on model averaging. 
