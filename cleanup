@@ -1,5 +1,5 @@
 #!/bin/sh
-
+rm -rf inst/include
 rm -f src/*.o
 rm -f src/*.so
 rm -f src/polyK/*.o

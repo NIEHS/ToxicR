@@ -2882,7 +2882,6 @@ void continuous_expectation( const continuous_analysis *CA, const continuous_mod
           neg_like = likelihood_lnhill.negLogLikelihood(theta); 
           break; 
       case cont_model::exp_3:
-      
 
         if (CA->isIncreasing){
           mean = likelihood_lnexp3U.mean(theta,myX); 

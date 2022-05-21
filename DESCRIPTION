@@ -3,14 +3,43 @@ Type: Package
 Title: Analyzing Toxicology Dose-Response Data
 Version: 22.5
 Date: 2022-05-31
+Authors@R:
+    c(
+    person(given = "Matt",
+           family = "Wheeler",
+           role = c("aut", "cre"),
+           email = "matt.wheeler@nih.gov",
+           comment = c(ORCID = "0000-0002-8242-2391")),
+    person(given = "Sooyeong",
+           family = "Lim",
+           role = "aut"),
+    person(given ="Eric",
+           family="Wimberly",
+           role = "ctb"),
+    person(given = "Keith",
+           family = "Shockley",
+           role = "com"),
+    person(given = "Jennifer",
+           family = "Fostel",
+           role = "ctb"),
+    person(given = "Steven",
+           family = "Johnson",
+           role = "cph",
+           comment ="Author of NLOPT"),
+    person(given = "Aymeric",
+           family = "Stamm",
+           role = "cph",
+           comment ="maintainer of nloptr Packag 2.0.1 from which all compile scripts were taken."),
+    person("U.S. Dept. Health and Human Services",
+           role="cph",
+           comment ="Owns Copyright for all ToxicR code outside NLOPT and nloptr scripts")
+           )
 Author: Matt Wheeler [aut, cre] (Wrote all C++ code in ToxicR/src the majority of the R interface), 
-    Sooyeong Lim [aut] (Wrote plot functionality), Eric Wimberly [ctb] (Wrote test functionality in ToxicR/test),
-    Keith Shockley [com] (Helped compile NTP_ algorithms),
-    Jennifer Fostel [com] (Helped compile NTP_ algorithms),
-    Steven G. Johnson [aut] (author of the NLopt C library),
-    Aymeric Stamm [ctb] (Maintainer of nloptr Package Library 2.0.1 from which all nlopt compile scripts were taken, i.e., file in ToxicR/tools and ToxicR/src/scripts), 
-    United States Department of Health and Human Services [cph] (Holds  Copyright for all code in /R and /src directory except the nlopt code and /ToxicR/src/scripts)
+        Sooyeong Lim [aut] (Wrote plot functionality), Eric Wimberly [ctb] (Wrote test functionality in ToxicR/test),
+        Keith Shockley [com]  (Helped compile NTP_ algorithms),
+        Jennifer Fostel [com] (Helped compile NTP_ algorithms)
 Maintainer: Matt Wheeler <matt.wheeler@nih.gov>
+Copyright: file inst/COPYRIGHTS 
 Description:  Toxicology routines for analyzing dose-response data include dose-response analysis 
     and trend tests. Dose-Response methods are based upon the US EPA's benchmark dose software 3.  Methods have
     been extended to include additional functionality based on World Health Organization 
@@ -18,7 +47,7 @@ Description:  Toxicology routines for analyzing dose-response data include dose-
     draft guidance on model averaging. 
 Depends:
     R (>= 4.1.0)
-License: MIT + file LICENSE 
+License: LGPL (>= 3)
 URL:  https://github.com/NIEHS/ToxicR
 LazyData: true
 Imports: Rcpp (>= 1.0.0), ggplot2 (>= 3.3.2), shiny (>= 1.5.0),  coda (>= 0.19-4),
