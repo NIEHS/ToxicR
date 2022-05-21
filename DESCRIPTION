@@ -24,13 +24,13 @@ Authors@R:
            role = "ctb"),
     person(given = "Steven",
            family = "Johnson",
-           role = "cph",
+           role = "ctb",
            comment ="Author of NLOPT"),
     person(given = "Aymeric",
            family = "Stamm",
-           role = "cph",
+           role = "ctb",
            comment ="maintainer of nloptr Packag 2.0.1 from which all compile scripts were taken."),
-    person("U.S. Dept. Health and Human Services",
+    person("U.S. Deptartment of Health and Human Services",
            role="cph",
            comment ="Owns Copyright for all ToxicR code outside NLOPT and nloptr scripts")
            )

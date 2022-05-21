@@ -1,10 +1,32 @@
-The code distributed in ToxicR comes from different sources with various licenses. 
+The code distributed in ToxicR comes from different sources with various licenses. Because of this
+the package is released under the GNU Lesser General Public License <https://www.gnu.org/licenses/lgpl-3.0.en.html> to satisfy all license requirements.  Some components can be used under the more permissive MIT
+license. Each component is described below: 
+
+NLOPT
+----------------------
 
 The nlopt library,  provided in the file src/nlopt-src.tar.gz, is distributed under the GNU Lesser General Public License <https://www.gnu.org/licenses/lgpl-3.0.en.html>.
 
-The scripts in the directories src/scripts and tools were derived from the R package nloptr and are distributed under the GNU Lesser General Public License <https://www.gnu.org/licenses/lgpl-3.0.en.html>.
+NLOPT install scripts
+----------------------
 
-All other source code was written by the U.S Department of Health and Human Services (U.S DHHS) employees. Consequently, the U.S. DHHS owns the copyright for this code, which is distributed under the MIT license. 
+The scripts in the directories ToxicR/src/scripts and ToxicR/tools were derived from the R package nloptr and are distributed under the GNU Lesser General Public License <https://www.gnu.org/licenses/lgpl-3.0.en.html>.
+
+ToxicR code NIEHS/NTP/DHHS
+--------------------------
+
+All official ToxicR source code was written by the U.S Department of Health and Human Services (U.S. DHHS) employees. Consequently, the U.S. DHHS owns the copyright for this code, which is distributed under the MIT license. 
+
+This code is located in the directories
+
+ToxicR/src  - This includes all files other than "nlopt-src.tar.gz."
+ToxicR/src/code_base
+ToxicR/src/include
+ToxicR/src/polyK
+ToxicR/R
+ToxicR/test
+
+and is under the MIT liscence. 
 
 Copyright <2022> <US Department of Health and Human Services>
 
