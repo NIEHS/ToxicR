@@ -21,30 +21,44 @@ Authors@R:
            role = "com"),
     person(given = "Jennifer",
            family = "Fostel",
-           role = "ctb"),
+           role = "com"),
+    person(given="Lonlong",
+           family="Yang",
+           role="ctb",
+           comment="Modfied Cochran-Armitage test."),
+    person(given = "Dawan",
+           family = "Taley",
+           role = "com"),
+    person(given = "Cari",
+           family = "Martini",
+           role   = "com"),
+    person(given = "Ashwin",
+           family = "Raghuraman",
+           role   = "ctb",
+           comment = "Modified code for (Jonckheere, Williams etc.) to make them  standalone functions."),
     person(given = "Steven",
            family = "Johnson",
            role = "ctb",
-           comment ="Author of NLOPT"),
+           comment ="Author of NLOPT."),
     person(given = "Aymeric",
            family = "Stamm",
            role = "ctb",
-           comment ="maintainer of nloptr Packag 2.0.1 from which all compile scripts were taken."),
+           comment ="Maintainer of nloptr Packag 2.0.1 from which all compile scripts were taken."),
     person("U.S. Deptartment of Health and Human Services",
            role="cph",
-           comment ="Owns Copyright for all ToxicR code outside NLOPT and nloptr scripts")
+           comment ="Owns Copyright for all ToxicR code outside NLOPT and nloptr scripts.")
            )
-Author: Matt Wheeler [aut, cre] (Wrote all C++ code in ToxicR/src the majority of the R interface), 
-        Sooyeong Lim [aut] (Wrote plot functionality), Eric Wimberly [ctb] (Wrote test functionality in ToxicR/test),
-        Keith Shockley [com]  (Helped compile NTP_ algorithms),
-        Jennifer Fostel [com] (Helped compile NTP_ algorithms)
 Maintainer: Matt Wheeler <matt.wheeler@nih.gov>
 Copyright: file inst/COPYRIGHTS 
 Description:  Toxicology routines for analyzing dose-response data include dose-response analysis 
     and trend tests. Dose-Response methods are based upon the US EPA's benchmark dose software 3.  Methods have
     been extended to include additional functionality based on World Health Organization 
     guidelines.  It further supports the European Food Safety Authority's 
-    draft guidance on model averaging. 
+    draft guidance on model averaging. The dose-response methods and datasets used in this package are 
+    described in Wheeler et al. (2019) <doi:10.1111/risa.13218>, Wheeler et al. (2020) <doi:10.1111/risa.13537>,
+    and Wheeler et al. (2022) <doi:10.1002/env.2728>.  NTP routines are described in 
+    Bailer and Portier (1988) <doi:10.2307/2531856>, Bieler and Williams (1993) <doi:10.2307/2532200>, 
+    Williams (1971) <doi:10.2307/2528930>, and Shirley (1977) <doi:10.2307/2529789>.
 Depends:
     R (>= 4.1.0)
 License: LGPL (>= 3)
