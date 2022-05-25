@@ -10,7 +10,8 @@ create_continuous_prior(prior_list, model, distribution, deg = 2)
 \arguments{
 \item{prior_list}{First Prior}
 
-\item{model}{Model to be used}
+\item{model}{Model to be used
+one of \code{"hill","exp-3","exp-5","power","polynomial"}}
 
 \item{distribution}{- Normal "normal", Normal non-constant variance "normal-ncv", or
 log-normal "lognormal"}
@@ -18,7 +19,8 @@ log-normal "lognormal"}
 \item{deg}{- For polynomial models only, the degree of the polynomial.}
 }
 \value{
-new BMDprior list.
+new BMDprior list. This object is essentially a prior list constructed by 
+\code{create_prior_lists} with a model type and variance type.
 }
 \description{
 create_continuous_prior  Given priorlist, a model, 
