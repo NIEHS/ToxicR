@@ -1,11 +1,18 @@
-PKG_CXXFLAGS =  -I./ -I./code_base -I./include $(SHLIB_OPENMP_CXXFLAGS) -I$(R_TOOLS_SOFT)/include/nlopt 
--I$(R_TOOLS_SOFT)/include/gsl -DR_COMPILATION -ftree-vectorize -Os
-PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS) -lgsl -lgslcblas -lnlopt
+PKG_CPPFLAGS= -I../windows/gsl-2.7/include -I../windows/nlopt-2.7.1/include  -I./ -I./code_base  -I./include -DR_COMPILATION
+PKG_LIBS= -L../windows/nlopt-2.7.1/lib${R_ARCH}${CRT}  -L../windows/gsl-2.7/lib${R_ARCH}${CRT} -lgsl -lgslcblas -lnlopt
 
 POLYK        = $(wildcard polyK/*.cpp)
 MAIN         = $(wildcard *.cpp)
 MAIN_CODE    = $(wildcard code_base/*.cpp)
 OBJECTS      = $(MAIN:.cpp=.o) $(MAIN_CODE:.cpp=.o) $(POLYK:.cpp=.o)
+
+all: clean winlibs
+
+winlibs:
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R"
+
+clean:
+	rm -f $(SHLIB) $(OBJECTS) 
 
 
 
