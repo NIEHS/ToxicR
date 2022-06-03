@@ -44,6 +44,10 @@ Authors@R:
            family = "Stamm",
            role = "ctb",
            comment ="Maintainer of nloptr Packag 2.0.1 from which all compile scripts were taken."),
+    person(given = "Dirk",
+           family = "Eddelbuettel",
+           role = "ctb",
+           comment ="Contributed script to download GSL, as in RcppGSL."),
     person("U.S. Deptartment of Health and Human Services",
            role="cph",
            comment ="Owns Copyright for all ToxicR code outside NLOPT and nloptr scripts.")

@@ -2,6 +2,11 @@ The code distributed in ToxicR comes from different sources with various license
 the package is released under the GNU Lesser General Public License <https://www.gnu.org/licenses/lgpl-3.0.en.html> to satisfy all license requirements.  Some components can be used under the more permissive MIT
 license. Each component is described below: 
 
+GSL
+______________________
+The code snippit in ToxicR/tools/winlibs.R that downloads GSL 2.7 for Rtools 4.0 was copied from RcppGSL and is distributed under GPL 2 as given 
+in that package copyright. 
+
 NLOPT
 ----------------------
 
