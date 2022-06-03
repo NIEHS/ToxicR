@@ -406,10 +406,11 @@ double compute_lognormal_dof(Eigen::MatrixXd Y,Eigen::MatrixXd X, Eigen::MatrixX
       cv_t = X_cov_cont< lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat, NORMAL_EXP5_DOWN);
     }
   
-    Xd = Xd.block(0,0,Xd.rows(),4); 
-   
+    Eigen::MatrixXd temp_Xd = Xd.block(0,0,Xd.rows(),4); 
+    Xd = temp_Xd; 
     pr   =  X_logPrior<IDPrior>(estimate,prior); 
-    pr = pr.block(0,0,4,4); 
+    temp_Xd  = pr.block(0,0,4,4); 
+    pr = temp_Xd; 
     if( fabs(pr.diagonal().array().sum()) == 0){
       DOF = 4.0; 
     }else{

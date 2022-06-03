@@ -237,8 +237,61 @@ List run_continuous_single(IntegerVector model,
          anal.sd[i]      = Y(i,2); 
       }
     }
+    ////////////////////////////////////
+    //////////////////////////////////////////
+    /// Set up the analysis
+    ////////////////////////////////////////////////
+    continuous_analysis anal2; 
+    anal2.Y       =    new double[Y.rows()]; 
+    anal2.n       =    Y.rows(); 
+    anal2.n_group =    new double[Y.rows()]; 
+    anal2.sd      =    new double[Y.rows()]; 
+    anal2.doses   =    new double[Y.rows()]; 
+    anal2.model   =    (cont_model) model[0]; 
+    anal2.disttype     = dist_type[0]; 
+    anal2.isIncreasing = is_increasing; 
+    anal2.alpha        = 0.005; //alpha for analyses; 
+    anal2.BMD_type     = riskType; 
+    anal2.BMR          = bmrf; 
+    anal2.samples      = samples; 
+    anal2.tail_prob    = tail_p; 
+    anal2.suff_stat    = Y.cols()==3;
+    anal2.parms        = prior.rows();
+    anal2.prior_cols   = prior.cols(); 
+    anal2.degree       = 0;
+    anal2.transform_dose = transform; 
+    anal2.prior   = new double[prior.rows()*prior.cols()]; 
+    cp_prior(prior,anal2.prior);
+    //
+    // Check on the polynomial stuff
+    //
+
+    if (anal2.model == cont_model::polynomial){
+      // figure out the degree
+      if (anal2.disttype == distribution::normal ){
+        anal2.degree = anal2.parms -2; 
+      }else if (anal2.disttype == distribution::normal_ncv){
+        anal2.degree = anal2.parms -3; 
+      }else{
+        //throw an error! can'd do log-normal polynomial
+        stop("Polynomial-Log-normal models are not allowed.\n Please choose normal or normal non-constant variance.");
+      }
+      
+    }
+   
+   
+    for (int i = 0; i < Y.rows(); i++){
+      anal2.Y[i] = Y(i,0); 
+      anal2.doses[i] = X(i,0); 
+      if (Y.cols() == 3){ //sufficient statistics
+         anal2.n_group[i] = Y(i,1);
+         anal2.sd[i]      = Y(i,2); 
+      }
+    }
     
     
+    ////////////////////////////////////
+
     ////////////////////////////////////
     continuous_model_result *result = new_continuous_model_result(anal.model,
                                                                   anal.parms,
@@ -259,11 +312,11 @@ List run_continuous_single(IntegerVector model,
         
         if (anal.disttype == distribution::log_normal){
         
-          estimate_log_normal_aod(&anal,
+          estimate_log_normal_aod(&anal2,
                                   &aod1);
         
         }else{
-          estimate_normal_aod(&anal,
+          estimate_normal_aod(&anal2,
                                 &aod1);
         }
         }
@@ -289,6 +342,7 @@ List run_continuous_single(IntegerVector model,
     delete[] exp_r.sd; 
     del_continuous_model_result(result); 
     del_continuous_analysis(anal);
+    del_continuous_analysis(anal2);
     ////////////////////////////////////
     return rV; 
     
