@@ -1,11 +1,5 @@
 context("Single Dichotomous Models MCMC")
 
-test_that("Hill", {
-     set.seed(5981)
-     mData <- build_single_dichotomous_dataset()
-     c = single_dichotomous_fit(mData[,1],mData[,2],mData[,3],model_type = "hill", fit_type = "mcmc")
-     validate_model(c,  "Model:  Hill" ,  c(-3.1514129532799, -0.542504910549596, 2.61668140290251, 1.38193548558345) ,  c(BMD = 3.22355133399257, BMDL = 1.32570638651708, BMDU = 7.2168846887097) )
-})
 
 test_that("Probit", {
      set.seed(5981)
