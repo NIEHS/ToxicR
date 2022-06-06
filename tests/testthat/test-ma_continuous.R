@@ -1,53 +1,35 @@
 context("MA Continuous Models")
 
-test_that("No Model List", {
-        set.seed(5981)
-        data <- build_ma_dataset()
-        y = data[["y"]]
-        doses = data[["doses"]]
-        AA <- ma_continuous_fit(as.matrix(doses), as.matrix(y),
-                                fit_type = "laplace", BMD_TYPE = 'sd', BMR = 1)
-        expect_equal(13, length(AA))
-        expect_equal(setNames(c(26.1, 13.1, 46.4), c("BMD", "BMDL", "BMDU")), AA$bmd, tolerance=10e-2)
-        expect_equal(c(0.020170794, 0.088721617, 0.007274817, 0.010060694, 0.429308134, 0.032407617, 0.068653807, 0.330598226, 0.010474859, 0.002329435), AA$posterior_probs, tolerance=10e-2)
-        #generate_validation_code(AA)
-        validate_model( AA$Individual_Model_1 ,  "Model: Hill Distribution: Normal" ,  c(459.967845943872, -161.008754551028, 27.5188401639968, 1.65424081942613, 7.98247151057799) ,  c(BMD = 18.2375333442782, BMDL = 10.8444280330944, BMDU = 31.4585711838948) )
-        validate_model( AA$Individual_Model_2 ,  "Model: Hill Distribution: Normal-NCV" ,  c(460.91986362233, -170.900638901152, 29.993036710078, 1.62508594445158, 1.77773636675909, -2.7526204573563) ,  c(BMD = 20.1864076616609, BMDL = 12.2303671904536, BMDU = 32.7000214684699) )
-        validate_model( AA$Individual_Model_3 ,  "Model: Exponential-3 Distribution: Normal" ,  c(452.251132237139, 0.00360797504540128, 0.88089759918846, 8.01713036177101) ,  c(BMD = 27.3068406619132, BMDL = 13.8392818225457, BMDU = 48.1885256719032) )
-        validate_model( AA$Individual_Model_4 ,  "Model: Exponential-3 Distribution: Normal-NCV" ,  c(453.72230059148, 0.00354755225529725, 0.858437854974876, 1.75670593800607, -2.57252569846925) ,  c(BMD = 28.7097525782883, BMDL = 15.0759417824207, BMDU = 48.2326956853754) )
-        validate_model( AA$Individual_Model_5 ,  "Model: Exponential-3 Distribution: Log-Normal" ,  c(447.444965882228, 0.00323898710616777, 0.834695165188957, -3.99674729819358) ,  c(BMD = 33.555762283504, BMDL = 14.2225167196148, BMDU = 48.7244905437359) )
-        validate_model( AA$Individual_Model_6 ,  "Model: Exponential-5 Distribution: Normal" ,  c(452.846141184847, 0.0118088430531916, -0.647844663710844, 1.03792464843229, 8.016117534184) ,  c(BMD = 26.0554229840636, BMDL = 14.0242097619719, BMDU = 45.6123344521286) )
-        validate_model( AA$Individual_Model_7 ,  "Model: Exponential-5 Distribution: Normal-NCV" ,  c(453.642251519102, 0.0139479436503198, -0.57553385098482, 1.08215857051091, 1.75451155533531, -2.58703430717675) ,  c(BMD = 27.2294450551271, BMDL = 15.1763420518202, BMDU = 27.7930945677683) )
-        validate_model( AA$Individual_Model_8 ,  "Model: Exponential-5 Distribution: Log-Normal" ,  c(447.941268941248, 0.0117667267210228, -0.624749228339207, 0.996583083830026, -4.01325233553182) ,  c(BMD = 31.3936345279217, BMDL = 14.3255087347062, BMDU = 45.7276526943185) )
-        validate_model( AA$Individual_Model_9 ,  "Model: Power Distribution: Normal" ,  c(449.719459940181, -3.01167900801319, 0.850410029789607, 8.04702514307978) ,  c(BMD = 31.0261725414404, BMDL = 15.718578354615, BMDU = 53.5077103803206) )
-        validate_model( AA$Individual_Model_10 ,  "Model: Power Distribution: Normal-NCV" ,  c(450.8323439329, -3.43254002670521, 0.822051300900347, 1.75784546770694, -2.56320443025547) ,  c(BMD = 32.2840716585567, BMDL = 17.0206144965613, BMDU = 53.1114395962907) )
-        
-})
 
-
+##
+# Change 6/5/2022: Changed E. Wimberly's test conditions. No longer having the same
+#                  test condition for all MA code. 
+##
 test_that("Laplace", {
      set.seed(5981)
      data <- build_ma_dataset()
      y = data[["y"]]
      doses = data[["doses"]]
      model_list <- build_model_list(y)
-     AA <- ma_continuous_fit(as.matrix(doses), as.matrix(y), model_list=model_list,
+     AA <- ma_continuous_fit(as.matrix(doses), as.matrix(y), 
                              fit_type = "laplace", BMD_TYPE = 'sd', BMR = 1)
      expect_equal(13, length(AA))
-     expect_equal(setNames(c(26.1, 13.1, 46.4), c("BMD", "BMDL", "BMDU")), AA$bmd, tolerance=10e-2)
-     expect_equal(c(0.020170794, 0.088721617, 0.007274817, 0.010060694, 0.429308134, 0.032407617, 0.068653807, 0.330598226, 0.010474859, 0.002329435), AA$posterior_probs, tolerance=10e-2)
+     expect_equal(setNames(c(8.568833,7.581585,9.725617), c("BMD", "BMDL", "BMDU")), AA$bmd, tolerance=10e-2)
+     expect_equal(c(  2.490478e-04,9.997242e-01,4.919926e-32,1.029411e-31,4.184972e-30,
+     0.068121e-08,2.383774e-05,2.865501e-06, 8.135752e-30,6.035466e-29), AA$posterior_probs, tolerance=10e-2)
      #generate_validation_code(AA)
-     validate_model( AA$Individual_Model_1 ,  "Model: Hill Distribution: Normal" ,  c(459.967845943872, -161.008754551028, 27.5188401639968, 1.65424081942613, 7.98247151057799) ,  c(BMD = 18.2375333442782, BMDL = 10.8444280330944, BMDU = 31.4585711838948) )
-     validate_model( AA$Individual_Model_2 ,  "Model: Hill Distribution: Normal-NCV" ,  c(460.91986362233, -170.900638901152, 29.993036710078, 1.62508594445158, 1.77773636675909, -2.7526204573563) ,  c(BMD = 20.1864076616609, BMDL = 12.2303671904536, BMDU = 32.7000214684699) )
-     validate_model( AA$Individual_Model_3 ,  "Model: Exponential-3 Distribution: Normal" ,  c(452.251132237139, 0.00360797504540128, 0.88089759918846, 8.01713036177101) ,  c(BMD = 27.3068406619132, BMDL = 13.8392818225457, BMDU = 48.1885256719032) )
-     validate_model( AA$Individual_Model_4 ,  "Model: Exponential-3 Distribution: Normal-NCV" ,  c(453.72230059148, 0.00354755225529725, 0.858437854974876, 1.75670593800607, -2.57252569846925) ,  c(BMD = 28.7097525782883, BMDL = 15.0759417824207, BMDU = 48.2326956853754) )
-     validate_model( AA$Individual_Model_5 ,  "Model: Exponential-3 Distribution: Log-Normal" ,  c(447.444965882228, 0.00323898710616777, 0.834695165188957, -3.99674729819358) ,  c(BMD = 33.555762283504, BMDL = 14.2225167196148, BMDU = 48.7244905437359) )
-     validate_model( AA$Individual_Model_6 ,  "Model: Exponential-5 Distribution: Normal" ,  c(452.846141184847, 0.0118088430531916, -0.647844663710844, 1.03792464843229, 8.016117534184) ,  c(BMD = 26.0554229840636, BMDL = 14.0242097619719, BMDU = 45.6123344521286) )
-     validate_model( AA$Individual_Model_7 ,  "Model: Exponential-5 Distribution: Normal-NCV" ,  c(453.642251519102, 0.0139479436503198, -0.57553385098482, 1.08215857051091, 1.75451155533531, -2.58703430717675) ,  c(BMD = 27.2294450551271, BMDL = 15.1763420518202, BMDU = 27.7930945677683) )
-     validate_model( AA$Individual_Model_8 ,  "Model: Exponential-5 Distribution: Log-Normal" ,  c(447.941268941248, 0.0117667267210228, -0.624749228339207, 0.996583083830026, -4.01325233553182) ,  c(BMD = 31.3936345279217, BMDL = 14.3255087347062, BMDU = 45.7276526943185) )
-     validate_model( AA$Individual_Model_9 ,  "Model: Power Distribution: Normal" ,  c(449.719459940181, -3.01167900801319, 0.850410029789607, 8.04702514307978) ,  c(BMD = 31.0261725414404, BMDL = 15.718578354615, BMDU = 53.5077103803206) )
-     validate_model( AA$Individual_Model_10 ,  "Model: Power Distribution: Normal-NCV" ,  c(450.8323439329, -3.43254002670521, 0.822051300900347, 1.75784546770694, -2.56320443025547) ,  c(BMD = 32.2840716585567, BMDL = 17.0206144965613, BMDU = 53.1114395962907) )
-     
+        validate_model( AA$Individual_Model_1 ,  "Model: Hill Distribution: Normal" ,  c(10.5364575359962, 10.1321968130315, 25.9553804649865, 2.9312534185233, -1.78360527954745) ,  c(BMD = 8.81292036977129, BMDL = 7.77360319250264, BMDU = 10.038830163013) )
+        validate_model( AA$Individual_Model_2 ,  "Model: Hill Distribution: Normal-NCV" ,  c(10.5387733317716, 10.1246980179567, 25.949625484858, 2.94190356756934, 0.217860255395499, -2.47791318851729) ,  c(BMD = 8.56879698769221, BMDL = 7.58530796701641, BMDU = 9.72728379864331) )
+        validate_model( AA$Individual_Model_3 ,  "Model: Exponential-3 Distribution: Normal" ,  c(9.88000042605503, 0.00606034009825435, 0.501143334846178, 0.667522743525469) ,  c(BMD = 2.90979295969009, BMDL = 1.48524034218829, BMDU = 5.6128456958154) )
+        validate_model( AA$Individual_Model_4 ,  "Model: Exponential-3 Distribution: Normal-NCV" ,  c(9.92091734166694, 0.00629062629297153, 0.526657833949637, 0.693441245848478, -1.1991037592188) ,  c(BMD = 2.64606848359108, BMDL = 1.38603949735297, BMDU = 5.00354043111249) )
+        validate_model( AA$Individual_Model_5 ,  "Model: Exponential-3 Distribution: Log-Normal" ,  c(10.0536071161962, 0.00671019726121126, 0.594642014334531, -4.71379467965956) ,  c(BMD = 2.83083096146584, BMDL = 1.55282174831324, BMDU = 5.14804808012108) )
+        validate_model( AA$Individual_Model_6 ,  "Model: Exponential-5 Distribution: Normal" ,  c(10.3572335733392, 0.0316363330323462, 0.678100646692081, 1.95623560832116, -1.52319151194146) ,  c(BMD = 6.66423290967941, BMDL = 5.69696817646146, BMDU = 7.88365455831351) )
+        validate_model( AA$Individual_Model_7 ,  "Model: Exponential-5 Distribution: Normal-NCV" ,  c(10.4105947833681, 0.0318987775736513, 0.669930155029355, 2.03111716938036, 0.470804360632926, -2.88253758052939) ,  c(BMD = 6.60052299499512, BMDL = 5.48245053502279, BMDU = 7.62693632073755) )
+        validate_model( AA$Individual_Model_8 ,  "Model: Exponential-5 Distribution: Log-Normal" ,  c(10.4453346497677, 0.0326706185835769, 0.661690178384068, 2.18753391383612, -6.9897057626201) ,  c(BMD = 6.47179484367371, BMDL = 5.45825730384399, BMDU = 7.81548945568862) )
+        validate_model( AA$Individual_Model_9 ,  "Model: Power Distribution: Normal" ,  c(9.81455751339419, 0.607478195907743, 0.642833313623578, 0.581187397105843) ,  c(BMD = 3.41244720522803, BMDL = 1.98026031114979, BMDU = 5.88759957647574) )
+        validate_model( AA$Individual_Model_10 ,  "Model: Power Distribution: Normal-NCV" ,  c(9.87814571011071, 0.528730524937364, 0.67558511920475, 0.687100269256969, -1.33060615543121) ,  c(BMD = 3.07466604865305, BMDL = 1.84384167291501, BMDU = 5.14769077561557) )
+
+    
 })
 
 

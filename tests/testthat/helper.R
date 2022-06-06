@@ -103,7 +103,7 @@ build_ma_dataset <- function(){
      doses <- rep(c(0,6.25,12.5,25,50,100),each=10)
      dosesq <- rep(c(0,6.25,12.5,25,50,100),each=30)
      
-     mean <- ToxicR:::.cont_hill_f(as.numeric(hill[2,]),doses)
+     mean <- ToxicR:::.cont_hill_f(as.numeric(hill[6,]),doses)
      y <- rinvgauss(length(mean),mean,18528.14)
      return(list(doses=doses, y=y))
 }
