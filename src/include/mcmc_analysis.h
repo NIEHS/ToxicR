@@ -85,6 +85,7 @@ mcmcSamples MCMC_bmd_analysis_DNC(Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::M
   rVal.map = 	oR.functionV;
   rVal.map_estimate = oR.max_parms;; 
   rVal.map_cov = model.varMatrix(oR.max_parms); 
+  rVal.isExtra = false; 
 
   int n = oR.max_parms.rows();
     //generate random univariate normals for the MCMC sampler
@@ -195,7 +196,7 @@ mcmcSamples mcmc_continuous(cBMDModel<LL, PR>  *model, int samples,
   } 
 
   mcmcSamples rVal;
-  
+  rVal.isExtra = false; 
   rVal.map = 	oR.functionV;
   rVal.map_estimate = oR.max_parms;; 
   rVal.map_cov = model->varMatrix(oR.max_parms); 
