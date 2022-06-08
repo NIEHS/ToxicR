@@ -32,7 +32,8 @@
   #include <Eigen/Dense>
 #endif
 
-struct mcmcSamples{
+class mcmcSamples{
+  public:
   /*******************
    *for model averaging
    *********************/
@@ -45,6 +46,11 @@ struct mcmcSamples{
   Eigen::MatrixXd log_posterior;
   double BMR;
   bool isExtra;
+  mcmcSamples(){
+    isExtra = true; 
+    map = 0; 
+    BMR = 0; 
+  }
 };
 
 #endif

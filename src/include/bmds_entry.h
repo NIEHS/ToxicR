@@ -253,6 +253,9 @@ struct MA_ModelInfo {
   int restriction;
   VarType_t varType;
   bool bLognormal;
+  MA_ModelInfo(){
+    bLognormal = false; 
+  }
 };
 
 struct MA_ModelOut {
