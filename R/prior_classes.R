@@ -292,8 +292,8 @@ create_prior_list <- function(x1,x2,...){
     prior <- create_dichotomous_prior(prior,"gamma")
   }
   if (dmodel == 3){ #LOGISTIC
-    prior <- create_prior_list(normprior(	0,	2,	-20,	20),
-                               lnormprior(0.1,	1,	0,	40))
+    prior <- create_prior_list(normprior(	0,	1,	-20,	20),
+                               lnormprior(0,	2,	0,	40))
     prior <- create_dichotomous_prior(prior,"logistic")
   }
   if (dmodel == 4){ #LOG-LOGISTIC
@@ -321,13 +321,13 @@ create_prior_list <- function(x1,x2,...){
     prior <- create_dichotomous_prior(prior,"multistage")
   }
   if (dmodel == 7){ #PROBIT
-    prior <- create_prior_list(normprior(	0,	2,	-20,	20),
-                               lnormprior(0.1,	1,	0,	40))
+    prior <- create_prior_list(normprior(	0,	1,	-20,	20),
+                               lnormprior(0,	2,	0,	40))
     prior <- create_dichotomous_prior(prior,"probit")
   }
   if (dmodel == 8){ #QLINEAR
     prior <- create_prior_list(normprior(	0,	2,	-20,	20),
-                               lnormprior(0.15,  1,	0,	18))
+                               lnormprior(0,  1,	0,	18))
     prior <- create_dichotomous_prior(prior,"qlinear")
   }
   if (dmodel == 9){ #WEIBULL
