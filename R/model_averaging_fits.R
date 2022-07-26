@@ -100,14 +100,14 @@ ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
                   if (distribution_list[ii] == "normal"){
                        PR$priors[nrow(PR$priors),2]   = log(mean(Y[,3])^2)
                   }else{
-                       PR$priors[nrow(PR$priors),2]   = log(mean(Y[1,])/mean(Y[,3])^2)
+                       PR$priors[nrow(PR$priors),2]   = log(abs(mean(Y[1,]))/mean(Y[,3])^2)
                   }
                  
            }else{
                   if (distribution_list[ii] == "normal"){
                     PR$priors[nrow(PR$priors),2]   = log(var(Y))
                   }else{
-                    PR$priors[nrow(PR$priors),2]   = log(mean(Y)/var(Y))
+                    PR$priors[nrow(PR$priors),2]   = log(abs(mean(Y))/var(Y))
                   }
            }
       }

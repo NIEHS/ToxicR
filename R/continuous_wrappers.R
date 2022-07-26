@@ -134,13 +134,13 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                 if (distribution == "normal"){
                      PR$priors[nrow(PR$priors),2]   = log(mean(Y[,3])^2)
                 }else{
-                     PR$priors[nrow(PR$priors),2]   = log(mean(Y[1,])/mean(Y[,3])^2)
+                     PR$priors[nrow(PR$priors),2]   = log(abs(mean(Y[1,]))/mean(Y[,3])^2)
                 }
            }else{ 
                   if (distribution == "normal"){
                     PR$priors[nrow(PR$priors),2]   = log(var(Y[,1]))
                   }else{
-                    PR$priors[nrow(PR$priors),2]   = log(mean(Y[,1])/var(Y[,1]))
+                    PR$priors[nrow(PR$priors),2]   = log(abs(mean(Y[,1]))/var(Y[,1]))
                   }
            }
       }
