@@ -404,6 +404,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   
   population.push_back(startV); 
   llist.push_back( M->negPenLike(test)); 
+  
   //
   // create the initial population of size (NI) random starting points for the genetic algorithm
   double initial_temp; 
@@ -591,6 +592,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   
    double t1 = M->negPenLike(test); 
    double t2 = M->negPenLike(startV); 
+  
    if (t2 < t1){ // the random search was no better than the first value. 
      test = startV; 
    }	
@@ -655,6 +657,12 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
       x[i] = startV(i,0);
     }
   }
+   for (int i = 0; i < x.size(); i++){
+      x[i] = startV(i,0);
+    }
+ 
+  
+
   int yy = x.size(); 
  
  
@@ -724,7 +732,7 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
     opt_ptr->set_upper_bounds(ub);
    // opt_ptr->set_ftol_rel(1e-8);
     opt_ptr->set_xtol_rel(1e-9);
-   // opt_ptr->set_initial_step(1e-5); 
+    opt_ptr->set_initial_step(1e-3); 
     opt_ptr->set_min_objective(neg_pen_likelihood<LL,PR>, M);
     
     ////////////////////////////////////////////////
@@ -768,7 +776,9 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
     }catch(...){
        
     } // catch
+ 
     
+
     DEBUG_CLOSE_LOG(file);
   } // for opt_iter
   

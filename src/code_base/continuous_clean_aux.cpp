@@ -97,7 +97,7 @@ Eigen::MatrixXd cleanSuffStat(Eigen::MatrixXd Y, Eigen::MatrixXd X, bool is_logN
   Y.col(2).array() = Y.col(2).array()/divisor; //divide sd; 
   if (is_logNormal){
     
-    Eigen::MatrixXd t1 = sqrt(log(1.0+pow(Y.col(2).array(),2)/Y.col(0).array())); 
+    Eigen::MatrixXd t1 = sqrt(log(1.0+pow(Y.col(2).array()/Y.col(0).array(),2))); 
     Eigen::MatrixXd t2 = log(Y.col(0).array())-pow(t1.array(),2)*0.5; 
     Y.col(0) = t2.array(); 
     Y.col(2) = t1.array(); 

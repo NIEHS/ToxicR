@@ -1025,7 +1025,7 @@ void estimate_ma_laplace(continuousMA_analysis *MA,
   Eigen::MatrixXd Y(n_rows,n_cols); 
   Eigen::MatrixXd X(n_rows,1); 
 
-  // copy the origional data
+  // copy the original data
   for (int i = 0; i < n_rows; i++){
     Y(i,0) = CA->Y[i]; 
     X(i,0) = CA->doses[i]; 
@@ -2110,14 +2110,13 @@ void estimate_sm_laplace(continuous_analysis *CA ,
   Eigen::MatrixXd SSTAT, SSTAT_LN, UX; 
   Eigen::MatrixXd Y_LN, Y_N;
   
- 
 
   if(!CA->suff_stat){
     //convert to sufficient statistics for speed if we can
     CA->suff_stat = convertSStat(Y, X, &SSTAT, &SSTAT_LN,&UX); 
     if (CA->suff_stat)// it can be converted
     {
-      X = UX; 
+      X = UX; // NOTE: UX is modified at line: CA->suff_stat = convertSStat(Y, X, &SSTAT, &SSTAT_LN,&UX); 
       Y_N = cleanSuffStat(SSTAT,UX,false);  
       Y_LN = cleanSuffStat(SSTAT_LN,UX,true); 
       orig_X = UX;  
@@ -2133,10 +2132,10 @@ void estimate_sm_laplace(continuous_analysis *CA ,
   }else{
     orig_Y = cleanSuffStat(Y,X,false,false); 
     orig_Y_LN = cleanSuffStat(Y,X,true,false);
-    SSTAT = cleanSuffStat(Y,X,false); 
-    SSTAT_LN = cleanSuffStat(Y,X,true);
     
-    
+    SSTAT = cleanSuffStat(Y,X,false,true); 
+    SSTAT_LN = cleanSuffStat(Y,X,true,true);
+   
     std::vector<double> tux = unique_list(X); 
     UX = Eigen::MatrixXd(tux.size(),1); 
     for (unsigned int i = 0; i < tux.size(); i++){
@@ -2147,6 +2146,7 @@ void estimate_sm_laplace(continuous_analysis *CA ,
     Y_LN = SSTAT_LN; 
   }
   
+  //fix  sufficient statistics stuff
   if (CA->suff_stat){
     X = UX; 
     
@@ -2187,14 +2187,6 @@ void estimate_sm_laplace(continuous_analysis *CA ,
   temp_init = temp_init.array(); 
   
   Eigen::MatrixXd init_opt; 
-
-  using std::chrono::high_resolution_clock;
-  using std::chrono::duration_cast;
-  using std::chrono::duration;
-  using std::chrono::milliseconds;
-  
-  /* Getting number of milliseconds as an integer. */
-  
   switch((cont_model)CA->model){
   case cont_model::funl:
  
@@ -2228,8 +2220,9 @@ void estimate_sm_laplace(continuous_analysis *CA ,
     break; 
   case cont_model::exp_3:
   case cont_model::exp_5:
-  
+    
     init_opt = CA->disttype == distribution::log_normal ?
+
     bmd_continuous_optimization<lognormalEXPONENTIAL_BMD_NC,IDPrior> (Y_LN, X, tprior, fixedB, fixedV,
                                                                       CA->disttype != distribution::normal_ncv, CA->isIncreasing,temp_init):
     bmd_continuous_optimization<normalEXPONENTIAL_BMD_NC,IDPrior>    (Y_N, X, tprior,  fixedB, fixedV, 
@@ -2267,6 +2260,7 @@ void estimate_sm_laplace(continuous_analysis *CA ,
   default:
     break; 
     
+
   }
  
  
@@ -2275,12 +2269,14 @@ void estimate_sm_laplace(continuous_analysis *CA ,
   
   if (CA->disttype == distribution::log_normal){
      if (CA->suff_stat ){
-      
+
       b = laplace_logNormal(orig_Y_LN, X,
                             tprior, CA->BMD_type, (cont_model)CA->model,
                             CA->isIncreasing, CA->BMR, 
                             CA->tail_prob,  
                             CA->alpha, 0.025,init_opt,isFast);
+
+    
     }else{
       
       b = laplace_logNormal(orig_Y_LN, X,
