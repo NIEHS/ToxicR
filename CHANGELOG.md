@@ -1,6 +1,24 @@
 # Changes
 
-## Version 22.05 (1.0.1)
+## Version 22.8.1.0.2
+
+### The following fixes are in version 1.0.2:
+	- Function 'single_continuous_fit' and 'ma_continuous_fit' changed error when defining default priors for
+	  'distribution=normal-ncv' when data are negative. Origionally the variance was described as mean(Y)/var(Y); 
+	  however, for negative means this causes NA error.  It is now defined as abs(mean(Y))/var(Y). 
+	- Log-normal distribution fits were incorrect when summerized data was used. The correct transformation on 
+	  summarized data are now performed.
+	- Changed default priors for dichotomous fits to be consistant with Wheeler et al. (2020). 
+
+### The following changes to fitting were made: 
+	- Changed MLE Polynomial fit behavior.  Now the terms up to the quadratic are constrained to be in the direction 
+	  of the response.  After this, i.e., degree >= 3, the parameters are unconstrained. 
+
+### Known Problems not yet fixed
+	- GoF for MA individual models not given. 
+	- GoF for dichotomous models with (0/1) data fails. 	
+
+## Version 22.5.1.0.1
 
 ### The following fixes are in version 1.0.1:
 
