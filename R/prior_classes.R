@@ -356,9 +356,17 @@ create_prior_list <- function(x1,x2,...){
       
       for (ii in 1:degree){
         if(is_increasing){
-          prior <- .combine_prior_lists(prior, normprior(0,5,0,1e6))
+          if (ii <= 2){
+            prior <- .combine_prior_lists(prior, normprior(0,5,0,1e6))
+          }else{
+            prior <- .combine_prior_lists(prior, normprior(0,5,-1e6,1e6))
+          }
         } else{
-          prior <- .combine_prior_lists(prior, normprior(0,5,-1e6,0))
+          if (ii <= 2){
+            prior <- .combine_prior_lists(prior, normprior(0,5,-1e6,0))
+          }else{
+            prior <- .combine_prior_lists(prior, normprior(0,5,-1e6,1e6))
+          }
         }
       }
       
@@ -372,9 +380,17 @@ create_prior_list <- function(x1,x2,...){
       
       for (ii in 1:degree){
         if(is_increasing){
-          prior <- .combine_prior_lists(prior, normprior(0,5,0,1e6))
+          if (ii <= 2){
+            prior <- .combine_prior_lists(prior, normprior(0,5,0,1e6))
+          }else{
+            prior <- .combine_prior_lists(prior, normprior(0,5,-1e6,1e6))
+          }
         } else{
-          prior <- .combine_prior_lists(prior, normprior(0,5,-1e6,0))
+          if (ii <= 2){
+            prior <- .combine_prior_lists(prior, normprior(0,5,-1e6,0))
+          }else{
+            prior <- .combine_prior_lists(prior, normprior(0,5,-1e6,1e6))
+          }
         }
       }
       prior <- .combine_prior_lists(prior, 

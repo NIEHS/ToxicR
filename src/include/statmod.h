@@ -657,10 +657,6 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
       x[i] = startV(i,0);
     }
   }
-   for (int i = 0; i < x.size(); i++){
-      x[i] = startV(i,0);
-    }
- 
   
 
   int yy = x.size(); 
@@ -732,7 +728,7 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
     opt_ptr->set_upper_bounds(ub);
    // opt_ptr->set_ftol_rel(1e-8);
     opt_ptr->set_xtol_rel(1e-9);
-    opt_ptr->set_initial_step(1e-3); 
+   // opt_ptr->set_initial_step(1e-3); 
     opt_ptr->set_min_objective(neg_pen_likelihood<LL,PR>, M);
     
     ////////////////////////////////////////////////
