@@ -21,7 +21,7 @@
 
 ## Version 22.5.1.0.1
 
-### The following fixes are in version 1.0.1:
+### The following fixes are in version 22.5.1.0.1:
 
 	- Function `single_continuous_fit' fixed prior issue with Log-Normal data, when sufficient statistics are given.
 	- Log-Normal deviance for Exponential 3/5 was producing incorrect values. Now reporting correct values. 
