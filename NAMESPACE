@@ -42,8 +42,11 @@ S3method(summary,BMDdich_fit_MCMC , .summary_continuous_mcmc)
 S3method(print,summary_mcmc  , .print_summary_continuous_mcmc)
 
 S3method(summary,BMDcontinuous_MA_laplace , .summary_ma_max)
+S3method(summary,BMDcontinuous_MA_mcmc , .summary_ma_mcmc)
 S3method(summary,BMDdichotomous_MA_laplace , .summary_ma_max)
-S3method(print,ma_summary_max,.print_summary_ma_max )
+S3method(summary,BMDdichotomous_MA_mcmc , .summary_ma_mcmc)
+S3method(print,ma_summary_max,.print_summary_ma )
+S3method(print,ma_summary_mcmc,.print_summary_ma )
 
 S3method(summary , ntp.shirley,  .summary_ntpshirley)
 S3method(summary , ntp.williams, .summary_ntpwilliams)

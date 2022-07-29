@@ -3,10 +3,11 @@
 ## Version 22.8.1.0.2
 
 ### The following fixes are in version 1.0.2:
- 	- Function 'single_continuous_fit' and 'ma_continuous_fit' changed error when defining default priors for
- 	'distribution=normal-ncv' when data are negative. Originally the variance was described as mean(Y)/var(Y); 
- 	however, for negative means, this causes NA error. It is now defined as abs(mean(Y))/var(Y). 
- 	- Log-normal distribution fits were incorrect when summarized data was used. The correct transformation of summarized data is now performed. The formula for standard deviation was typed in as sqrt(log((sd)^2/mu + 1)) it is now sqrt(log((sd/mu)^2+1)). 
+ 	- Function 'single_continuous_fit' and 'ma_continuous_fit' changed error when defining default priors
+		 for 'distribution=normal-ncv' when data are negative. Originally the variance was described as mean(Y)/var(Y); 
+ 		however, for negative means, this causes NA error. It is now defined as abs(mean(Y))/var(Y). 
+ 	- Log-normal distribution fits were incorrect when summarized data was used. The correct transformation of
+		summarized data is now performed. The formula for standard deviation was typed in as sqrt(log((sd)^2/mu + 1)) it is now sqrt(log((sd/mu)^2+1)). 
 	- Changed default priors for dichotomous fits to be consistant with Wheeler et al. (2020). 
 
 ### The following changes to fitting were made: 

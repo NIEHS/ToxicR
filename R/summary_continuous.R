@@ -138,7 +138,7 @@
 
   returnV <- list()
  
-  returnV$fit_method <- "Bayesian:MCMC"
+  returnV$fit_method <- "Bayesian:MAX"
   returnV$fit_table  <- data.frame(post_p = round(model$posterior_probs,3))
   tmp_idx <- grep("Individual",names(model))
   
@@ -189,7 +189,65 @@
   return(returnV)
 }
 
-.print_summary_ma_max<-function(x, ...){ # nolint
+
+.summary_ma_mcmc<-function(object, ...){
+  model = object
+  alpha = .evaluate_alpha(...)
+  
+  returnV <- list()
+  
+  returnV$fit_method <- "Bayesian:MCMC"
+  returnV$fit_table  <- data.frame(post_p = round(model$posterior_probs,3))
+  tmp_idx <- grep("Individual",names(model))
+  
+  temp_mfit <- rep(" ",length(tmp_idx)) #model name
+  temp_BMD <- rep(" ",length(tmp_idx))  #bmd
+  temp_BMDL <- rep(" ",length(tmp_idx)) #bmdl
+  temp_BMDU <- rep(" ",length(tmp_idx)) #bmdu
+  
+  for (ii in tmp_idx){
+    tmp_fit <- model[[ii]]
+    data_temp = tmp_fit$bmd_dist
+    dist = data_temp[!is.infinite(data_temp[,1]) & !is.na(data_temp[,1]),]
+    dist = data_temp[!is.nan(data_temp[,1])]
+    if (length(dist)>10 & !identical(dist, numeric(0))){
+      temp_function <- splinefun(data_temp[,2],data_temp[,1],method="monoH.FC")
+      temp_bmds <- temp_function(1-c(1-alpha,0.5,alpha))
+      temp_mfit[ii] <- sub("Model: ","",tmp_fit$full_model)
+      temp_BMD[ii]  <- round(temp_bmds[2],3)
+      temp_BMDL[ii]  <- round(temp_bmds[1],3)
+      temp_BMDU[ii]  <- round(temp_bmds[3],3)
+    }else{
+      temp_mfit[ii] <- sub("Model: ","",tmp_fit$full_model)
+      temp_BMD[ii]  <- NA
+      temp_BMDL[ii]  <- NA
+      temp_BMDU[ii]  <- NA
+    }
+  }
+  
+  returnV$fit_table$model_names = temp_mfit
+  returnV$fit_table$BMD         = temp_BMD
+  returnV$fit_table$BMDL        = temp_BMDL
+  returnV$fit_table$BMDU        = temp_BMDU
+  
+  tmp_idx = order(returnV$fit_table$post_p,decreasing=T)
+  returnV$fit_table = returnV$fit_table[tmp_idx,c(2,3,4,5,1)]
+  
+  warnFunc <- function(w){
+    return()
+  }
+  tryCatch({temp_function <- splinefun(model$ma_bmd[,2],model$ma_bmd[,1],method="monoH.FC")},
+           warning = warnFunc)
+  
+  returnV$BMD <- temp_function(1-c(1-alpha,0.5,alpha))
+  names(returnV$BMD) <- c("BMDL","BMD","BMDU")
+  returnV$alpha <- alpha
+  
+  class(returnV) <- "ma_summary_mcmc"
+  return(returnV)
+}
+
+.print_summary_ma<-function(x, ...){ # nolint
   s_fit <- x 
   cat("Summary of single MA BMD\n\n")
   cat("Individual Model BMDS\n")
