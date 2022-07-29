@@ -13,6 +13,7 @@
 ### The following changes to fitting were made: 
 	- Changed MLE Polynomial fit behavior.  Now the terms up to the quadratic are constrained to be in the direction 
 	  of the response.  After this, i.e., degree >= 3, the parameters are unconstrained. 
+	- Added summary and print methods for mcmc model averaging. 
 
 ### Known Problems not yet fixed
 	- GoF for MA individual models not given. 
