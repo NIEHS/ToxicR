@@ -10,9 +10,9 @@ test_that("Probit", {
 
 test_that("Log Probit", {
      set.seed(5981)
-     mData <- build_single_dichotomous_dataset()
+     mData <- build_single_dichotomous_dataset2()
      c = single_dichotomous_fit(mData[,1],mData[,2],mData[,3],model_type = "log-probit", fit_type = "mcmc")
-     validate_model(c,  "Model:  Log-Probit" ,  c(-2.76563341583274, -0.326871415198025, 0.487681754992638) ,  c(BMD = 7.03560338819198, BMDL = 2.26582400694548, BMDU = 15.4151199324048) )
+     validate_model(c,  "Model:  Log-Probit" ,  c(-2.5767039674999, -0.363921570939808, 0.585986511476555) ,  c(BMD = 11.5294629371935, BMDL = 3.54819293851276, BMDU = 21.0396223458889) )
 })
 
 test_that("Weibull", {
