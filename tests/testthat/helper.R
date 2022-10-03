@@ -61,6 +61,17 @@ build_single_dichotomous_dataset <- function(){
      mData
 }
 
+
+build_single_dichotomous_dataset2 <- function(){
+  mData <- matrix(c(0, 2,50,
+                    1, 2,50,
+                    3, 10, 50,
+                    16, 13,50,
+                    32, 18,50,
+                    33, 20,50),nrow=6,ncol=3,byrow=T)
+  mData
+}
+
 validate_model <- function(model, name, parameters, bmd_estimates){
         expect_equal(name, model$full_model)
         expect_equal(parameters, model$parameters, tolerance=10e-2)
