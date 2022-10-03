@@ -9,5 +9,4 @@ checking installed package size ... NOTE
     doc    1.4Mb
     libs   4.6Mb
 
-The size of the the libs 4.6MB is based upon the compiler.  For macOS and Windows, it is usually around 5Mb. On Linux, it can be much larger ~ 100mb. 
-This size can be reduced by non-standard flags (e.g., -Os), which are compiler specific. 
+

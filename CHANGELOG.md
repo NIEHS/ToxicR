@@ -1,5 +1,10 @@
 # Changes
 
+## Version 22.8.1.0.3
+### The following fixes are in version 1.0.3
+	- Fixed an NLOPT warning with CLANG 15 to keep on CRAN. 
+	- There is no added functionality in this release.  Keeping the 22.8 moniker. 
+
 ## Version 22.8.1.0.2
 
 ### The following fixes are in version 1.0.2:
