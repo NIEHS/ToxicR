@@ -55,13 +55,13 @@ test_that("Plots", {
         set.seed(5981)
         M2 <- build_single_continuous_dataset()
         c = single_continuous_fit(M2[,1,drop=F],M2[,2:4],BMD_TYPE="sd",BMR=1, ewald = T,
-                                  distribution = "normal",fit_type="mcmc",model_type = "polynomial",degree = 4)
+                                  distribution = "normal",fit_type="mcmc",model_type = "exp-5")
         mle_plot <- plot(c)
         expect_identical(mle_plot$labels$x, "Dose")
         expect_identical(mle_plot$labels$y, "Response")
-        expect_identical(mle_plot$labels$title, "Model: Polynomial Distribution: Normal,  Fit Type: MCMC")
+        expect_identical(mle_plot$labels$title, "Model: Exponential-5 Distribution: Normal,  Fit Type: MCMC")
         c = single_continuous_fit(M2[,1,drop=F],M2[,2:4],BMD_TYPE="sd",BMR=1, ewald = T,
-                                  distribution = "normal",fit_type="mcmc",model_type = "hill",degree = 4)
+                                  distribution = "normal",fit_type="mcmc",model_type = "hill")
         mle_plot <- plot(c)
         expect_identical(mle_plot$labels$x, "Dose")
         expect_identical(mle_plot$labels$y, "Response")

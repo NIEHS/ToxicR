@@ -178,10 +178,19 @@
 # Add density 
   if (BMD_DENSITY ==TRUE){
     temp = fit$mcmc_result$BMD_samples[!is.nan(fit$mcmc_result$BMD_samples)]
+    temp = temp[!is.na(temp)]
     temp = temp[!is.infinite(temp)]
     # Dens =  density(temp,cut=c(max(test_doses)), n=512, from=0, to=max(test_doses))
+    # Dens =  density(temp,cut=c(max(test_doses)),adjust =1.5, n=512, from=min(test_doses), to=max(test_doses),na.rm=TRUE)
+    errorFun <-function(e) {
+      y <- rep(1,512)
+      x <- seq(min(test_doses),max(test_doses), (max(test_doses) - min(test_doses))/511)
+      return(data.frame(x=x,y=y))
+    }
     
-    Dens =  density(temp,cut=c(max(test_doses)),adjust =1.5, n=512, from=min(test_doses), to=max(test_doses))
+    Dens = tryCatch(density(temp,cut=c(max(test_doses)),adjust =1.5, n=512, 
+                            from=min(test_doses), to=max(test_doses)), 
+                    error = errorFun)
     Dens$y = Dens$y/max(Dens$y) * (max(Response)-min(Response))*0.6
     temp = which(Dens$x < max(test_doses))
     D1_y = Dens$y[temp]
