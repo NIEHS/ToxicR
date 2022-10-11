@@ -60,6 +60,7 @@ a model object containing a list of single models
 Fit a model averaged dichotomous BMD model.
 }
 \examples{
+\dontrun{
 mData <- matrix(c(0, 2,50,
                   1, 2,50,
                   3, 10, 50,
@@ -70,5 +71,7 @@ D <- mData[,1]
 Y <- mData[,2]
 N <- mData[,3]
 model = ma_dichotomous_fit(D,Y,N)
+
 summary(model)
+}
 }

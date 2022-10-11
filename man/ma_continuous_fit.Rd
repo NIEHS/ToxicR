@@ -58,7 +58,7 @@ This function model object containing a list of individual fits and model averag
 Fit a model averaged continuous BMD model.
 }
 \examples{
-
+\dontrun{
 hill_m <- function(doses){
        returnV <-  481  -250.3*doses^1.3/(40^1.3 + doses^1.3)
        return(returnV)
@@ -68,4 +68,5 @@ mean <- hill_m(doses)
 y <- rnorm(length(mean),mean,20.14)
 model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMD_TYPE = 'sd', BMR = 1)
 summary(model)
+}
 }

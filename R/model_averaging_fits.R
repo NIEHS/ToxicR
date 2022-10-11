@@ -26,7 +26,7 @@
 #'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals. 
 #' }
 #' @examples 
-#'
+#'\dontrun{
 #' hill_m <- function(doses){
 #'        returnV <-  481  -250.3*doses^1.3/(40^1.3 + doses^1.3)
 #'        return(returnV)
@@ -36,6 +36,7 @@
 #' y <- rnorm(length(mean),mean,20.14)
 #' model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMD_TYPE = 'sd', BMR = 1)
 #' summary(model)
+#'}
 ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
                                   BMD_TYPE = "sd", BMR = 0.1, point_p = 0.01, 
                                   alpha = 0.05,samples = 21000,
@@ -368,6 +369,7 @@ ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
 #'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals. 
 #' }
 #' @examples 
+#' \dontrun{
 #' mData <- matrix(c(0, 2,50,
 #'                   1, 2,50,
 #'                   3, 10, 50,
@@ -378,7 +380,9 @@ ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
 #' Y <- mData[,2]
 #' N <- mData[,3]
 #' model = ma_dichotomous_fit(D,Y,N)
+#' 
 #' summary(model)
+#' }
 #' @export
 ma_dichotomous_fit <- function(D,Y,N,model_list=integer(0), fit_type = "laplace",
                               BMD_TYPE = "extra",

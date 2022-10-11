@@ -16,6 +16,7 @@ Returns a \code{ggplot2} graphics object.
 Create a Cleveland plot from a model averaged model.
 }
 \examples{
+\dontrun{ 
 mData <- matrix(c(0, 2,50,
                   1, 2,50,
                   3, 10, 50,
@@ -28,5 +29,5 @@ N <- mData[,3]
 
 model = ma_dichotomous_fit(D,Y,N)
 cleveland_plot(model)
-
+}
 }

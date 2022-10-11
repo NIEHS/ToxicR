@@ -6,6 +6,7 @@
 #' @param A the model averaged model to plot
 #' @return Returns a \code{ggplot2} graphics object. 
 #' @examples 
+#'\dontrun{ 
 #' mData <- matrix(c(0, 2,50,
 #'                   1, 2,50,
 #'                   3, 10, 50,
@@ -18,7 +19,7 @@
 #' 
 #' model = ma_dichotomous_fit(D,Y,N)
 #' cleveland_plot(model)
-#' 
+#' }
 #' @export
 cleveland_plot <- function (A){
   UseMethod("cleveland_plot")

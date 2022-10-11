@@ -5,7 +5,7 @@
 #' @param A the model averaged model to plot
 #' @return Returns a \code{ggplot2} graphics object. 
 #' @examples 
-#' \donttest{
+#' \dontrun{
 #' doses  <- cbind(c(0,25,50,100,200))
 #' y <- cbind(c(6,5.2,2.4,1.1,0.75),
 #'                 c(20,20,19,20,20),
