@@ -101,9 +101,9 @@ double TDMSE_PolyK::polyk_mod(PolyKPrepareClass subsetVars,
   double term3=0.0;
   double topcc=0.0;
   double test_stat=0.0;
-  std::vector<double> ai(ntrt+1);// =    new double[ntrt + 1];
-  std::vector<double> ai2(ntrt + 1);// =   new double[ntrt + 1];
-  std::vector<double> scale(ntrt + 1);// = new double[ntrt + 1];
+  std::vector<double> ai(ntrt+1,0.0);// =    new double[ntrt + 1];
+  std::vector<double> ai2(ntrt + 1,0.0);// =   new double[ntrt + 1];
+  std::vector<double> scale(ntrt + 1,0.0);// = new double[ntrt + 1];
   double timeValue = 0;
   double exp1 = 0;
   double exp2 = 0;

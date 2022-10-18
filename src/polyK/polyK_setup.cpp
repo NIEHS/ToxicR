@@ -47,7 +47,7 @@ bool PolyKPrepareClass::SetupStudy(std::vector<double> dose, std::vector<int> tu
 void PolyKPrepareClass::prepare() {
   
   // These arrays are indexed by dose level
-  std::vector<double> tumorSum(MAX_DOSE_LEVELS);//* = new double[MAX_DOSE_LEVELS];
+  std::vector<double> tumorSum(MAX_DOSE_LEVELS,0.0);//* = new double[MAX_DOSE_LEVELS];
   
   // initialize output variables
   dmax = -1;

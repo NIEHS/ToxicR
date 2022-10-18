@@ -70,10 +70,11 @@ private:
    */
   PolyKPrepareClass()
   {
-	  Eigen::VectorXi temp_im(MAX_DOSE_LEVELS + 1);
-	  Eigen::VectorXd temp_ti(MAX_AGES+1); 
-	  Eigen::VectorXd temp_m(MAX_DOSE_LEVELS+ 1);   
-	  Eigen::MatrixXi temp_i(MAX_AGES+1,MAX_DOSE_LEVELS+ 1);        
+	  Eigen::VectorXi temp_im = Eigen::VectorXi::Zero(MAX_DOSE_LEVELS + 1);
+	  Eigen::VectorXd temp_ti = Eigen::VectorXd::Zero(MAX_AGES+1); 
+	  Eigen::VectorXd temp_m  = Eigen::VectorXd::Zero(MAX_DOSE_LEVELS+ 1);   
+	  Eigen::MatrixXi temp_i(MAX_AGES+1,MAX_DOSE_LEVELS+ 1);
+	temp_i.setZero();         
 
 	  m_Scale = temp_m*0;
 	  m_NumAnimals = temp_im*0; 

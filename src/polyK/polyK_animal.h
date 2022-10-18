@@ -10,14 +10,14 @@ private:
   int daysOnStudy;
 public:
   Animal(){
-    
+    dose = 0; doseIdx = 0; tumor = 0; daysOnStudy=0; 
   };
   
   Animal(double doseVal, int tumorVal, int daysVal) {
     dose = doseVal;
     tumor = tumorVal;
     daysOnStudy = daysVal;
-    
+ doseIdx = 0;     
   };
   
   double getDose() {

@@ -25,10 +25,10 @@ using namespace Rcpp;
 // [[Rcpp::export(.polykCPP)]]
 NumericVector polyk(NumericVector dose, NumericVector tumor,
                     NumericVector daysOnStudy) {
-  std::vector<double> t_dose(dose.size()); 
-  std::vector<int>    t_tumor(tumor.size()); 
-  std::vector<int>    t_daysOnStudy(daysOnStudy.size());
-  std::vector<double> temp = t_dose; 
+  std::vector<double> t_dose(dose.size(),0.0);   
+ std::vector<int>    t_tumor(tumor.size(),0); 
+  std::vector<int>    t_daysOnStudy(daysOnStudy.size(),0.0);
+  std::vector<double> temp(tumor.size(),0.0);//= t_dose; 
   if (dose.size() != tumor.size() ||
       dose.size() != daysOnStudy.size()){
     stop("The variables @dose,@tumor, and @daysOnStudy need to have the same number of entries.");
