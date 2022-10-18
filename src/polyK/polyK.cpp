@@ -68,39 +68,39 @@ double TDMSE_PolyK::polyk_mod(PolyKPrepareClass subsetVars,
   bool debugFlag = false;   // Change to true to show debug messages
   
   double pvalue = BAD_PVALUE;
-  double dBar;
-  double dBartop;
-  double dBarbot;
+  double dBar = 0.0;
+  double dBartop = 0.0;
+  double dBarbot = 0.0;
   double front = 0.0;
   double back = 0.0;
   double cf = 0.0;
-  double sum_adpi;
-  double sum_ad;
-  double sum_api;
-  double sum_a;
-  double sum_add;
-  double sum6;
-  double sum7;
-  double sum8;
-  double sum9;
-  double sum10;
-  double sum11;
-  double y_n;
-  double y_nk;
-  double y_ak;
-  double y_pk;
-  double y_dk;
-  double base;
-  double sumj_bn0;
-  double sumj_am3;
-  double sumj_am6;
-  double xbn, xam = 0;
-  double top, den_p, p, q, bot;
-  double term1;
-  double term2;
-  double term3;
-  double topcc;
-  double test_stat;
+  double sum_adpi = 0.0;
+  double sum_ad =0.0;
+  double sum_api =0.0;
+  double sum_a=0.0;
+  double sum_add=0.0;
+  double sum6=0.0;
+  double sum7=0.0;
+  double sum8=0.0;
+  double sum9=0.0;
+  double sum10=0.0;
+  double sum11=0.0;
+  double y_n=0.0;
+  double y_nk=0.0;
+  double y_ak=0.0;
+  double y_pk=0.0;
+  double y_dk=0.0;
+  double base=0.0;
+  double sumj_bn0=0.0;
+  double sumj_am3=0.0;
+  double sumj_am6=0.0;
+  double xbn=0.0, xam = 0;
+  double top=0.0, den_p=0.0, p=0.0, q=0.0, bot=0.0;
+  double term1=0.0;
+  double term2=0.0;
+  double term3=0.0;
+  double topcc=0.0;
+  double test_stat=0.0;
   std::vector<double> ai(ntrt+1);// =    new double[ntrt + 1];
   std::vector<double> ai2(ntrt + 1);// =   new double[ntrt + 1];
   std::vector<double> scale(ntrt + 1);// = new double[ntrt + 1];
@@ -108,8 +108,8 @@ double TDMSE_PolyK::polyk_mod(PolyKPrepareClass subsetVars,
   double exp1 = 0;
   double exp2 = 0;
   
-  int quitnow;
-  int ndf;
+  int quitnow = 0;
+  int ndf = 0;
   dBar = 0;
   dBartop = 0;
   dBarbot = 0;
@@ -357,9 +357,9 @@ double TDMSE_PolyK::polyk_mod(PolyKPrepareClass subsetVars,
  */
 double TDMSE_PolyK::chisq(double x2, int idf)
 {
-  double p;
-  double d2;
-  double x22;
+  double p=0.0;
+  double d2=0.0;
+  double x22=0.0;
   
   if(fabs(x2) < TESTSTAT_EPSILON && idf == 1) return 0.5;
   d2 = idf / 2.0;
@@ -379,7 +379,7 @@ double TDMSE_PolyK::chisq(double x2, int idf)
  */
 double TDMSE_PolyK::gammp(double a, double x)
 {
-  double returnValue;
+  double returnValue=0.0;
   if(x < a + 1.0)
   {
     returnValue = gser(a, x);
@@ -399,7 +399,7 @@ double TDMSE_PolyK::gammp(double a, double x)
  */
 double TDMSE_PolyK::gser(double a, double x)
 {
-  double gamser;
+  double gamser=0.0;
   
   double gln = gammln(a);
   double ap = a;
@@ -425,9 +425,9 @@ double TDMSE_PolyK::gser(double a, double x)
  */
 double TDMSE_PolyK::gcf(double a, double x)
 {
-  double gammcf;
-  double ana;
-  double anf;
+  double gammcf=0.0;
+  double ana=0.0;
+  double anf=0.0;
   
   double g = 0.0;
   double gln = gammln(a);
@@ -465,7 +465,7 @@ double TDMSE_PolyK::gcf(double a, double x)
  **/
 double TDMSE_PolyK::gammln(double xx)
 {
-  double returnValue;
+  double returnValue=0;
   
   double x = xx - 1.0;
   double tmp = x + FPF;

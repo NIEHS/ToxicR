@@ -83,7 +83,12 @@ private:
 	  m_Poly6Denom = temp_m*0; 
 	  m_TumorAnimals = temp_i*0;
 	  m_NonTumorAnimals = temp_i*0; 
- 
+	 m_MaxTime = 0; 
+         m_NAge = 0;  
+	m_NumDoseLevels = 0; 
+	dosediffmax = 0; 
+	tmax = 0; 
+       dmax = 0; 
   }
   
   ~PolyKPrepareClass() {
