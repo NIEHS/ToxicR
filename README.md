@@ -9,7 +9,7 @@ ToxicR is an R package that utilizes the core functionality of the US EPA's Benc
 ## Current Release
 
 
-Version 1.0.1 is the most recent release. For precompiled binaries of this release, go to [Release V.1.0.0](https://github.com/NIEHS/ToxicR/releases/tag/v1.0.0). 
+Version 1.0.4 is the most recent release. For precompiled binaries of this release type "install.packages('ToxicR')" inside R. 
 
 ### Installation
 
