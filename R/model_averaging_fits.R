@@ -252,7 +252,7 @@ ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
     
         temp$ma_bmd = data_temp
         tempn$posterior_probs[is.nan(tempn$posterior_probs)] = 0
-        if (length(data_temp)>10 && (abs(sum(tempn$posterior_probs) -1) <= 1e-8)){
+        if (length(data_temp)>10 && (abs(sum(tempn$posterior_probs,na.rm=TRUE) -1) <= 1e-8)){
          
          
              te <- splinefun(data_temp[,2,drop=F],data_temp[,1,drop=F],method="hyman")
