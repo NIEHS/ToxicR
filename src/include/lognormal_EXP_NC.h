@@ -87,8 +87,8 @@ class lognormalEXPONENTIAL_BMD_NC : public lognormalLLModel {
 	
 	virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta,Eigen::MatrixXd d){
 				
-		Eigen::MatrixXd rV; 
-		
+		Eigen::MatrixXd rV(1,1); 
+		rV.setZero(); 
 		double sign = 1.0; 
 		switch(deg){
 			case LOGNORMAL_EXP2_DOWN:

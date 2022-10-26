@@ -72,6 +72,7 @@ double IDPriorMCMC::neg_log_prior(Eigen::MatrixXd theta) {
 Eigen::MatrixXd IDPriorMCMC::log_prior(Eigen::MatrixXd theta) {
   double pi_const = log(0.5*M_2_SQRTPI * M_SQRT1_2);
   Eigen::MatrixXd returnV(theta.rows(),1); 
+  returnV.setZero();
   double mean = 0;
   double sd = 0;
   double mu = 0 ;
@@ -113,7 +114,7 @@ Eigen::MatrixXd IDPriorMCMC::log_prior(Eigen::MatrixXd theta) {
 //         can be used for initial starting points. 
 Eigen::MatrixXd IDPriorMCMC::prior_mean() {
 	Eigen::MatrixXd pmean(prior_spec.rows(), 1);
-
+    pmean.setZero(); 
 	for (int i = 0; i < prior_spec.rows(); i++) {
 		int t = int(prior_spec(i, 0));
 		switch (t) {

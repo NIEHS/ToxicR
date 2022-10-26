@@ -50,8 +50,14 @@
   }
   returnV$fit <- model$full_model
   
-  temp_function <- splinefun(model$bmd_dist[,2],model$bmd_dist[,1],method="monoH.FC")
-  returnV$BMD <- temp_function(1-c(1-alpha,0.5,alpha))
+  
+  temp_function <- tryCatch(splinefun(model$bmd_dist[,2],model$bmd_dist[,1],method="monoH.FC"),error = function(e) {NULL})
+  if (is.null(temp_function)){
+     returnV$BMD <- c(NA,NA,NA)
+  }else{
+      returnV$BMD <- temp_function(1-c(1-alpha,0.5,alpha))
+  }
+  
   names(returnV$BMD) <- c("BMDL","BMD","BMDU")
   returnV$alpha <- alpha
   
@@ -103,8 +109,12 @@
   returnV$prior <- model$prior
   returnV$fit <- model$full_model
   
-  temp_function <- splinefun(model$bmd_dist[,2],model$bmd_dist[,1],method="monoH.FC")
-  returnV$BMD <- temp_function(1-c(1-alpha,0.5,alpha))
+  temp_function <- tryCatch(splinefun(model$bmd_dist[,2],model$bmd_dist[,1],method="monoH.FC"),error = function(e) {NULL})
+  if (is.null(temp_function)){
+     returnV$BMD <- c(NA,NA,NA)
+  }else{
+      returnV$BMD <- temp_function(1-c(1-alpha,0.5,alpha))
+  }
   names(returnV$BMD) <- c("BMDL","BMD","BMDU")
   returnV$alpha <- alpha
   returnV$eff_size <- coda::effectiveSize(model$mcmc_result$BMD_samples)

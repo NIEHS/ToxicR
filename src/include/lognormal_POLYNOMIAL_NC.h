@@ -69,7 +69,8 @@ class lognormalPOLYNOMIAL_BMD_NC : public lognormalLLModel {
 	virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta,Eigen::MatrixXd d){
 
 		Eigen::MatrixXd rV = theta(0, 0) + 0.0*pow(d.array(), 0);
-		Eigen::MatrixXd temp;
+		Eigen::MatrixXd temp(1,1);
+		temp.setZero(); 
 		for (int i = 1; i < deg + 1; i++) {
 			 temp  =   theta(i, 0)*pow(d.array(), double(i)); // sum up each degree of the polynomial
 			 rV.col(0) += temp;

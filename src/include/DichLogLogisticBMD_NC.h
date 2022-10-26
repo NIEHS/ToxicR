@@ -43,6 +43,8 @@ public:
 		Eigen::MatrixXd temp = X;
 		Eigen::MatrixXd newX(temp.rows(), 3);
 		Eigen::MatrixXd one(temp.rows(), 1);
+		newX.setZero(); 
+		one.setZero(); 
 		newX << one, one, temp;
 		X = newX;
 	};
