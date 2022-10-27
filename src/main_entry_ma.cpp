@@ -181,7 +181,7 @@ List convert_continuous_fit_to_list(continuous_model_result *result){
 	  }
   } 
   char dist[160];
-  char str[160]; 
+  char str[360]; 
   
   switch(result->dist){
 	   case distribution::normal:
@@ -197,25 +197,25 @@ List convert_continuous_fit_to_list(continuous_model_result *result){
   
   switch(result->model){
 	case cont_model::hill:
-		snprintf(str,160,"Model: %s %s", "Hill",dist); 
+		snprintf(str,360,"Model: %s %s", "Hill",dist); 
 	break; 
 	case cont_model::exp_3:
-		snprintf(str,160,"Model: %s %s", "Exponential-3",dist); 
+		snprintf(str,360,"Model: %s %s", "Exponential-3",dist); 
 	break;
 	case cont_model::exp_5:
-		snprintf(str,160,"Model: %s %s", "Exponential-5",dist); 
+		snprintf(str,360,"Model: %s %s", "Exponential-5",dist); 
 	break;	
 	case cont_model::power: 
-		snprintf(str,160,"Model: %s %s", "Power",dist);
+		snprintf(str,360,"Model: %s %s", "Power",dist);
 	break; 
   case cont_model::funl:
-          snprintf(str,160,"Model: %s %s", "FUNL", dist); 
+    snprintf(str,360,"Model: %s %s", "FUNL", dist); 
      break; 
   case cont_model::polynomial:
-    snprintf(str,160,"Model: %s %s", "Polynomial", dist); 
+    snprintf(str,360,"Model: %s %s", "Polynomial", dist); 
     break; 
   default: 
-    snprintf(str,160,"Model: %s %s", "Danger","Danger");
+    snprintf(str,360,"Model: %s %s", "Danger","Danger");
 	break;  
   }
   double maximum = result->max; 
