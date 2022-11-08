@@ -108,7 +108,7 @@ cleveland_plot <- function (A){
   bmd_ind_df2<-data.frame(bmd_ind_df[which(!is.na(bmd_ind_df[,1])),])
   
   out<-ggplot()+
-    geom_point(data=bmd_ind_df2, aes(x=as.numeric(X1), y=fct_reorder(X4,as.numeric(X5),.desc=T),size=(sqrt(as.numeric(X5)))), color="red")+
+    geom_point(data=bmd_ind_df2, aes(x=as.numeric(X1), y=fct_reorder(X4,as.numeric(X5),.desc=T),size=(sqrt(as.numeric(X5)+0.01))), color="red")+
     #scale_colour_gradient(low = "gray", high = "black")+
     geom_vline(xintercept=as.numeric(bmd_ind_df2$X1[length(fit_idx)+1]), linetype="dotted")+
     theme_minimal()+
@@ -165,9 +165,9 @@ cleveland_plot <- function (A){
   bmd_ind_df2<-data.frame(bmd_ind_df[which(!is.na(bmd_ind_df[,1])),])
   
   out<-ggplot()+
-    geom_point(data=bmd_ind_df2, aes(x=as.numeric(X1), y=fct_reorder(X4,as.numeric(X5),.desc=T),size=(sqrt(as.numeric(X5)))), color="red")+
+    geom_point(data=bmd_ind_df2, aes(x=as.numeric(X1), y=fct_reorder(X4,as.numeric(X5),.desc=T),size=(sqrt(0.01+as.numeric(X5)))), color="red")+
     #scale_colour_gradient(low = "gray", high = "black")+
-    geom_vline(xintercept=as.numeric(bmd_ind_df2$X1[length(fit_idx)+1]), linetype="dotted")+
+    #geom_vline(xintercept=as.numeric(bmd_ind_df2$X1[length(fit_idx)+1]), linetype="dotted")+
     theme_minimal()+
     labs(x="Dose Level",y="", title="BMD Estimates by Each Model (Sorted by Posterior Probability)",size="Posterior Probability")+
     theme(legend.position="none")+
