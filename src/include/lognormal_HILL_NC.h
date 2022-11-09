@@ -10,6 +10,9 @@
     //necessary things to run in R    
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else 
     #include <Eigen/Dense>
 #endif
@@ -59,6 +62,24 @@ class lognormalHILL_BMD_NC : public lognormalLLModel {
 	}
 	
 	virtual int parameter_to_remove(contbmd TYPE);
+
+// BEGIN AUTODIFF
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return mean(theta, X);
+	}
+    
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta,Eigen::MatrixXd d){
+		autodiff::real gamma = theta[0]; 
+		autodiff::real nu = theta[1]; 
+		autodiff::real k  = theta[2]; 
+		autodiff::real n_exp = theta[3]; 
+		
+		autodiff::ArrayXreal rV = gamma + nu*pow(d.array(),n_exp)/(pow(k,n_exp)+pow(d.array(),n_exp));		
+		
+		return log(rV.array()); 
+	}
+// END AUTODIFF
+    
 
 	virtual Eigen::MatrixXd mmean(Eigen::MatrixXd theta,Eigen::MatrixXd d){
 	  double gamma = theta(0,0); 

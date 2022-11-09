@@ -28,6 +28,9 @@
     //necessary things to run in R    
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else 
     #include <Eigen/Dense>
     #include <gsl/gsl_randist.h>
@@ -95,6 +98,26 @@ class normalPOLYNOMIAL_BMD_NC : public normalLLModel {
 		return rV; 
 	
 	}
+// BEGIN AUTODIFF
+	
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return mean(theta, X);
+	}
+	
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta,Eigen::MatrixXd d){
+				
+		autodiff::ArrayXreal rV = theta[0] + 0.0*pow(d.array(), 0); 
+		autodiff::ArrayXreal temp; 
+		
+		for (int i = 1; i < deg + 1; i++) {
+			 temp  =   theta[i]*pow(d.array(), double(i)); // sum up each degree of the polynomial
+			 rV += temp; 
+		}
+		
+		return rV; 
+	}
+
+// END AUTODIFF
 
 	// return true if it is a increasing function
 

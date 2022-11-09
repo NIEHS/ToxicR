@@ -19,6 +19,9 @@
         //necessary things to run in R
         #include <RcppGSL.h>
         #include <RcppEigen.h>
+		#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff;
 #else
         #include <Eigen/Dense>
 #endif
@@ -88,6 +91,33 @@ public:
 
 		return   p;
 	};
+
+// BEGIN AUTODIFF
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return   mean(theta, X);
+	};
+
+	autodiff::ArrayXreal mean(autodiff::ArrayXreal  theta, Eigen::MatrixXd X) {
+
+		autodiff::real g = MULTISTAGE_G(theta(0,0));
+		autodiff::ArrayXreal  BETA = MULTISTAGE_B(theta,degree);
+		autodiff::ArrayXreal  p(X.rows()) ;
+		autodiff::real t1; 
+		for (int ii = 0; ii < X.rows() ; ii++){
+			autodiff::ArrayXreal temp  = X.row(ii); 
+			t1 = 0.0; 
+			for (int jj =0; jj < BETA.rows(); jj++){
+				t1 += temp[jj]*BETA[jj]; 
+			}
+			
+			p[ii] =  t1; 
+		}
+		p = g+(1-g)*(1-p.array().exp());
+
+		return   p;
+	};
+// END AUTODIFF
+
 
 	Eigen::MatrixXd XgivenD(double d) {
 		Eigen::MatrixXd rV(1, degree);

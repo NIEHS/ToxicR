@@ -6,6 +6,9 @@
     //necessary things to run in R    
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else 
     #include <Eigen/Dense>
 
@@ -55,6 +58,43 @@ class lognormalEXPONENTIAL_BMD_NC : public lognormalLLModel {
 	
 	};
 	
+// BEGIN AUTODIFF
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return mean(theta, X);
+	}
+
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta,Eigen::MatrixXd d){
+				
+		autodiff::ArrayXreal rV(1); 
+		rV.setZero(); 
+		autodiff::real sign = 1.0; 
+		switch(deg){
+			case LOGNORMAL_EXP2_DOWN:
+				sign = -1.0; 
+			case LOGNORMAL_EXP2_UP:
+				rV = theta[0]*exp(sign*theta(1,0)*d.array()); 
+				break; 
+			case LOGNORMAL_EXP3_DOWN:
+				sign = -1.0;
+			case LOGNORMAL_EXP3_UP:
+				rV = theta[0]*exp(sign*pow(theta(1, 0)*d.array(),theta(3,0)));
+				break; 
+			case LOGNORMAL_EXP4_DOWN:
+			case LOGNORMAL_EXP4_UP:
+				rV = theta[0]*(exp(theta(2,0))-(exp(theta(2,0))-1.0)*exp(-theta(1,0)*d.array()));
+				break; 
+			case LOGNORMAL_EXP5_DOWN:
+			case LOGNORMAL_EXP5_UP:
+			default:
+  				rV = theta[0]*(exp(theta[2])-(exp(theta[2])-1.0)*exp(-pow(theta[1]*d.array(),theta[3])));
+			
+		}
+		autodiff::ArrayXreal ret = rV; 
+		ret = log(rV.array());
+		return ret; 
+	}
+// END AUTODIFF
+
 	virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta) {
 		return mean(theta, X);
 	}

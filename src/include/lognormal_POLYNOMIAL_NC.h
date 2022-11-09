@@ -7,6 +7,9 @@
     //necessary things to run in R
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else
     #include <Eigen/Dense>
 #endif
@@ -80,6 +83,26 @@ class lognormalPOLYNOMIAL_BMD_NC : public lognormalLLModel {
 		return returnV;
 
 	}
+
+//BEGIN AUTODIFF
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return mean(theta, X);
+	}
+
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta,Eigen::MatrixXd d){
+
+		autodiff::ArrayXreal rV = theta[0] + 0.0*pow(d.array(), 0);
+		autodiff::ArrayXreal temp = rV*0; 
+		
+		for (int i = 1; i < deg + 1; i++) {
+			 temp  =   theta(i, 0)*pow(d.array(), double(i)); // sum up each degree of the polynomial
+			 rV.col(0) += temp;
+		}
+		autodiff::ArrayXreal returnV = log(rV.array());  // log the median
+
+		return returnV;
+	}
+//END AUTODIFF
 
 	// return true if it is a increasing function
 

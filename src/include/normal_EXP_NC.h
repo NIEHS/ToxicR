@@ -10,6 +10,9 @@
     //necessary things to run in R    
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else 
     #include <Eigen/Dense>
 #endif
@@ -84,35 +87,42 @@ class normalEXPONENTIAL_BMD_NC : public normalLLModel {
 	  }
 	  return cont_model::generic;
 	}		
-	
-	virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta,Eigen::MatrixXd d){
+//BEGIN AUTODIFF
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return mean(theta, X);
+	}
+
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta,Eigen::MatrixXd d){
 				
-		Eigen::MatrixXd rV; 
+		autodiff::ArrayXreal rV; 
 	  
-		double sign = 1.0; 
+		autodiff::real sign = 1.0; 
 		switch(deg){
 			case NORMAL_EXP2_DOWN:
 				sign = -1.0; 
 			case NORMAL_EXP2_UP:
-				rV = theta(0,0)*exp(sign*theta(1,0)*d.array()); 
+				rV = theta[0]*exp(sign*theta[1]*d.array()); 
 				break; 
 			case NORMAL_EXP3_DOWN:
 				sign = -1.0;
 			case NORMAL_EXP3_UP:
-				rV = theta(0,0)*exp(sign*pow(theta(1, 0)*d.array(),theta(3,0)));
+				rV = theta[0]*exp(sign*pow(theta(1, 0)*d.array(),theta(3,0)));
 				break; 
 			case NORMAL_EXP4_DOWN:
 			case NORMAL_EXP4_UP:
-				rV = theta(0,0)*(exp(theta(2,0))-(exp(theta(2,0))-1.0)*exp(-theta(1,0)*d.array()));
+				rV = theta[0]*(exp(theta[2])-(exp(theta[2])-1.0)*exp(-theta[1]*d.array()));
 				break; 
 			case NORMAL_EXP5_DOWN:
 			case NORMAL_EXP5_UP:
 			default:
-				rV = theta(0,0)*(exp(theta(2,0))-(exp(theta(2,0))-1.0)*exp(-pow(theta(1,0)*d.array(),theta(3,0))));
+				rV = theta[0]*(exp(theta[2])-(exp(theta[2])-1.0)*exp(-pow(theta[1]*d.array(),theta[3])));
 			
 		}
 		return rV; 
 	}
+
+//END AUTODIFF
+
 
 	// return true if it is a increasing function
 

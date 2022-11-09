@@ -7,6 +7,9 @@
     //necessary things to run in R    
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else 
     #include <Eigen/Dense>
   
@@ -66,6 +69,22 @@ class normalPOWER_BMD_NC : public normalLLModel {
 
 		return rV; 
 	}
+// BEGIN AUTODIFF
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return mean(theta, X);
+	}
+
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta,Eigen::MatrixXd d){
+		autodiff::real gamma = theta[0]; 
+		autodiff::real beta = theta[1]; 
+		autodiff::real k  = theta[2]; 
+				
+		Eigen::MatrixXd rV = gamma + beta * pow(d.array(), k);
+
+		return rV; 
+	}
+
+// END AUTODIFF
 
 	// return true if it is a increasing function
 

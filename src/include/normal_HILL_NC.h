@@ -7,6 +7,9 @@
     //necessary things to run in R    
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else 
     #include <Eigen/Dense>
     
@@ -73,6 +76,23 @@ class normalHILL_BMD_NC : public normalLLModel {
 		return rV; 
 	}
 
+// BEGIN AUTODIFF
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+			return mean(theta, X);
+	}
+
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta,Eigen::MatrixXd d){
+			autodiff::real gamma = theta[0]; 
+			autodiff::real nu = theta[1]; 
+			autodiff::real k  = theta[2]; 
+			autodiff::real n_exp = theta[3]; 
+			
+			autodiff::ArrayXreal rV = gamma + nu*pow(d.array(),n_exp)/(pow(k,n_exp)+pow(d.array(),n_exp));		
+			
+			return rV; 
+	}
+
+// END AUTODIFF
 	// return true if it is a increasing function
 
 	//BASIC BMD Computation absolute to hybrid

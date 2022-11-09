@@ -20,13 +20,16 @@
 #define OPTIM_ALL_FLAGS   7
 
 
+
 #ifdef R_COMPILATION
     //necessary things to run in R
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+    #include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else
     #include <Eigen/Dense>
-
 #endif
     
 #include <gsl/gsl_rng.h>
@@ -92,7 +95,7 @@ public:
 		}
 		///////////////////////////////////////////
 		double a = log_likelihood.negLogLikelihood(x);
-          double b = prior_model.neg_log_prior(x);
+    double b = prior_model.neg_log_prior(x);
 		return a + b; // log_likelihood.negLogLikelihood(x) + prior_model.neg_log_prior(x);
 	};
 
@@ -144,6 +147,8 @@ public:
 	// Note: The prior over the parameters does not have to be an actual
 	// prior. It can merely place bounds (e.g., box, equality) on functions
 	// of the parameters.
+   //autodiff::real
+   autodiff::real   f(const ArrayXreal &x); 
 	 LL log_likelihood;
 	 PR prior_model;
 	// The parameter vector that the log_likelihood and the prior model
@@ -154,6 +159,16 @@ public:
 
 };
 
+//
+// Include autdiff instead of finite difference calculations
+template <class LL, class PR>
+autodiff::real statModel<LL,PR>::f(const autodiff::ArrayXreal &x){
+  autodiff::ArrayXreal hvector = x; 
+ 
+  autodiff::real temp = negPenLike(hvector); 
+//  autodiff::real rval = autodiff::real(temp); 
+  return temp; //rval; 
+}
 /////////////////////////////////////////////////////////////////
 // Function: gradient(Eigen::MatrixXd v)
 // Purpose : Performs a finite difference evaluation of the
@@ -167,6 +182,22 @@ public:
 ///////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 Eigen::MatrixXd statModel<LL,PR>::gradient(Eigen::MatrixXd v) {
+  ArrayXreal x = v.col(0); 
+  autodiff::real u; 
+  statModel<LL,PR> *temp_this = this; 
+
+  auto  ff = [=](auto j) ->autodiff::real { 
+                          return this->f(j); 
+  };
+
+
+  Eigen::VectorXd temp = autodiff::gradient(ff,wrt(x),at(x),u); 
+  Eigen::MatrixXd  g(log_likelihood.nParms(), 1);
+  g.col(0) = temp; 
+  return g; 
+}
+/*
+
 
 	Eigen::VectorXd h(log_likelihood.nParms());
 	double mpres = pow(1.0e-16, 0.5);
@@ -188,9 +219,9 @@ Eigen::MatrixXd statModel<LL,PR>::gradient(Eigen::MatrixXd v) {
 		}
 
 	}
-	/*find the gradients for each of the variables in the likelihood*/
+	//find the gradients for each of the variables in the likelihood
 	for (int i = 0; i < log_likelihood.nParms(); i++) {
-		/*perform a finite difference calculation on the specific derivative*/
+		//perform a finite difference calculation on the specific derivative
 		x = v(i,0);
 		// add h
 		hvector(i,0) = x + h[i];
@@ -204,7 +235,7 @@ Eigen::MatrixXd statModel<LL,PR>::gradient(Eigen::MatrixXd v) {
 	}
 	return g;
 }
-
+*/
 ////////////////////////////////////////////////////////////////////
 // Function: varMatrix(Eigen::MatrixXd theta)
 // Purpose:  Computes the inverse hessian of the penalized likelihood

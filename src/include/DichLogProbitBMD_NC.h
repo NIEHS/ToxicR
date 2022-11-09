@@ -28,6 +28,9 @@
         //necessary things to run in R
         #include <RcppGSL.h>
         #include <RcppEigen.h>
+		#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff;
 #else
         #include <Eigen/Dense>
 #endif
@@ -88,6 +91,26 @@ public:
 
 		return   p;
 	};
+
+
+// BEGIN AUTODIFF
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return   mean(theta, X);
+	};
+
+	autodiff::ArrayXreal mean(autodiff::ArrayXreal  theta, Eigen::MatrixXd X) {
+
+		autodiff::real g = LOGPROBIT_G(theta[0]);
+		autodiff::real a = LOGPROBIT_A(theta[1]); autodiff::real b = LOGPROBIT_B(theta[2]);
+
+		autodiff::ArrayXreal  p(X.rows());
+
+		for (int i = 0; i < X.rows(); i++)
+			p[i] = LOGPROBIT_MEAN(g, a, b, X(i, 2));
+
+		return   p;
+	};
+// END AUTODIFF
 
 	virtual double BMR_CONSTRAINT(Eigen::MatrixXd theta, double * grad, double BMR, double isExtra) {
 		double g = LOGPROBIT_G(theta(0, 0));

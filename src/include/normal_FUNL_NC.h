@@ -7,6 +7,9 @@
     //necessary things to run in R    
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else 
     #include <Eigen/Dense>
     
@@ -78,6 +81,34 @@ class normalFUNL_BMD_NC : public normalLLModel {
 		return rV; 
 	}
 
+//BEGIN AUTODIFF
+
+	virtual autodiff::ArrayXreal  mean(autodiff::ArrayXreal  theta) {
+		return mean(theta, X);
+	}
+
+	virtual autodiff::ArrayXreal  mean(autodiff::ArrayXreal theta,Eigen::MatrixXd d){
+		autodiff::real b1 = theta[0]; 
+		autodiff::real b2 = theta[1]; 
+		autodiff::real b3 = theta[2]; 
+		autodiff::real b4 = theta[3];
+		autodiff::real b5 = theta[4]; 
+		autodiff::real b6 = theta[5]; 
+		
+		autodiff::ArrayXreal  cdf(d.rows());
+		cdf.setZero(); 
+		autodiff::ArrayXreal  pdf(d.rows()); 
+		pdf.setZero(); 
+
+		for(int i = 0; i < d.rows(); i++){
+		  cdf[i] =  1/(1+exp(-(d(i,0) - b3)/b4)); 
+		  pdf[i] = exp(-exp(b6)*(d(i,0) - b5)*(d(i,0) - b5)); 
+		}
+		autodiff::ArrayXreal  rV = b1 + b2*pdf.array()*cdf.array();		
+		
+		return rV; 
+	}
+//END AUTODIFF
 
   double FUNL_mean(double d, Eigen::MatrixXd A){
     

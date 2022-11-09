@@ -9,6 +9,9 @@
     //necessary things to run in R    
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else 
     #include <Eigen/Dense>
 #endif
@@ -58,8 +61,24 @@ class lognormalPOWER_BMD_NC : public lognormalLLModel {
 	int    nParms() { 
 			return 4; // Power model regression + constant variance
 	}
-	
-						 							    	
+
+// BEGIN AUTODIFF
+
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return mean(theta, X);
+	}
+
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta,Eigen::MatrixXd d){
+		autodiff::real gamma = theta[0]; 
+		autodiff::real beta = theta[1]; 
+		autodiff::real k  = theta[2]; 
+				
+		autodiff::ArrayXreal rV = gamma + beta * pow(d.array(), k);
+		
+		return log(rV.array()); 
+	}
+
+// END AUTODIFF
 
 	
 	virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta,Eigen::MatrixXd d){

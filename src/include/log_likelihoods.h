@@ -22,6 +22,9 @@
     //necessary things to run in R
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+   #include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff;
 #else
     #include <Eigen/Dense>
     #include <gsl/gsl_randist.h>
@@ -71,6 +74,34 @@ public:
 		return theta.array()*(1-theta.array());  // no likelihood has no variance
 	};
 
+// FOR AUTODIFF
+
+	autodiff::real negLogLikelihood(autodiff::ArrayXreal theta) {
+		autodiff::ArrayXreal p = mean(theta);
+		autodiff::ArrayXreal returnV = p;
+
+		returnV = Y.col(0).array()*p.array().log() + (Y.col(1).array() - Y.col(0).array())*(1 - p.array()).log();
+
+		// correct the likelihood 
+		// "?log(0) is not there
+		for (int i = 0; i < returnV.rows(); i++) {
+          if (p(i, 0) < NEAR_ZERO)
+            returnV(i, 0) = Y(i, 0)*log(NEAR_ZERO); // Note the last term doesn't exist because log(1) = 0
+          else if ((1.0 - p(i, 0)) < NEAR_ZERO)
+            returnV(i, 0) = (Y(i, 1) - Y(i, 0))*log(NEAR_ZERO); // Note the last term doesn't exist because log(1) = 0
+        }
+
+		return -returnV.sum();
+	};
+
+    virtual autodiff::ArrayXreal  mean(autodiff::ArrayXreal theta){
+		return theta; 
+	}
+
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta,  Eigen::MatrixXd X ){
+		return theta.array()*(1-theta.array());
+	}
+// END AUTODIFF
 
 	double negLogLikelihood(Eigen::MatrixXd theta) {
 		Eigen::MatrixXd p = mean(theta);

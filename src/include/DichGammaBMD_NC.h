@@ -26,6 +26,10 @@
         //necessary things to run in R
         #include <RcppGSL.h>
         #include <RcppEigen.h>
+		#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff;
+
 #else
         #include <Eigen/Dense>
 #endif
@@ -88,13 +92,35 @@ public:
 		double g = GAMMA_G(theta(0, 0));
 		double a = GAMMA_A(theta(1, 0)); double b = GAMMA_B(theta(2, 0));
 
-		Eigen::MatrixXd p(X.rows(), 1);
+		autodiff::ArrayXreal p(X.rows());
 
 		for (int i = 0; i < X.rows(); i++)
-			p(i, 0) = GAMMA_MEAN(g, a, b, X(i, 2));
+			p[i] = GAMMA_MEAN(g, a, b, X(i, 2));
 
 		return   p;
 	};
+
+// BEGIN AUTODIFF
+
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return   mean(theta, X);
+	};
+
+	autodiff::ArrayXreal mean(autodiff::ArrayXreal  theta, Eigen::MatrixXd X) {
+
+		autodiff::real g = GAMMA_G(theta[0]);
+		autodiff::real a = GAMMA_A(theta[1]); autodiff::real b = GAMMA_B(theta[2]);
+
+		Eigen::MatrixXd p(X.rows(), 1);
+
+		for (int i = 0; i < X.rows(); i++)
+			p[i] = GAMMA_MEAN(g, a, b, X(i, 2));
+
+		return   p;
+	};
+
+/// END AUTODIFF
+
 
 	virtual double BMR_CONSTRAINT(Eigen::MatrixXd theta, double * grad, double BMR, double isExtra) {
 		double g = GAMMA_G(theta(0, 0));

@@ -1,0 +1,20 @@
+PKG_CXXFLAGS = -w -std=c++17 -I../inst -I./code_base -I./include $(SHLIB_OPENMP_CXXFLAGS)  -I./nlopt/include -I/usr/include -DR_COMPILATION  
+PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) -L./nlopt/lib -lnlopt  -L/usr/lib -lgsl -lgslcblas -lm $(SHLIB_OPENMP_CXXFLAGS) 
+
+# Include all C++ files in src/ and its subdirectories
+SOURCES=RcppExports.cpp main_entry.cpp main_entry_ma.cpp main_entry_mcmc.cpp main_polyk.cpp  code_base/DichGammaBMD_NC.cpp code_base/DichLogProbitBMD_NC.cpp code_base/DichLogisticBMD_NC.cpp code_base/DichProbitBMD_NC.cpp code_base/DichQlinearBMD_NC.cpp code_base/DichWeibullBMD_NC.cpp code_base/IDPrior.cpp code_base/IDPriorMCMC.cpp code_base/analysis_of_deviance.cpp code_base/bmdStruct.cpp code_base/continuous_clean_aux.cpp code_base/continuous_entry_code.cpp code_base/continuous_model_functions.cpp code_base/dichotomous_entry_code.cpp code_base/gradient.cpp code_base/helperfunctions.cpp code_base/lognormalModels.cpp code_base/lognormal_EXP_NC.cpp code_base/lognormal_HILL_NC.cpp code_base/lognormal_POLYNOMIAL_NC.cpp code_base/lognormal_POWER_NC.cpp code_base/normalModels.cpp code_base/normal_EXP_NC.cpp code_base/normal_FUNL_NC.cpp code_base/normal_HILL_NC.cpp code_base/normal_POLYNOMIAL_NC.cpp code_base/normal_POWER_NC.cpp code_base/normal_likelihoods.cpp code_base/stdafx.cpp polyK/polyK.cpp polyK/polyK_setup.cpp 
+
+# Obtain the object files
+OBJECTS=$(SOURCES:.cpp=.o) 
+
+# Make the shared object
+all: $(SHLIB)
+
+# Provide recipe to remove all objects
+clean:
+	@rm -f $(OBJECTS)
+
+
+
+
+

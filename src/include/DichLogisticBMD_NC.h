@@ -28,6 +28,9 @@
         //necessary things to run in R
         #include <RcppGSL.h>
         #include <RcppEigen.h>
+		#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff;
 #else
         #include <Eigen/Dense>
 #endif
@@ -75,13 +78,32 @@ public:
 		double g = LOGISTIC_A(theta(0, 0));
 		double b = LOGISTIC_B(theta(1, 0));
 
-		Eigen::MatrixXd p(X.rows(), 1);
+		Eigen::MatrixXd p(X.rows());
 
 		for (int i = 0; i < X.rows(); i++)
 			p(i, 0) = LOGISTIC_MEAN(g, b, X(i, 1));
 
 		return   p;
 	};
+// BEGIN AUTODIFF
+	
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return   mean(theta, X);
+	};
+
+	autodiff::ArrayXreal mean(autodiff::ArrayXreal  theta, Eigen::MatrixXd X) {
+
+		autodiff::real g = LOGISTIC_A(theta[0]);
+		autodiff::real b = LOGISTIC_B(theta[1]);
+
+		autodiff::ArrayXreal p(X.rows());
+
+		for (int i = 0; i < X.rows(); i++)
+			p[i] = LOGISTIC_MEAN(g, b, X(i, 1));
+
+		return   p;
+	};
+//END AUTODIFF
 
 	virtual double BMR_CONSTRAINT(Eigen::MatrixXd theta, double * grad, double BMR, double isExtra) {
 		double a = LOGISTIC_A(theta(0, 0));

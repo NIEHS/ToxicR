@@ -19,6 +19,9 @@
         //necessary things to run in R
         #include <RcppGSL.h>
         #include <RcppEigen.h>
+		#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff;
 #else
         #include <Eigen/Dense>
 #endif
@@ -56,10 +59,35 @@ public:
 		X = newX;
 	};
 	int    nParms() { return X.cols() + 1; }; // assumes n x 3 matrix +1 is four
+
+
 	virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta) {
 		return   mean(theta, X);
 	};
 	
+
+// BEGIN AUTODIFF
+	
+	virtual autodiff::ArrayXreal mean(autodiff::ArrayXreal theta) {
+		return   mean(theta, X);
+	};
+
+	autodiff::ArrayXreal mean(autodiff::ArrayXreal  theta, Eigen::MatrixXd X) {
+
+		autodiff::real g = HILL_G(theta[0]);
+		autodiff::real n = HILL_N(theta[1]);
+		autodiff::real a = HILL_A(theta[2]);autodiff::real b = HILL_B(theta[3]);
+
+		autodiff::ArrayXreal p(X.rows());
+
+		for (int i = 0; i < X.rows(); i++)
+			p[i] = HILL_MEAN(g, n, a, b, X(i, 2));
+
+		return   p;
+	};
+
+/// END AUTODIFF
+
 	virtual Eigen::MatrixXd convertDataMatrix(Eigen::MatrixXd D){
 	     Eigen::MatrixXd returnV(D.rows(), 3);
 	     Eigen::MatrixXd one = Eigen::MatrixXd::Ones(D.rows(), 1) ;

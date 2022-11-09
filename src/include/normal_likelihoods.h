@@ -10,6 +10,9 @@
     //necessary things to run in R    
     #include <RcppEigen.h>
     #include <RcppGSL.h>
+	#include <autodiff/forward/real.hpp>
+    #include <autodiff/forward/real/eigen.hpp>
+    using namespace autodiff; 
 #else 
     #include <Eigen/Dense>
 #endif
@@ -57,8 +60,24 @@ public:
 		Eigen::MatrixXd rV = Eigen::MatrixXd::Ones(Y.rows(),1)*var; 
 		return rV;  // variance is constant											
 	};
-  
+	
 	double negLogLikelihood(Eigen::MatrixXd theta);
+/////////////////////////////////////////////////////////////////////////////////////////
+//ADD AUTODIFF//
+	virtual autodiff::ArrayXreal  mean(autodiff::ArrayXreal theta) {
+		autodiff::real mean = theta[0]; 
+		autodiff::ArrayXreal rV = Eigen::VectorXd::Ones(Y.rows())*mean; 
+		return rV;  // mean is constant											
+	};
+
+	virtual autodiff::ArrayXreal variance(autodiff::ArrayXreal theta) {
+		autodiff::real var = theta[1]; 
+		autodiff::ArrayXreal rV = Eigen::VectorXd::Ones(Y.rows())*exp(var); 
+		return rV;  // variance is constant											
+	};
+
+
+	autodiff::real negLogLikelihood(const autodiff::ArrayXreal &theta); //necessary for autodiff 
 	protected: 
 		bool sufficient_statistics; 
 
