@@ -30,6 +30,8 @@ import(ggridges)
 #and the plot commands etc. 
 
 S3method(print, ntp.polyk, .print_polyk_ntp )
+S3method(print, BMD_Bayes_continuous_model, .print.BMD_Bayes_model)
+S3method(print, BMD_Bayes_dichotomous_model, .print.BMD_Bayes_model)
 
 # Summary Methods
 S3method(summary, BMDcont_fit_maximized ,.summary_continuous_max)
