@@ -82,11 +82,7 @@ MAdensity_plot <- function (A){
     
     
     
-    # Q <- t(Q)
-    # 
-    # me <- colMeans(Q)
-    # lq <- apply(Q,2,quantile, probs = qprob)
-    # uq <- apply(Q,2,quantile, probs = 1-qprob)
+   
     
     Dens =  density(temp,cut=c(max(doses)))
     # what is this 0.4 means? Scale?
@@ -128,37 +124,7 @@ MAdensity_plot <- function (A){
   idx <- sample(1:length(fit_idx), length(A$Individual_Model_1$mcmc_result$BMD_samples),replace=TRUE,prob=A$posterior_probs)
   
   df<-NA
-  # 
-  # m1<-A$Individual_Model_1
-  # c1<-m1$mcmc_result$BMD_samples
-  # 
-  # 
-  # m2<-A$Individual_Model_2
-  # c2<-m2$mcmc_result$BMD_samples
-  # 
-  # m3<-A$Individual_Model_3
-  # c3<-m3$mcmc_result$BMD_samples
-  # 
-  # m4<-A$Individual_Model_4
-  # c4<-m4$mcmc_result$BMD_samples
-  # 
-  # m5<-A$Individual_Model_5
-  # c5<-m5$mcmc_result$BMD_samples
-  # 
-  # m6<-A$Individual_Model_6
-  # c6<-m6$mcmc_result$BMD_samples
-  # 
-  # m7<-A$Individual_Model_7
-  # c7<-m7$mcmc_result$BMD_samples
-  # 
-  # m8<-A$Individual_Model_8
-  # c8<-m5$mcmc_result$BMD_samples
-  # 
-  # m9<-A$Individual_Model_9
-  # c9<-m9$mcmc_result$BMD_samples
-  # 
-  # combine_samples<-data.frame(cbind(c1,c2,c3,c4,c5,c6,c7,c8,c9))
-
+ 
   
   # How should I initialize this?
   for (i in 1:length(fit_idx)){
@@ -196,37 +162,7 @@ MAdensity_plot <- function (A){
   t_combine3<-t_combine2 %>%
     filter(as.numeric(X3)>0.05  , as.numeric(X1)!=Inf)
   
-  
-  
-  
-  # # Update to change color
-  # 
-  # step1<- p<-ggplot()+
-  #   stat_density_ridges(data=t_combine3, aes(x=X1, y=fct_reorder(X2,X3,.desc=T),group=X2,
-  #                                            fill=cut(X3,c(0,0.999,1))), 
-  #                       calc_ecdf=TRUE,quantiles=c(0.025,0.975),na.rm=T,quantile_lines=T,scale=0.9)+
-  #                       scale_fill_manual(name="X3", values=c("(0,0.999]"="grey", "(0.999,1]"="blue"))
-  #   
-  # 
-  # step2<-step1+
-  #   xlim(c(0,quantile(t_combine$X1,0.999)))+
-  #   geom_vline(xintercept = A$bmd[1],linetype="longdash")+
-  #   labs(x="Dose Level (Dotted Line : MA BMD)",y="", title="Density plots for each fitted model (Fit type: MCMC)")+theme_classic()
-  # 
-  # step2
-  # 
-  # step3<-step2+
-  #   stat_density_ridges(data=t_combine3, aes(x=X1, y=fct_reorder(X2,X3,.desc=T), group=X2, fill = factor(stat(quantile))),
-  #                                  geom = "density_ridges_gradient",
-  #                                  calc_ecdf = TRUE, quantiles = c(0.025, 0.975), scale=0.9)+
-  #   scale_fill_manual(
-  #     name = "Probability",
-  #     values = c("NA","NA","NA", "NA", "NA")
-  #    )
-  #   
-  # 
-  # step3
-  # 
+
 
   
   p<-ggplot()+
@@ -241,15 +177,6 @@ MAdensity_plot <- function (A){
   
 
   p2<-p+theme(legend.position="none", axis.text.y=element_text(size=12))
-    # stat_density_ridges(data=t_combine3, aes(x=X1, y=fct_reorder(X2,X3,.desc=T), group=X2,fill = factor(stat(quantile))),
-    #                     geom = "density_ridges_gradient",
-    #                     calc_ecdf = TRUE, quantiles = c(0.025, 0.975),scale=0.9
-    # )+ scale_fill_manual(
-    #   name = "factor(stat(quantile))",
-    #   values = c("#FF0000A0", "NA", "#FF0000A0"),
-    #   labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
-    # )+
-  
   
   p2
   return(p2) # Return output
@@ -258,8 +185,6 @@ MAdensity_plot <- function (A){
 }
 
 
-# Laplace case- Is it even possible to do this? 
-# No we don't need this part
 
 .plot.density.BMDdichotomous_MA_maximized<-function(A){
   t_1 <- t_2 <- t_3 <- t_4 <- t_5 <- t_6 <- t_7 <- t_8 <- t_9 <- c3 <- X1 <- X2 <- X3 <- NULL
@@ -406,152 +331,56 @@ MAdensity_plot <- function (A){
   for (i in fit_idx){
     # Loop for the model
     fit<-A[[i]]
-    test_doses <- seq(min(doses),max(doses)*1.03,(max(doses)*1.03-min(doses))/100)
-    #probs <- (0.5+fit$data[,2,drop=T])/(1.0 + fit$data[,3,drop=T])
-    
-    
-    
-    if (fit$model=="hill"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_hill_f, d=test_doses)
-      
-    }
-    if (fit$model=="exp-3"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_exp_3_f, d=test_doses)
-      
-    }
-    if (fit$model=="exp-5"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_exp_5_f, d=test_doses)
-      
-    }
-    if (fit$model=="power"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_power_f, d=test_doses)
-      
-    }
-    if (fit$model=="FUNL"){
-      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_FUNL_f, d=test_doses)
-      
-    }
-
-    
+  
     temp <- fit$mcmc_result$BMD_samples[!is.nan(fit$mcmc_result$BMD_samples)]
     temp <- temp[!is.infinite(temp)]
     
     
-    
-    # Q <- t(Q)
-    # 
-    # me <- colMeans(Q)
-    # lq <- apply(Q,2,quantile, probs = qprob)
-    # uq <- apply(Q,2,quantile, probs = 1-qprob)
-    
-    Dens =  density(temp,cut=c(max(doses)))
-    # what is this 0.4 means? Scale?
-    
-    # normalize it?-- We don't need it actually here
-    # Dens$y = Dens$y/max(Dens$y) * max(probs)
-    # temp = which(Dens$x < max(doses))
-    # D1_y = Dens$y[temp]
-    # D1_x = Dens$x[temp]
-    
-    
-    
-    # Do I need to stack up the dataset?
-    
-    
-    temp_density<-data.frame(matrix(0,length(temp),3))
-    temp_density[,2]=substr(fit$full_model,8,999)
-    temp_density[,1]=temp
-    temp_density[,3]=A$posterior_probs[i]
-    
-    # assign(paste("t",i,sep="_"),temp_density)
-    
-    t<-temp_density
-    
-    t_combine<-rbind(t_combine,t)
-    
+    # Try to run the density function.  
+    # If there is a problem, return null
+
+      temp_density<-data.frame(matrix(0,length(temp),3))
+      temp_density[,2]=substr(fit$full_model,8,999)
+      temp_density[,1]=temp
+      temp_density[,3]=A$posterior_probs[i]
+      
+      # assign(paste("t",i,sep="_"),temp_density)
+      
+      t<-temp_density
+      
+      t_combine<-rbind(t_combine,t)
+  
   }
 
   t_combine<-t_combine[-1,]
   
+  idx <- sample(1:length(fit_idx), length(A$Individual_Model_1$mcmc_result$BMD_samples),
+                                   replace=TRUE,prob=A$posterior_probs)
   
-  
-  # This part is needed to get MA density plots
-  # Model ~xxx..
-  # Number of model should be fixed 
-  
-  # Grep function -- index
-  fit_idx
-
-  
-  
-  idx <- sample(1:length(fit_idx), length(A$Individual_Model_1$mcmc_result$BMD_samples),replace=TRUE,prob=A$posterior_probs)
-  
-  
-  
-
-  # rbind(A[[1]]$mcmc_result$BMD_samples)  
-
   df<-NA
-
-  
-  # How should I initialize this?
+  ## 
   for (i in 1:length(fit_idx)){
     m<-A[[i]]
     c<-m$mcmc_result$BMD_samples
-    df<-data.frame(cbind(df,c))
+    df<-cbind(df,c)
   }
-  # 
-  # m1<-A$Individual_Model_1
-  # c1<-m1$mcmc_result$BMD_samples
-  # 
-  # 
-  # m2<-A$Individual_Model_2
-  # c2<-m2$mcmc_result$BMD_samples
-  # 
-  # m3<-A$Individual_Model_3
-  # c3<-m3$mcmc_result$BMD_samples
-  # 
-  # m4<-A$Individual_Model_4
-  # c4<-m4$mcmc_result$BMD_samples
-  # 
-  # m5<-A$Individual_Model_5
-  # c5<-m5$mcmc_result$BMD_samples
-
-  # This part should be dynamically assigned... 
-  # combine_samples2<-data.frame(cbind(c1,c2,c3,c4,c5))
-
-  df_samples<-data.frame(df[,-1])
-  
-  
-
-  
-  
-  # Select MA values
-  
-  BMD_MA<-matrix(NA,length(A$Individual_Model_1$mcmc_result$BMD_samples),1)
-  
-  for (i in 1:length(A$Individual_Model_1$mcmc_result$BMD_samples)){
-    j<-sample(nrow(df_samples), size=1, replace=TRUE)
-    BMD_MA[i,1]<-df_samples[j,idx[i]]
+  # Compute the model average density
+  df <- as.matrix(df[,-1])
+  result_idx = sample(1:ncol(df),dim(df)[1],replace=T,prob= A$posterior_probs )
+  BMD_MA = matrix(NA,dim(df)[1],3)
+  for (ii in 1:(dim(BMD_MA)[1])){
+    BMD_MA[ii,1] = df[ii,result_idx[ii]] 
   }
-
-  
-
   BMD_MA<-data.frame(BMD_MA)
+  BMD_MA[,2] = "Model Average"
+  BMD_MA[,3] = 1
+  #clean up t_combine for the plot
+  t_combine <- t_combine %>% filter(as.numeric(X3)>0.05 , as.numeric(X1)!=Inf)
+  t_combine <-rbind(t_combine,BMD_MA)
+  t_combine3 <- t_combine %>% filter(!is.infinite(as.numeric(X3)), 
+                                     !is.na(as.numeric(X1)))
   
-  t_ma<-BMD_MA %>% mutate(X1=BMD_MA,X2="Model Average",X3=1)
-  #BMD_CDF should be shown here - it 
-  t_ma<-t_ma %>% select(X1,X2,X3)
-  
-  
-  
-  t_combine2<-rbind(t_combine,t_ma)
-  
-  
-  t_combine3<-t_combine2 %>% filter(as.numeric(X3)>0.05 , as.numeric(X1)!=Inf)
-  
-  
-  # John's comment- I want to fill the color as 
+  #make plot
   p<-ggplot()+
     stat_density_ridges(data=t_combine3, aes(x=X1, y=fct_reorder(X2,X3,.desc=T),group=X2 ,alpha=sqrt(X3), fill=cut(X3,c(0,0.99,1))), 
                         calc_ecdf=TRUE,quantiles=c(0.025,0.975),na.rm=T,quantile_lines=T,scale=0.9)+
@@ -567,7 +396,6 @@ MAdensity_plot <- function (A){
   
   
   return(p2) # Return output
-  
   
 }
 
