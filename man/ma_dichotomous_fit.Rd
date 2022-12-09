@@ -60,7 +60,7 @@ a model object containing a list of single models
 Fit a model averaged dichotomous BMD model.
 }
 \examples{
-\dontrun{
+\donttest{
 mData <- matrix(c(0, 2,50,
                   1, 2,50,
                   3, 10, 50,

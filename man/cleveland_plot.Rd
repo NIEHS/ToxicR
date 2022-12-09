@@ -16,7 +16,7 @@ Returns a \code{ggplot2} graphics object.
 Create a Cleveland plot from a model averaged model.
 }
 \examples{
-\dontrun{ 
+\donttest{ 
 mData <- matrix(c(0, 2,50,
                   1, 2,50,
                   3, 10, 50,

@@ -6,7 +6,7 @@
 #' @param A the model averaged model to plot
 #' @return Returns a \code{ggplot2} graphics object. 
 #' @examples 
-#'\dontrun{ 
+#'\donttest{ 
 #' mData <- matrix(c(0, 2,50,
 #'                   1, 2,50,
 #'                   3, 10, 50,

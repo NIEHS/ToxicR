@@ -58,7 +58,7 @@ This function model object containing a list of individual fits and model averag
 Fit a model averaged continuous BMD model.
 }
 \examples{
-\dontrun{
+\donttest{
 hill_m <- function(doses){
        returnV <-  481  -250.3*doses^1.3/(40^1.3 + doses^1.3)
        return(returnV)

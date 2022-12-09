@@ -26,7 +26,7 @@
 #'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals. 
 #' }
 #' @examples 
-#'\dontrun{
+#'\donttest{
 #' hill_m <- function(doses){
 #'        returnV <-  481  -250.3*doses^1.3/(40^1.3 + doses^1.3)
 #'        return(returnV)
@@ -369,7 +369,7 @@ ma_continuous_fit <- function(D,Y,model_list=NA, fit_type = "laplace",
 #'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals. 
 #' }
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #' mData <- matrix(c(0, 2,50,
 #'                   1, 2,50,
 #'                   3, 10, 50,
