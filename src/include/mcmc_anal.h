@@ -1,6 +1,7 @@
 /*
- 
- * Copyright 2020  NIEHS <matt.wheeler@nih.gov>
+ * Copyright 2020  US HHS, NIEHS 
+ * Author Matt Wheeler 
+ * e-mail: <matt.wheeler@nih.gov>
  * 
  *
  *Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
