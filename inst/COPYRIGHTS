@@ -17,11 +17,12 @@ NLOPT install scripts
 
 The scripts in the directories ToxicR/src/scripts and ToxicR/tools were derived from the R package nloptr and are distributed under the GNU Lesser General Public License <https://www.gnu.org/licenses/lgpl-3.0.en.html>.
 
-ToxicR code U.S. Department of Health and Human Services (US HHS), National Institute of Environmental 
-Health Sciences (NIEHS)
+ToxicR code U.S. Department of Health and Human Services (HHS), 
+National Institute of Environmental Health Sciences (NIEHS)
 --------------------------
 
-All official ToxicR source code was written by the U.S. Department of Health and Human Services (U.S. HHS) employees at NIEHS. Consequently, the U.S. DHHS and NIEHS owns the copyright for this code, which is distributed under the MIT license. 
+All official ToxicR source code was written by the U.S. Department of Health and Human Services (HHS) employees at NIEHS. Consequently, the U.S. HHS/NIEHS 
+owns the copyright for this code, which is distributed under the MIT license. 
 
 This code is located in the directories
 

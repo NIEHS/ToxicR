@@ -1,6 +1,8 @@
 /*
- 
- * Copyright 2020  NIEHS <matt.wheeler@nih.gov>
+ * 
+ * Copyright 2020  US. Department of Health and Human Services (HHS), 
+ * National Institute of Environmental Health Sciences (NIEHS)
+ * Email: Matt Wheeler  <matt.wheeler@nih.gov>
  * 
  *
  *Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
