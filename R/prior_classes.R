@@ -306,6 +306,7 @@ create_prior_list <- function(x1,x2,...){
     prior <- create_prior_list(normprior(	0,	2,	-20,	20),
                                normprior(	0,	1,	-40,	40),
                                lnormprior(0.693147180559945,	0.5,	0,	20))
+    prior <- create_dichotomous_prior(prior,"log-probit")
   }
   
   if (dmodel == 6){ #MULTISTAGE
