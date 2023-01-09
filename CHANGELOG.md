@@ -1,4 +1,9 @@
 # Changes
+## Version 23.1.1.0.8
+### The following cumulative fixes are in version 23.1.1.0.8
+	- Removed depricated C sprintf files. 
+	- Fixed ASAN memory error in initialization routine under CLANG 15.0.6
+	- Removed tidyverse as a dependency. 
 ## Version 22.8.1.0.4
 ### The following fixes are in version 1.0.4
 	- Fixed valgrind initialization issue with polyK test. 
