@@ -1,6 +1,8 @@
 ![alt text](https://github.com/wheelemw/ToxicRDocs/blob/main/Toxic-R_Web_Graphic_V13.jpg)
 
 # Welcome to the Official Git Repository of ToxicR!
+# Note: 
+Currently the R package 'purrr', which is required by 'dplyr' and ToxicR is having compile issues, which is causing errors with ToxicR.  We are currently trying to fix this dependency problem, but ToxicR will be pulled from CRAN unil this is resolved. 
 
 ## What is ToxicR? 
 
