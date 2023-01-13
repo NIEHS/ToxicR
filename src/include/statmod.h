@@ -507,21 +507,23 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
          // put the new value in sorted order based upon likelihood
          int ctsize = cur_tourny_nll.size(); 
          if (ctsize == 0){
-           cur_tourny_nll.insert(temp_it,it_l[sel]); 
-           cur_tourny_parms.insert(temp_pop,population[sel]);
+           cur_tourny_nll.emplace_back(it_l[sel]); //insert(temp_it,it_l[sel]); 
+           cur_tourny_parms.emplace_back(population[sel]); //temp_pop,population[sel]);
+           temp_it = cur_tourny_nll.begin(); 
+           temp_pop = cur_tourny_parms.begin(); 
          }else{
            for (int j = 0; !break_loop && j < ctsize; j++){
              if (it_l[sel] < cur_tourny_nll[j]){ // this is the first occurance
                std::advance(temp_it,j);  std::advance(temp_pop,j);
-               cur_tourny_nll.insert(temp_it,it_l[sel]); 
-               cur_tourny_parms.insert(temp_pop,population[sel]);
+               cur_tourny_nll.emplace(temp_it,it_l[sel]); 
+               cur_tourny_parms.emplace(temp_pop,population[sel]);
                break_loop = true; 
              }
            }
            // never inserted the value
            if (!break_loop){ // put it at the end
-             cur_tourny_nll.insert(cur_tourny_nll.end(),it_l[sel]); 
-             cur_tourny_parms.insert(cur_tourny_parms.end(),population[sel]); 
+             cur_tourny_nll.emplace_back(it_l[sel]); 
+             cur_tourny_parms.emplace_back(population[sel]); 
              break_loop = true; 
            }
          }
