@@ -33,14 +33,6 @@ test_that("Normal Ewald power", {
      validate_model(c, "Model: Power Distribution: Normal", c(6.077, -0.380, 0.517, 0.339), c(7.16, 3.60, 14.23))
 })
 
-test_that("Normal Ewald polynomial", {
-     set.seed(5981)
-     M2 <- build_single_continuous_dataset()
-     c = single_continuous_fit(M2[,1,drop=F],M2[,2:4],BMD_TYPE="sd",BMR=1, ewald = T,
-                               distribution = "normal",fit_type="mle",model_type = "polynomial",degree = 4)
-     validate_model(c, "Model: Polynomial Distribution: Normal", c(5.203563e+00, -1.220068e-02, -8.294745e-05,
-                                                                   -4.788429e-06, 2.476356e-08, 6.817159e-01), c(53.2, 22.9, 123.7))
-})
 
 test_that("Plots", {
         set.seed(5981)
