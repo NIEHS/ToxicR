@@ -58,13 +58,25 @@
 #include "continuous_entry_code.h"
 #include "dichotomous_entry_code.h"
 #include "list_r_conversion.h"
+#include "owenst_asa076.h"
 
 using namespace Rcpp;
 
 
 #define MAX_PARMS 32 // Should never get close to this many!!!
 
-
+// [[Rcpp::depends(RcppGSL)]]
+// [[Rcpp::depends(RcppEigen)]]
+//////////////////////////////////////////////////////////////////////////
+// function: owenst_fn
+// purpose: takes input, which is assumed to be correct,
+// and then computes the corresponding Owens T of those inputs
+// output: function evaluation as a double
+// [[Rcpp::export(".owenst_fn")]]
+double owenst_fn(double x, double fx)
+{
+	return tfn(x, fx);
+}
 
 // [[Rcpp::depends(RcppGSL)]]
 // [[Rcpp::depends(RcppEigen)]]

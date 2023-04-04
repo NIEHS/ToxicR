@@ -20,8 +20,37 @@
 #' @title single_continuous_fit - Fit a single continuous BMD model.
 #' @param D doses matrix
 #' @param Y response matrix
-#' @param model_type Mean model. It should be one of 
-#'      \code{"hill","exp-3","exp-5","power","polynomial"}
+#' @param model_type Specifies the mean model, or log-mean 
+#' for lognormal data.  For more information, see Aerts, Wheeler, and Abrahantes (2021)
+#'
+#'  \itemize{
+#'      \item \code{"exp-aerts"}:         \eqn{f(x) = a(1 + (c-1)(1-exp(-bx^{d}))) }
+#'      \item \code{"invexp-aerts"}:      \eqn{f(x) = a(1 + (c-1)(exp(-bx^{-d})))}
+#'      \item \code{"hill-aerts"}:        \eqn{f(x) = a(1 + (c-1)(1-\frac{b^d}{b^d + x^d}))}
+#'      \item \code{"gamma-aerts"}:       \eqn{f(x) = a(1 + (c-1)(\Gamma(bx^d;\xi)))}
+#'      \item \code{"invgamma-aerts"}:    \eqn{f(x) = a(1 + (c-1)(1-\Gamma(bx^{-d};\xi)))}
+#'      \item \code{"lomax-aerts"}:       \eqn{f(x) = a\left\{1 + (c-1)(1-\left(\frac{b}{b+x^d} \right))^\xi \right\}}
+#'      \item \code{"invlomax-aerts"}:    \eqn{f(x) = a\left\{1 + (c-1)(\left(\frac{b}{b+x^{-d}} \right))^\xi \right\}}
+#'      \item \code{"lognormal-aerts"}:   \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( \ln(b) + d\times \ln(x))\right) \right\}}
+#'      \item \code{"logskew-aerts"}:     \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi_{SN}( \ln(b) + d\times \ln(x); \xi )\right) \right\}}
+#'      \item \code{"invlogskew-aerts"}:  \eqn{f(x) = a\left\{1 + (c-1)\left(1 - \Phi_{SN}( \ln(b) - d\times \ln(x); \xi )\right) \right\}}
+#'      \item \code{"logistic-aerts"}:    \eqn{f(x) = a\left\{1 + (c-1)\left(\frac{1}{1+\exp(-bx)}\right) \right\}}
+#'      \item \code{"probit-aerts"}:      \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( b + d\times x)\right) \right\}}
+#'      \item \code{"gamma-efsa"}:        \eqn{f(x) = a(1 + (c-1)(\Gamma(bx; d)))}
+#'    }
+#'   Here: \eqn{\Phi(\cdot)} is the standard normal distribution and
+#'         \eqn{\Phi_{SN}(\cdot;\cdot)} is the skew-normal distribution
+#'
+#'    Legacy continuous models based upon US EPA BMDS software. 
+#'    These models can be fit using Bayesian and Maximum Likelihood. 
+#'    \itemize{
+#'      \item \code{"hill"}: \eqn{f(x) = a + b\frac{x^d}{c^d + x^d}}
+#'      \item \code{"exp-3"}: \eqn{f(x) = a(1-exp(-bx^{d})) }
+#'      \item \code{"exp-5"}: \eqn{f(x) = a(1 + (c-1)(1-exp(-bx^{d}))) }
+#'      \item \code{"power"}: \eqn{f(x) = a + b x^d}
+#'      \item \code{"polynomial"}: \eqn{\beta_0 + \beta_1 x + \ldots \beta_p x^p}, where p is equal to 
+#'      \code{degree} (defined) below. 
+#'    }
 #' @param fit_type the method used to fit (laplace, mle, or mcmc)
 #' @param prior Prior / model for the continuous fit. If this is specified, it overrides the parameters 'model_type' and 'distribution.' 
 #' @param BMD_TYPE BMD_TYPE specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used. \cr
@@ -36,6 +65,7 @@
 #' @param degree the number of degrees of a polynomial model. Only used for polynomial models. 
 #' @param burnin the number of burnin samples to take (MCMC only)
 #' @param distribution The underlying distribution used as the data distribution. 
+#' @param BMD_priors Logical specifying if BMD Express-3 priors should be used instead of ToxicR defaults
 #' @param ewald perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)
 #' @param transform Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.
 #' @return Returns a model object class with the following structure:
@@ -75,8 +105,8 @@
 single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                                    prior=NA, BMD_TYPE = "sd", 
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
-                                   alpha = 0.05, samples = 25000,degree=2,
-                                   burnin = 1000,ewald = FALSE,
+                                   alpha = 0.05, samples = 25000, degree=2,
+                                   burnin = 1000, BMD_priors = FALSE, ewald = FALSE,
                                    transform = FALSE){
     Y <- as.matrix(Y) 
     D <- as.matrix(D) 
@@ -118,7 +148,9 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       
       if (identical(dmodel, integer(0))){
         stop('Please specify one of the following model types: \n
-            "hill","exp-3","exp-5","power","FUNL","polynomial"')
+            "hill","exp-3","exp-5","power","polynomial", "exp-aerts", "invexp-aerts", "gamma-aerts", "invgamma-aerts", "hill-aerts",
+            "lomax-aerts", "invlomax-aerts", "lognormal-aerts", "logskew-aerts", "invlogskew-aerts", "logistic-aerts", "probit-aerts", "LMS",
+            "gamma-efsa"')
       }
 
       PR    = .bayesian_prior_continuous_default(model_type,distribution,degree)
@@ -176,14 +208,20 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
     }
     #permute the matrix to the internal C values
     # Hill = 6, Exp3 = 3, Exp5 = 5, Power = 8, 
-    # FUNL = 10
-    permuteMat = cbind(c(1,2,3,4,5,6),c(6,3,5,8,10,666))
+    # FUNL = 10, aerts = 11-22
+    permuteMat = cbind(c(1,2,3,4,5,6,7:20),c(6,3,5,8,10,666, 11:24))
     fitmodel = permuteMat[dmodel,2]
     if (fitmodel == 10 && dis_type == 3){
          stop("The FUNL model is currently not defined for Log-Normal distribution.")
     }
     if (fitmodel == 666 && dis_type == 3){
          stop("Polynomial models are currently not defined for the Log-Normal distribution.")
+    }
+    if (fitmodel %in% 11:24 && fit_type == "mle"){
+      stop("Aerts models are currently not supported with the frequentist approach.")
+    }
+    if(any(PR[,1] >= 3)){
+      warning("Gamma, Cauchy, and PERT priors are still under development and may be incorrect.")
     }
     
     #Fit to determine direction. 
@@ -226,6 +264,50 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
     }else{
       vt = 1
       constVar = TRUE
+    }
+
+    if(BMD_priors == TRUE){
+      #MLE differences (only for bounds)
+      if(type_of_fit == 2){
+        if(fitmodel == 8){ #power model has different lower bound on 3rd parameter
+          PR[3,4] <- 1
+        } 
+        if(fitmodel == 666){#polynomial model has many changes
+          if(distribution == "normal-ncv"){
+            temp <- nrow(PR) - 2 #NCV term
+            PR[temp, 5] <- 100 #UB on NCV parameter in 100
+            PR[2:(temp-1), 4] <- -10000
+            PR[2:(temp-1), 5] <- 10000
+          }
+          if(distribution == 'normal'){
+            PR[1,4:5] <- c(-1000, 1000)
+            if(is_increasing){
+              PR[2:(nrow(PR)-1), 4] <- 0.00001
+              PR[2:(nrow(PR)-1), 5] <- 18
+            } else{
+              PR[2:(nrow(PR)-1), 5] <- -0.00001
+              PR[2:(nrow(PR)-1), 4] <- -18
+            }
+          }
+        }
+      } else{
+        if(fitmodel == 3){ #exp-3
+          PR[2,] <- c(2,0,6.9,0,10000)
+        }
+        if(fitmodel == 6){ #hill
+          PR[2,] <- c(1,0,1000,-10000, 10000)
+        }
+        if(fitmodel == 5){ #exp-5
+          PR[2,] <- c(1,0,1000,-10000, 10000)
+          if(distribution == "normal-ncv"){
+            PR[5, 3] <- 0.75
+            PR[6,4:5] <- c(-18, 18)
+          }
+        }
+        if(fitmodel == 8 & distribution == "normal-ncv"){ #power NCV
+          PR[2,] <- c(1,0,10, -10000, 10000)
+        }
+      }
     }
     
 
@@ -273,16 +355,26 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       rvals$bmd_dist <- rvals$fitted_model$bmd_dist
       if (!identical(rvals$bmd_dist, numeric(0))){
         temp_me = rvals$bmd_dist
-        temp_me = temp_me[!is.infinite(temp_me[,1]),]
-        temp_me = temp_me[!is.na(temp_me[,1]),]
-        temp_me = temp_me[!is.nan(temp_me[,1]),]
-        
+        #rarely gives error, so wrap in tryCatch: if fails, create 2x2 0 matrix
+        tryCatch({
+          temp_me = temp_me[!is.infinite(temp_me[,1]),]
+          temp_me = temp_me[!is.na(temp_me[,1]),]
+          temp_me = temp_me[!is.nan(temp_me[,1]),]
+        }, error = function(e) temp_me <- matrix(0, nr=2,nc=2))
+        #nrow can throw error too
+        if(is.null(nrow(temp_me))){
+          temp_me <- matrix(0, nr=2,nc=2)
+        }
         if( nrow(temp_me) > 5){
           te <- splinefun(temp_me[,2],temp_me[,1],method="hyman")
           rvals$bmd[2:3]  <- c(te(alpha),te(1-alpha))
         }else{
           rvals$bmd[2:3] <- c(NA,NA)
         }
+      }
+      #if less than 10 unique jumps, warn that mixing was poor
+      if(length(unique(rvals$mcmc_result$BMD_samples)) < 10){
+        warning("MCMC did not mix well!", call. = FALSE)
       }
       
       class(rvals) <- "BMDcont_fit_MCMC"; 
@@ -311,10 +403,15 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       }
       if (!identical(rvals$bmd_dist, numeric(0))){
         temp_me = rvals$bmd_dist
-        temp_me = temp_me[!is.infinite(temp_me[,1]),]
-        temp_me = temp_me[!is.na(temp_me[,1]),]
-        temp_me = temp_me[!is.nan(temp_me[,1]),]
-        
+        tryCatch({
+          temp_me = temp_me[!is.infinite(temp_me[,1]),]
+          temp_me = temp_me[!is.na(temp_me[,1]),]
+          temp_me = temp_me[!is.nan(temp_me[,1]),]
+        }, error = function(e) temp_me <- matrix(0, nr=2,nc=2))
+        #nrow can throw error too
+        if(is.null(nrow(temp_me))){
+          temp_me <- matrix(0, nr=2,nc=2)
+        }
         if( nrow(temp_me) > 5){
           te <- splinefun(temp_me[,2],temp_me[,1],method="hyman")
           rvals$bmd[2:3]  <- c(te(alpha),te(1-alpha))

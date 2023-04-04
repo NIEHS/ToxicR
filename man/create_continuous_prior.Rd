@@ -2,7 +2,7 @@
 % Please edit documentation in R/Build_Priors.R
 \name{create_continuous_prior}
 \alias{create_continuous_prior}
-\title{create_continuous_prior  Given priorlist, a model, 
+\title{create_continuous_prior  Given priorlist, a model,
        and a distribution. Create a prior for a given analysis.}
 \usage{
 create_continuous_prior(prior_list, model, distribution, deg = 2)
@@ -11,7 +11,8 @@ create_continuous_prior(prior_list, model, distribution, deg = 2)
 \item{prior_list}{First Prior}
 
 \item{model}{Model to be used
-one of \code{"hill","exp-3","exp-5","power","polynomial"}}
+one of \code{"hill", "exp-3", "exp-5", "power", "polynomial", "FUNL", "exp-aerts", "invexp-aerts", "gamma-aerts", "invgamma-aerts", "hill-aerts", 
+"lomax-aerts", "invlomax-aerts", "lognormal-aerts", "logskew-aerts", "invlogskew-aerts", "logistic-aerts", "probit-aerts", "gamma-efsa"}}
 
 \item{distribution}{- Normal "normal", Normal non-constant variance "normal-ncv", or
 log-normal "lognormal"}
@@ -19,19 +20,21 @@ log-normal "lognormal"}
 \item{deg}{- For polynomial models only, the degree of the polynomial.}
 }
 \value{
-new BMDprior list. This object is essentially a prior list constructed by 
+new BMDprior list. This object is essentially a prior list constructed by
 \code{create_prior_lists} with a model type and variance type.
 }
 \description{
-create_continuous_prior  Given priorlist, a model, 
+create_continuous_prior  Given priorlist, a model,
        and a distribution. Create a prior for a given analysis.
 }
 \examples{
-plist<- create_prior_list(normprior(0,0.1,-100,100), # a
-                          normprior(0,1,  -1e2,1e2),     # b
-                          lnormprior(1,0.2,0,18),  #k
-                          normprior(0,1,-18,18))
- 
- power_normal <- create_continuous_prior(plist,"power","normal") 
+plist <- create_prior_list(
+  normprior(0, 0.1, -100, 100), # a
+  normprior(0, 1, -1e2, 1e2), # b
+  lnormprior(1, 0.2, 0, 18), # k
+  normprior(0, 1, -18, 18)
+)
+
+power_normal <- create_continuous_prior(plist, "power", "normal")
 
 }

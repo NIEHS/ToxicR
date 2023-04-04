@@ -2,7 +2,7 @@
 % Please edit documentation in R/Build_Priors.R
 \name{create_dichotomous_prior}
 \alias{create_dichotomous_prior}
-\title{create_dichotomous_prior  Given priorlist, a model, 
+\title{create_dichotomous_prior  Given priorlist, a model,
        and a distribution. Create a prior for a given analysis.}
 \usage{
 create_dichotomous_prior(prior, model)
@@ -16,13 +16,15 @@ create_dichotomous_prior(prior, model)
 new BMDprior list that can be used in a dichotomous fit.
 }
 \description{
-create_dichotomous_prior  Given priorlist, a model, 
+create_dichotomous_prior  Given priorlist, a model,
        and a distribution. Create a prior for a given analysis.
 }
 \examples{
-plist<- create_prior_list(normprior(0,0.1,-100,100), # a
-                          lnormprior(1,0.2,0,18))
- 
- power_normal <- create_dichotomous_prior(plist,"logistic") 
+plist <- create_prior_list(
+  normprior(0, 0.1, -100, 100), # a
+  lnormprior(1, 0.2, 0, 18)
+)
+
+power_normal <- create_dichotomous_prior(plist, "logistic")
 
 }

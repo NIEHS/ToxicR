@@ -8,7 +8,7 @@ ntp_dunnett(formula, data, dose_name = "dose")
 }
 \arguments{
 \item{formula}{An equation of the form \eqn{Y \sim X.} Here the variable
-\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
+\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
 conditions. For example, if weight is the dependent variable, and you are
 interested in looking at the trend across sex one would have 'weight ~ sex'.}
 
@@ -24,6 +24,6 @@ The results of Dunnet's  test for each level in \eqn{dose_name}
 ntp_dunett Dunnett's test
 }
 \examples{
-a = ntp_dunnett(response ~ sex + response_type,data=ntp_599_hemotology,dose_name="concentration")
+a <- ntp_dunnett(response ~ sex + response_type, data = ntp_599_hemotology, dose_name = "concentration")
 summary(a)
 }

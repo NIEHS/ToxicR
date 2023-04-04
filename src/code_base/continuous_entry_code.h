@@ -1,9 +1,7 @@
 /*
- * 
-* Copyright 2020  US. Department of Health and Human Services (HHS), 
+ * Copyright 2020  US. Department of Health and Human Services (HHS), 
  * National Institute of Environmental Health Sciences (NIEHS)
  * Email: Matt Wheeler  <matt.wheeler@nih.gov>
- *
  *
  *Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
  *and associated documentation files (the "Software"), to deal in the Software without restriction, 
@@ -75,10 +73,41 @@ using Eigen::MatrixXd;
 #include "normal_POLYNOMIAL_NC.h"
 #include "normal_EXP_NC.h"
 
+#include "normal_EXP_aerts_NC.h"
+#include "normal_GAMMA_aerts_NC.h"
+#include "normal_HILL_aerts_NC.h"
+#include "normal_IEXP_aerts_NC.h"
+#include "normal_IGAMMA_aerts_NC.h"
+#include "normal_ILOGSKEW_aerts_NC.h"
+#include "normal_ILOMAX_aerts_NC.h"
+#include "normal_LOGISTIC_aerts_NC.h"
+#include "normal_LOGNORMAL_aerts_NC.h"
+#include "normal_LOGSKEW_aerts_NC.h"
+#include "normal_LOMAX_aerts_NC.h"
+#include "normal_PROBIT_aerts_NC.h"
+#include "normal_LMS_NC.h"
+#include "normal_GAMMA_efsa_NC.h"
+
 #include "lognormal_HILL_NC.h"
 #include "lognormal_POWER_NC.h"
 #include "lognormal_POLYNOMIAL_NC.h"
 #include "lognormal_EXP_NC.h"
+
+#include "lognormal_EXP_aerts_NC.h"
+#include "lognormal_GAMMA_aerts_NC.h"
+#include "lognormal_HILL_aerts_NC.h"
+#include "lognormal_IEXP_aerts_NC.h"
+#include "lognormal_IGAMMA_aerts_NC.h"
+#include "lognormal_ILOGSKEW_aerts_NC.h"
+#include "lognormal_ILOMAX_aerts_NC.h"
+#include "lognormal_LOGISTIC_aerts_NC.h"
+#include "lognormal_LOGNORMAL_aerts_NC.h"
+#include "lognormal_LOGSKEW_aerts_NC.h"
+#include "lognormal_LOMAX_aerts_NC.h"
+#include "lognormal_PROBIT_aerts_NC.h"
+#include "lognormal_LMS_NC.h"
+#include "lognormal_GAMMA_efsa_NC.h"
+
 
 #include "continuous_clean_aux.h"
 #include "mcmc_analysis.h"

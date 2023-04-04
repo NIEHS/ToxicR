@@ -18,6 +18,7 @@ single_continuous_fit(
   samples = 25000,
   degree = 2,
   burnin = 1000,
+  BMD_priors = FALSE,
   ewald = FALSE,
   transform = FALSE
 )
@@ -27,8 +28,37 @@ single_continuous_fit(
 
 \item{Y}{response matrix}
 
-\item{model_type}{Mean model. It should be one of 
-\code{"hill","exp-3","exp-5","power","polynomial"}}
+\item{model_type}{Specifies the mean model, or log-mean 
+for lognormal data.  For more information, see Aerts, Wheeler, and Abrahantes (2021)
+
+ \itemize{
+     \item \code{"exp-aerts"}:         \eqn{f(x) = a(1 + (c-1)(1-exp(-bx^{d}))) }
+     \item \code{"invexp-aerts"}:      \eqn{f(x) = a(1 + (c-1)(exp(-bx^{-d})))}
+     \item \code{"hill-aerts"}:        \eqn{f(x) = a(1 + (c-1)(1-\frac{b^d}{b+x^d}))}
+     \item \code{"gamma-aerts"}:       \eqn{f(x) = a(1 + (c-1)(\Gamma(bx^d;\xi)))}
+     \item \code{"invgamma-aerts"}:    \eqn{f(x) = a(1 + (c-1)(1-\Gamma(bx^{-d};\xi)))}
+     \item \code{"lomax-aerts"}:       \eqn{f(x) = a\left\{1 + (c-1)(1-\left(\frac{b}{b+x^d} \right))^\xi \right\}}
+     \item \code{"invlomax-aerts"}:    \eqn{f(x) = a\left\{1 + (c-1)(\left(\frac{b}{b+x^{-d}} \right))^\xi \right\}}
+     \item \code{"lognormal-aerts"}:   \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( \ln(b) + d\times \ln(x))\right) \right\}}
+     \item \code{"logskew-aerts"}:     \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi_{SN}( \ln(b) + d\times \ln(x); \xi )\right) \right\}}
+     \item \code{"invlogskew-aerts"}:  \eqn{f(x) = a\left\{1 + (c-1)\left(1 - \Phi_{SN}( \ln(b) - d\times \ln(x); \xi )\right) \right\}}
+     \item \code{"logistic-aerts"}:    \eqn{f(x) = a\left\{1 + (c-1)\left(\frac{1}{1+\exp(-bx)}\right) \right\}}
+     \item \code{"probit-aerts"}:      \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( b + d\times x)\right) \right\}}
+     \item \code{"gamma-efsa"}:        \eqn{f(x) = a(1 + (c-1)(\Gamma(bx; d)))}
+   }
+  Here: \eqn{\Phi(\cdot)} is the standard normal distribution and
+        \eqn{\Phi_{SN}(\cdot;\cdot)} is the skew-normal distribution
+
+   Legacy continuous models based upon US EPA BMDS software. 
+   These models can be fit using Bayesian and Maximum Likelihood. 
+   \itemize{
+     \item \code{"hill"}: \eqn{f(x) = a + b\frac{x^d}{c^d + x^d}}
+     \item \code{"exp-3"}: \eqn{f(x) = a(1-exp(-bx^{d})) }
+     \item \code{"exp-5"}: \eqn{f(x) = a(1 + (c-1)(1-exp(-bx^{d}))) }
+     \item \code{"power"}: \eqn{f(x) = a + b x^d}
+     \item \code{"polynomial"}: \eqn{\beta_0 + \beta_1 x + \ldots \beta_p x^p}, where p is equal to 
+     \code{degree} (defined) below. 
+   }}
 
 \item{fit_type}{the method used to fit (laplace, mle, or mcmc)}
 
@@ -53,6 +83,8 @@ single_continuous_fit(
 \item{degree}{the number of degrees of a polynomial model. Only used for polynomial models.}
 
 \item{burnin}{the number of burnin samples to take (MCMC only)}
+
+\item{BMD_priors}{Logical specifying if BMD Express-3 priors should be used instead of ToxicR defaults}
 
 \item{ewald}{perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)}
 

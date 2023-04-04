@@ -12,6 +12,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// owenst_fn
+double owenst_fn(double x, double fx);
+RcppExport SEXP _ToxicR_owenst_fn(SEXP xSEXP, SEXP fxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type fx(fxSEXP);
+    rcpp_result_gen = Rcpp::wrap(owenst_fn(x, fx));
+    return rcpp_result_gen;
+END_RCPP
+}
 // run_single_dichotomous
 List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data, Eigen::MatrixXd pr, NumericVector options1, IntegerVector options2);
 RcppExport SEXP _ToxicR_run_single_dichotomous(SEXP modelSEXP, SEXP dataSEXP, SEXP prSEXP, SEXP options1SEXP, SEXP options2SEXP) {
@@ -139,6 +151,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_ToxicR_owenst_fn", (DL_FUNC) &_ToxicR_owenst_fn, 2},
     {"_ToxicR_run_single_dichotomous", (DL_FUNC) &_ToxicR_run_single_dichotomous, 5},
     {"_ToxicR_run_continuous_single", (DL_FUNC) &_ToxicR_run_continuous_single, 6},
     {"_ToxicR_run_continuous_ma_laplace", (DL_FUNC) &_ToxicR_run_continuous_ma_laplace, 6},

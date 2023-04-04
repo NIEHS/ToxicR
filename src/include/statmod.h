@@ -218,87 +218,155 @@ template <class LL, class PR>
 Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
 
 	Eigen::MatrixXd m(log_likelihood.nParms(), log_likelihood.nParms());
+  m.setZero();
 	double temp;
 	double h = 1e-10;
 	double mpres = pow(1.0e-16, 0.333333);
 
 	Eigen::MatrixXd tempVect(log_likelihood.nParms(), 1);
+  tempVect.setZero();
 	double hi, hj;
 
 	for (unsigned int i = 0; i < log_likelihood.nParms(); i++) {
 		for (unsigned int j = 0; j < log_likelihood.nParms(); j++) {
 
-			double x = theta(i, 0);  //compute the hessian for parameter i-j
-			if (fabs(x) > DBL_EPSILON) {
-				h = mpres * (fabs(x));
-				temp = x + h;
-				hi = temp - x;
-			}else {
-				hi = mpres;
-			}
+      double x = theta(i, 0); // compute the hessian for parameter i-j
+      if (fabs(x) > DBL_EPSILON)
+      {
+        h = mpres * (fabs(x));
+        temp = x + h;
+        hi = temp - x;
+      }
+      else
+      {
+        hi = mpres;
+      }
 
-			x = theta(j, 0);
-			if (fabs(x) > DBL_EPSILON) {
-				h = mpres * (fabs(x));
-				temp = x + h;
-				hj = temp - x;
-			}else {
-				hj = mpres;
-			}
+      x = theta(j, 0);
+      if (fabs(x) > DBL_EPSILON)
+      {
+        h = mpres * (fabs(x));
+        temp = x + h;
+        hj = temp - x;
+      }
+      else
+      {
+        hj = mpres;
+      }
 
-			temp = 0.0;
+      temp = 0.0;
 
-			if (i == j) {
-				// on diagonal variance estimate
-				// eg the 2nd partial derivative
-				tempVect = theta;
-				tempVect(i, 0) = tempVect(i, 0) + 2 * hi;
-				temp += -1.0*negPenLike(tempVect);
-				tempVect = theta;
-				tempVect(i, 0) = tempVect(i, 0) + hi;
-				temp += 16.0*negPenLike(tempVect);
-				temp += -30.0*negPenLike(theta);
-				tempVect = theta;
-				tempVect(i, 0) = tempVect(i, 0) - hi;
-				temp += 16.0*negPenLike(tempVect);
+      if (i == j)
+      {
+        // on diagonal variance estimate
+        // eg the 2nd partial derivative
+        tempVect = theta;
+        tempVect(i, 0) = tempVect(i, 0) + 2 * hi;
+        temp += -1.0 * negPenLike(tempVect);
+        tempVect = theta;
+        tempVect(i, 0) = tempVect(i, 0) + hi;
+        temp += 16.0 * negPenLike(tempVect);
+        temp += -30.0 * negPenLike(theta);
+        tempVect = theta;
+        tempVect(i, 0) = tempVect(i, 0) - hi;
+        temp += 16.0 * negPenLike(tempVect);
 
-				tempVect = theta;
-				tempVect(i, 0) = tempVect(i, 0) - 2 * hi;
-				temp += -1.0*negPenLike(tempVect);
-				temp = temp / (12 * hi*hi);
-				m(i, i) = temp;
+        tempVect = theta;
+        tempVect(i, 0) = tempVect(i, 0) - 2 * hi;
+        temp += -1.0 * negPenLike(tempVect);
+        temp = temp / (12 * hi * hi);
+        m(i, i) = temp;
+        //if nan, shift up off boundary
+        if(std::isnan(temp)){
+        	temp = 0.0;
+        	tempVect = theta;
+        	tempVect(i,0) += 2.0 * hi;
+            tempVect(i, 0) = tempVect(i, 0) + 2 * hi;
+            temp += -1.0 * negPenLike(tempVect);
+            tempVect = theta;
+        	tempVect(i,0) += 2.0 * hi;
+            tempVect(i, 0) = tempVect(i, 0) + hi;
+            temp += 16.0 * negPenLike(tempVect);
+            temp += -30.0 * negPenLike(theta);
+            tempVect = theta;
+        	tempVect(i,0) += 2.0 * hi;
+            tempVect(i, 0) = tempVect(i, 0) - hi;
+            temp += 16.0 * negPenLike(tempVect);
+            tempVect = theta;
+        	tempVect(i,0) += 2.0 * hi;
+            tempVect(i, 0) = tempVect(i, 0) - 2 * hi;
+            temp += -1.0 * negPenLike(tempVect);
+            temp = temp / (12 * hi * hi);
+            m(i, i) = temp;
+        }
+      }
+      else
+      {
 
-			}else {
+        // off diagonal variance estimate
+        // eg the first partial of x wrt the
+        // first partial  of y
 
-				// off diagonal variance estimate
-				// eg the first partial of x wrt the
-				// first partial  of y
+        tempVect = theta;
+        tempVect(i, 0) = tempVect(i, 0) + hi;
+        tempVect(j, 0) = tempVect(j, 0) + hj;
+        temp += negPenLike(tempVect);
 
-				tempVect = theta;
-				tempVect(i, 0) = tempVect(i, 0) + hi; tempVect(j, 0) = tempVect(j, 0) + hj;
-				temp += negPenLike(tempVect);
+        tempVect = theta;
+        tempVect(i, 0) = tempVect(i, 0) + hi;
+        tempVect(j, 0) = tempVect(j, 0) - hj;
+        temp += -1.0 * negPenLike(tempVect);
 
-				tempVect = theta;
-				tempVect(i, 0) = tempVect(i, 0) + hi; tempVect(j, 0) = tempVect(j, 0) - hj;
-				temp += -1.0*negPenLike(tempVect);
+        tempVect = theta;
+        tempVect(i, 0) = tempVect(i, 0) - hi;
+        tempVect(j, 0) = tempVect(j, 0) + hj;
+        temp += -1.0 * negPenLike(tempVect);
 
-				tempVect = theta;
-				tempVect(i, 0) = tempVect(i, 0) - hi; tempVect(j, 0) = tempVect(j, 0) + hj;
-				temp += -1.0*negPenLike(tempVect);
+        tempVect = theta;
+        tempVect(i, 0) = tempVect(i, 0) - hi;
+        tempVect(j, 0) = tempVect(j, 0) - hj;
+        temp += negPenLike(tempVect);
+        temp = temp / (4 * hi * hj);
+        m(i, j) = temp;
+        //if nan, shift up off boundary
+        if(std::isnan(temp)){
+        	temp = 0.0;
+            tempVect = theta;
+        	tempVect(i,0) += hi;
+        	tempVect(j,0) += hj;
+            tempVect(i, 0) = tempVect(i, 0) + hi;
+            tempVect(j, 0) = tempVect(j, 0) + hj;
+            temp += negPenLike(tempVect);
 
+            tempVect = theta;
+        	tempVect(i,0) += hi;
+        	tempVect(j,0) += hj;
+            tempVect(i, 0) = tempVect(i, 0) + hi;
+            tempVect(j, 0) = tempVect(j, 0) - hj;
+            temp += -1.0 * negPenLike(tempVect);
 
-				tempVect = theta;
-				tempVect(i, 0) = tempVect(i, 0) - hi;
-				tempVect(j, 0) = tempVect(j, 0) - hj;
-				temp += negPenLike(tempVect);
-				temp = temp / (4 * hi*hj);
-				m(i, j) = temp;
+            tempVect = theta;
+        	tempVect(i,0) += hi;
+        	tempVect(j,0) += hj;
+            tempVect(i, 0) = tempVect(i, 0) - hi;
+            tempVect(j, 0) = tempVect(j, 0) + hj;
+            temp += -1.0 * negPenLike(tempVect);
 
-			}
+            tempVect = theta;
+        	tempVect(i,0) += hi;
+        	tempVect(j,0) += hj;
+            tempVect(i, 0) = tempVect(i, 0) - hi;
+            tempVect(j, 0) = tempVect(j, 0) - hj;
+            temp += negPenLike(tempVect);
+            temp = temp / (4 * hi * hj);
+            m(i, j) = temp;
+        }
+      }
+    }
+  }
+  // replace NaN by 0
+  m = m.unaryExpr([](double xh){ return std::isnan(xh) ? 0.0 : xh;} );
 
-		}
-
-	}
 	// m = m.inverse();
   Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(m);
   auto rank = lu_decomp.rank();
@@ -307,8 +375,12 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
   if (rank < m.rows()){
       m = m + 1e-4*Eigen::MatrixXd::Identity(m.rows(),m.cols());
   }
+	// return m.inverse();
+  m = m.inverse();
+  //fix the covariance element if it was zero (and 1e-4 was added)
+  m = m.unaryExpr([](double x){ return (x==1e4) ? 0.0 : x;} );
 
-	return m.inverse();
+	return m;
 }
 
 /////////////////////////////////////////////////////////////////
@@ -803,4 +875,3 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
 }
 
 #endif
-

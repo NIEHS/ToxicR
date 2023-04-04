@@ -1,3 +1,64 @@
+.cont_exp_aerts_f <- function(A,doses,decrease=F){
+  out <- A[1] * (1 + (A[3] - 1) * (1 - exp(-A[2] * doses^A[4])))
+  return(out)
+}
+.cont_LMS_f <- function(A, doses, decrease=F){
+  out <- A[1] * (1 + (A[3] - 1) * (1 - exp(-A[2] * doses - A[4] * doses^2)))
+}
+.cont_invexp_aerts_f <- function(A,doses,decrease=F){
+  out <- A[1] * (1 + (A[3] - 1) * (exp(-A[2] * doses^(-A[4]))))
+  return(out)
+}
+.cont_gamma_aerts_f <- function(A,doses,decrease=F){
+  out <- A[1] * (1 + (A[3] - 1)*pgamma(doses^A[4], shape = A[5], scale = 1.0 / A[2]))
+  return(out)
+}
+.cont_gamma_efsa_f <- function(A,doses,decrease=F){
+  out <- A[1] * (1 + (A[3] - 1)*pgamma(doses, shape = A[4], scale = 1.0 / A[2]))
+  return(out)
+}
+.cont_invgamma_aerts_f <- function(A,doses,decrease=F){
+  out <- A[1] * (1 + (A[3] - 1)*(1-pgamma(doses^(-A[4]), shape = A[5], scale = 1.0 / A[2])))
+  return(out)
+}
+.cont_hill_aerts_f <- function(A,doses,decrease=F){
+  out <- A[1] * (1 + (A[3] - 1) * (1 - A[2]^A[4] / (A[2]^A[4] + doses^A[4]))) 
+  return(out)
+}
+.cont_lognormal_aerts_f <- function(A,doses,decrease=F){
+  out <- A[1] * (1 + (A[3] - 1) * pnorm(log(A[2]) + A[4]*log(doses)))
+  return(out)
+}
+.cont_lomax_aerts_f <- function(A,doses,decrease=F){
+  out <- A[1] * (1 + (A[3] - 1) * (1 - (A[2] / (A[2] + doses^A[4]))^A[5]))
+  return(out)
+}
+.cont_invlomax_aerts_f <- function(A,doses,decrease=F){
+  out <- A[1] * (1 + (A[3] - 1) * ((A[2] / (A[2] + doses^(-A[4])))^(A[5])))
+  return(out)
+}
+.cont_logskew_aerts_f <- function(A,doses,decrease=F){
+  #out <- A[1] * (1 + (A[3] - 1) * psn(log(A[2]) + A[4]*log(doses), alpha=A[5]))
+  temp <- sapply(doses, function(x) .owenst_fn(log(A[2]) + A[4]*log(x), A[5]))
+  cdf <- pnorm(log(A[2]) + A[4]*log(doses)) - 2.0*temp
+  out <- A[1] * (1 + (A[3] - 1) * cdf)
+  return(out)
+}
+.cont_invlogskew_aerts_f <- function(A,doses,decrease=F){
+  #out <- A[1] * (1 + (A[3] - 1) * (1 - psn(log(A[2]) - A[4]*log(doses), alpha=A[5])))
+  temp <- sapply(doses, function(x) .owenst_fn(log(A[2]) - A[4]*log(x), A[5]))
+  cdf <- pnorm(log(A[2]) - A[4]*log(doses)) - 2.0*temp
+  out <- A[1] * (1 + (A[3] - 1) * (1 - cdf))
+  return(out)
+}
+.cont_logistic_aerts_f <- function(A,doses,decrease=F){
+  out <- A[3] / (1 + exp(-A[1] - A[2] * doses^A[4]))
+  return(out)
+}
+.cont_probit_aerts_f <- function(A,doses,decrease=F){
+  out <- A[3] * pnorm(A[1] + A[2] * doses^A[4])
+  return(out)
+}
 
 .cont_polynomial_f <- function(A,doses,decrease=F){
 
@@ -72,6 +133,9 @@
   density_col="blueviolet"
   credint_col="azure2"
   BMD_DENSITY = T
+  if(is.null(IS_tranformed)){ #NULL for MA, which cannot transform
+    IS_tranformed = FALSE
+  }
   
   if (qprob < 0 || qprob > 0.5){
     stop( "Quantile probability must be between 0 and 0.5")
@@ -109,7 +173,24 @@
   {
     test_doses = asinh(test_doses)
   }
-  
+  Q <- switch(fit$model,
+              "exp-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_exp_aerts_f, d=test_doses,decrease=decrease),
+              "invexp-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_invexp_aerts_f, d=test_doses,decrease=decrease),
+              "gamma-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_gamma_aerts_f, d=test_doses,decrease=decrease),
+              "invgamma-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_invgamma_aerts_f, d=test_doses,decrease=decrease),
+              "hill-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_hill_aerts_f, d=test_doses,decrease=decrease),
+              "lomax-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_lomax_aerts_f, d=test_doses,decrease=decrease), 
+              "invlomax-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_invlomax_aerts_f, d=test_doses,decrease=decrease), 
+              "lognormal-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_lognormal_aerts_f, d=test_doses,decrease=decrease), 
+              "logskew-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_logskew_aerts_f, d=test_doses,decrease=decrease), 
+              "invlogskew-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_invlogskew_aerts_f, d=test_doses,decrease=decrease), 
+              "logistic-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_logistic_aerts_f, d=test_doses,decrease=decrease), 
+              "probit-aerts" = apply(fit$mcmc_result$PARM_samples,1,.cont_probit_aerts_f, d=test_doses,decrease=decrease),
+              "LMS" = apply(fit$mcmc_result$PARM_samples,1,.cont_LMS_f, d=test_doses,decrease=decrease),
+              "gamma-efsa" = apply(fit$mcmc_result$PARM_samples,1,.cont_gamma_efsa_f, d=test_doses,decrease=decrease))
+  if(isLogNormal & !is.null(Q)){
+    Q <- exp(Q + exp(fit$mcmc_result$PARM_samples[,ncol(fit$mcmc_result$PARM_samples)])/2)
+  }
   if (fit$model=="FUNL"){
      Q <- apply(fit$mcmc_result$PARM_samples,1,.cont_FUNL_f, d=test_doses,decrease=decrease)   
   }
@@ -187,7 +268,8 @@
       x <- seq(min(test_doses),max(test_doses), (max(test_doses) - min(test_doses))/511)
       return(data.frame(x=x,y=y))
     }
-    
+
+    # Dens =  density(temp,cut=c(max(test_doses)),adjust =1.5, n=512, from=min(test_doses), to=max(test_doses))
     Dens = tryCatch(density(temp,cut=c(max(test_doses)),adjust =1.5, n=512, 
                             from=min(test_doses), to=max(test_doses)), 
                     error = errorFun)
@@ -237,6 +319,10 @@
   fit <-A
   density_col="blueviolet"
   credint_col="azure2"
+
+  if(is.null(IS_tranformed)){ #NULL for MA, which cannot transform
+    IS_tranformed = FALSE
+  }
   
   if (qprob < 0 || qprob > 0.5){
     stop( "Quantile probability must be between 0 and 0.5")
@@ -275,6 +361,24 @@
     test_doses <- asinh(test_doses)
   }
   #Pre defined function- lm_fit can be used for fitting parameters?
+  me <- switch(fit$model,
+              "exp-aerts" = .cont_exp_aerts_f(fit$parameters,test_doses),
+              "invexp-aerts" = .cont_invexp_aerts_f(fit$parameters,test_doses),
+              "gamma-aerts" = .cont_gamma_aerts_f(fit$parameters,test_doses),
+              "invgamma-aerts" = .cont_invgamma_aerts_f(fit$parameters,test_doses),
+              "hill-aerts" = .cont_hill_aerts_f(fit$parameters,test_doses),
+              "lomax-aerts" = .cont_lomax_aerts_f(fit$parameters,test_doses), 
+              "invlomax-aerts" = .cont_invlomax_aerts_f(fit$parameters,test_doses), 
+              "lognormal-aerts" = .cont_lognormal_aerts_f(fit$parameters,test_doses), 
+              "logskew-aerts" = .cont_logskew_aerts_f(fit$parameters,test_doses), 
+              "invlogskew-aerts" = .cont_invlogskew_aerts_f(fit$parameters,test_doses), 
+              "logistic-aerts" = .cont_logistic_aerts_f(fit$parameters,test_doses), 
+              "probit-aerts" = .cont_probit_aerts_f(fit$parameters,test_doses),
+              "LMS" = .cont_LMS_f(fit$parameters, test_doses),
+              "gamma-efsa" = .cont_gamma_efsa_f(fit$parameters, test_doses))
+  if(isLogNormal & !is.null(me)){
+    me <- exp(me)
+  }
   if (fit$model=="FUNL"){
      me <- .cont_FUNL_f(fit$parameters,test_doses)
   }  
@@ -408,6 +512,30 @@
           
           for (ii in 1:n_samps){
                fit <- A[[fit_idx[ma_samps[ii]]]]
+               isLogNormal = (grepl("Log-Normal",fit$full_model) == 1)
+               asdf <- switch(fit$model,
+                           "exp-aerts" = .cont_exp_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses),
+                           "invexp-aerts" = .cont_invexp_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses),
+                           "gamma-aerts" = .cont_gamma_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses),
+                           "invgamma-aerts" = .cont_invgamma_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses),
+                           "hill-aerts" = .cont_hill_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses),
+                           "lomax-aerts" = .cont_lomax_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses), 
+                           "invlomax-aerts" = .cont_invlomax_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses), 
+                           "lognormal-aerts" = .cont_lognormal_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses), 
+                           "logskew-aerts" = .cont_logskew_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses), 
+                           "invlogskew-aerts" = .cont_invlogskew_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses), 
+                           "logistic-aerts" = .cont_logistic_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses), 
+                           "probit-aerts" = .cont_probit_aerts_f(fit$mcmc_result$PARM_samples[ii,],test_doses),
+                           "LMS" = .cont_LMS_f(fit$mcmc_result$PARM_samples[ii,],test_doses),
+                           "gamma-efsa" = .cont_gamma_efsa_f(fit$mcmc_result$PARM_samples[ii,],test_doses))
+               if(isLogNormal & !is.null(asdf)){
+                 asdf <- exp(asdf)
+               }
+               if(!is.null(asdf)){
+                 temp_f[ii,] <- asdf
+                 temp_bmd[ii] <- fit$mcmc_result$BMD_samples[ii]
+                 rm(asdf)
+               }
                if (fit$model=="FUNL"){
                     temp_f[ii,] <- .cont_FUNL_f(fit$mcmc_result$PARM_samples[ii,],test_doses)
                     temp_bmd[ii] <- fit$mcmc_result$BMD_samples[ii]
@@ -510,6 +638,25 @@
             
             if (A$posterior_probs[ii]>0.05){
                fit <- A[[fit_idx[ii]]]
+               isLogNormal = (grepl("Log-Normal",fit$full_model) == 1)
+               f <- switch(fit$model,
+                            "exp-aerts" = .cont_exp_aerts_f(fit$parameters,test_doses),
+                            "invexp-aerts" = .cont_invexp_aerts_f(fit$parameters,test_doses),
+                            "gamma-aerts" = .cont_gamma_aerts_f(fit$parameters,test_doses),
+                            "invgamma-aerts" = .cont_invgamma_aerts_f(fit$parameters,test_doses),
+                            "hill-aerts" = .cont_hill_aerts_f(fit$parameters,test_doses),
+                            "lomax-aerts" = .cont_lomax_aerts_f(fit$parameters,test_doses), 
+                            "invlomax-aerts" = .cont_invlomax_aerts_f(fit$parameters,test_doses), 
+                            "lognormal-aerts" = .cont_lognormal_aerts_f(fit$parameters,test_doses), 
+                            "logskew-aerts" = .cont_logskew_aerts_f(fit$parameters,test_doses), 
+                            "invlogskew-aerts" = .cont_invlogskew_aerts_f(fit$parameters,test_doses), 
+                            "logistic-aerts" = .cont_logistic_aerts_f(fit$parameters,test_doses), 
+                            "probit-aerts" = .cont_probit_aerts_f(fit$parameters,test_doses),
+                            "LMS" = .cont_LMS_f(fit$parameters,test_doses),
+                            "gamma-efsa" = .cont_gamma_efsa_f(fit$parameters,test_doses))
+               if(isLogNormal & !is.null(f)){
+                 f <- exp(f)
+               }
                if (fit$model=="FUNL"){
                     f <- .cont_FUNL_f(fit$parameters,test_doses)
                }  
@@ -591,6 +738,30 @@
        me = test_doses*0   
        for (ii in 1:length(fit_idx)){
          fit <- A[[fit_idx[ii]]]
+         isLogNormal = (grepl("Log-Normal",fit$full_model) == 1)
+         t <- switch(fit$model,
+                      "exp-aerts" = .cont_exp_aerts_f(fit$parameters,test_doses),
+                      "invexp-aerts" = .cont_invexp_aerts_f(fit$parameters,test_doses),
+                      "gamma-aerts" = .cont_gamma_aerts_f(fit$parameters,test_doses),
+                      "invgamma-aerts" = .cont_invgamma_aerts_f(fit$parameters,test_doses),
+                      "hill-aerts" = .cont_hill_aerts_f(fit$parameters,test_doses),
+                      "lomax-aerts" = .cont_lomax_aerts_f(fit$parameters,test_doses), 
+                      "invlomax-aerts" = .cont_invlomax_aerts_f(fit$parameters,test_doses), 
+                      "lognormal-aerts" = .cont_lognormal_aerts_f(fit$parameters,test_doses), 
+                      "logskew-aerts" = .cont_logskew_aerts_f(fit$parameters,test_doses), 
+                      "invlogskew-aerts" = .cont_invlogskew_aerts_f(fit$parameters,test_doses), 
+                      "logistic-aerts" = .cont_logistic_aerts_f(fit$parameters,test_doses), 
+                      "probit-aerts" = .cont_probit_aerts_f(fit$parameters,test_doses),
+                      "LMS" = .cont_LMS_f(fit$parameters,test_doses),
+                      "gamma-efsa" = .cont_gamma_efsa_f(fit$parameters,test_doses))
+         if(isLogNormal & !is.null(t)){
+           t <- exp(t)
+         }
+         if(!is.null(t)){
+           if(A$posterior_probs[ii] > 0){
+             me = t*A$posterior_probs[ii] + me
+           }
+         }
          if (fit$model=="FUNL"){
            t <- .cont_FUNL_f(fit$parameters,test_doses)
            if(A$posterior_probs[ii] > 0){
@@ -666,6 +837,25 @@
        df<-NULL
          if (A$posterior_probs[ii]>0.05){
            fit <- A[[fit_idx[ii]]]
+           isLogNormal = (grepl("Log-Normal",fit$full_model) == 1)
+           f <- switch(fit$model,
+                       "exp-aerts" = .cont_exp_aerts_f(fit$parameters,test_doses),
+                       "invexp-aerts" = .cont_invexp_aerts_f(fit$parameters,test_doses),
+                       "gamma-aerts" = .cont_gamma_aerts_f(fit$parameters,test_doses),
+                       "invgamma-aerts" = .cont_invgamma_aerts_f(fit$parameters,test_doses),
+                       "hill-aerts" = .cont_hill_aerts_f(fit$parameters,test_doses),
+                       "lomax-aerts" = .cont_lomax_aerts_f(fit$parameters,test_doses), 
+                       "invlomax-aerts" = .cont_invlomax_aerts_f(fit$parameters,test_doses), 
+                       "lognormal-aerts" = .cont_lognormal_aerts_f(fit$parameters,test_doses), 
+                       "logskew-aerts" = .cont_logskew_aerts_f(fit$parameters,test_doses), 
+                       "invlogskew-aerts" = .cont_invlogskew_aerts_f(fit$parameters,test_doses), 
+                       "logistic-aerts" = .cont_logistic_aerts_f(fit$parameters,test_doses), 
+                       "probit-aerts" = .cont_probit_aerts_f(fit$parameters,test_doses),
+                       "LMS" = .cont_LMS_f(fit$parameters,test_doses),
+                       "gamma-efsa" = .cont_gamma_efsa_f(fit$parameters,test_doses))
+           if(isLogNormal & !is.null(f)){
+             f <- exp(f)
+           }
            if (fit$model=="FUNL"){
              f <- .cont_FUNL_f(fit$parameters,test_doses)
            }

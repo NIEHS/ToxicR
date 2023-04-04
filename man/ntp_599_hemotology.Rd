@@ -18,7 +18,7 @@ For more information see: \doi{10.22427/NTP-DATA-TR-599}
 ntp_599_hemotology
 }
 \description{
-This dataset contains clinical chemistry data  for  
+This dataset contains clinical chemistry data  for
 all rats in the short term 90-day study.
 }
 \keyword{datasets}

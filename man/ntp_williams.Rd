@@ -8,7 +8,7 @@ ntp_williams(formula, data, dose_name = "dose")
 }
 \arguments{
 \item{formula}{An equation of the form \eqn{Y \sim X.} Here the variable
-\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
+\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
 conditions. For example, if weight is the dependent variable, and you are
 interested in looking at the trend across sex one would have 'weight ~ sex'.}
 
@@ -22,10 +22,10 @@ The results of a Williams trend test for each level in \eqn{dose_name}.
 For more information on the Williams trend test: \doi{10.2307/2528930}
 #' \itemize{
  \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
- \item \code{dose:} the dose groups relative to control. 
- \item \code{willStat}: Value of the Shirley test statistic. 
- \item \code{mult_comp_signif}: Test's significance as 0, 1, or 2 which is not-significant, 
- significant at the 0.05% level and significant at the 0.01% level. 
+ \item \code{dose:} the dose groups relative to control.
+ \item \code{willStat}: Value of the Shirley test statistic.
+ \item \code{mult_comp_signif}: Test's significance as 0, 1, or 2 which is not-significant,
+ significant at the 0.05% level and significant at the 0.01% level.
  \item \code{mult_comp_test}: The type of test, i.e. "William"
 }
 }
@@ -34,6 +34,6 @@ Williams Trend test for
 }
 \examples{
 
-a = ntp_williams(weight ~ sex, data=ntp_weight_data) 
+a <- ntp_williams(weight ~ sex, data = ntp_weight_data)
 summary(a)
 }

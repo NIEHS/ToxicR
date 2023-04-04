@@ -2,7 +2,7 @@
 % Please edit documentation in R/prior_classes.R
 \name{create_prior_list}
 \alias{create_prior_list}
-\title{create_prior_lists .. Given priors 
+\title{create_prior_lists .. Given priors
        created using the ToxicR prior functions, create a list of priors
        for a model.}
 \usage{
@@ -20,14 +20,16 @@ new BMDprior list. This object is essentailly a matrix where each
 row is  an element defined by a prior object (e.g., normprior or lnormprior).
 }
 \description{
-create_prior_lists .. Given priors 
+create_prior_lists .. Given priors
        created using the ToxicR prior functions, create a list of priors
        for a model.
 }
 \examples{
-plist<- create_prior_list(normprior(0,0.1,-100,100), # a
-                          normprior(0,1,  -1e2,1e2),     # b
-                          lnormprior(1,0.2,0,18),  #k
-                          normprior(0,1,-18,18))
+plist <- create_prior_list(
+  normprior(0, 0.1, -100, 100), # a
+  normprior(0, 1, -1e2, 1e2), # b
+  lnormprior(1, 0.2, 0, 18), # k
+  normprior(0, 1, -18, 18)
+)
 
 }

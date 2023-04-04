@@ -69,7 +69,8 @@ public:
   void scale_prior(double  scale, int parm){
     if (parm >= 0 && parm <  prior_spec.rows()){
        switch (prior_iidtype(prior_spec(parm,0))){
-         case prior_iidtype::iid_normal:
+        case prior_iidtype::iid_normal: case prior_iidtype::iid_cauchy:
+ 	    case prior_iidtype::iid_gamma: case prior_iidtype::iid_pert:
              prior_spec(parm,1) *= scale; 
              prior_spec(parm,2) *= fabs(scale); //note it is only scale because we are dealing with the SD 
              prior_spec(parm,3) *= scale;
@@ -89,6 +90,29 @@ public:
        }
     }
   }
+
+// 	//scales the prior by a constant
+//   void scalingg_bounds(double  scale, int parm){
+//     if (parm >= 0 && parm <  prior_spec.rows()){
+//        switch (prior_iidtype(prior_spec(parm,0))){
+//         case prior_iidtype::iid_normal: case prior_iidtype::iid_cauchy:
+//  	    case prior_iidtype::iid_gamma: case prior_iidtype::iid_pert:
+//              prior_spec(parm,3) *= scale;
+//              prior_spec(parm,4) *= scale;
+//            break; 
+//         case prior_iidtype::iid_lognormal: 
+//           //    std::cout << prior_spec.row(parm) << std::endl;
+//               prior_spec(parm,3) *= scale;
+//               prior_spec(parm,4) *= scale;
+//           //  std::cout << prior_spec << std::endl; 
+//             break; 
+//          case prior_iidtype::iid_mle: 
+//              prior_spec(parm,3) *= scale;
+//              prior_spec(parm,4) *= scale;
+//            break; 
+//        }
+//     }
+//   }
 	
 	// mean shift the prior 
 	// do nothing with the  other stuff
@@ -96,15 +120,16 @@ public:
 	void add_mean_prior(double  scale, int parm){
 	  if (parm >= 0 && parm < prior_spec.rows()){
 	    switch (prior_iidtype(prior_spec(parm,0))){
-	    case prior_iidtype::iid_normal:
+	    case prior_iidtype::iid_normal: case prior_iidtype::iid_cauchy:
+	    case prior_iidtype::iid_gamma: case prior_iidtype::iid_pert:
 	      if (prior_spec(parm,1) + scale > prior_spec(parm,3) &&
-            prior_spec(parm,1) + scale < prior_spec(parm,3)){
+            prior_spec(parm,1) + scale < prior_spec(parm,4)){
 	          prior_spec(parm,1) += scale; 
 	      }
 	      break; 
 	    case prior_iidtype::iid_lognormal: 
 	      if (exp(prior_spec(parm,1) + scale) > prior_spec(parm,3) &&
-            exp(prior_spec(parm,1) + scale) < prior_spec(parm,3)){
+            exp(prior_spec(parm,1) + scale) < prior_spec(parm,4)){
 	         prior_spec(parm,1) += scale; 
 	      }
 	      break; 

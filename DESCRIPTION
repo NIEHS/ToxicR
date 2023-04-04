@@ -1,9 +1,9 @@
 Package: ToxicR
 Type: Package
 Title: Analyzing Toxicology Dose-Response Data
-Version: 23.1.1.0.9
-Date: 2023-1-19
-Authors@R:
+Version: 23.1.1.2.3
+Date: 2023-1-23
+Authors@R: 
     c(
     person(given = "Matt",
            family = "Wheeler",
@@ -53,7 +53,7 @@ Authors@R:
            comment ="Owns Copyright for all ToxicR code outside NLOPT and nloptr scripts.")
            )
 Maintainer: Matt Wheeler <matt.wheeler@nih.gov>
-Copyright: file inst/COPYRIGHTS 
+Copyright: file inst/COPYRIGHTS
 Description: Toxicology routines for analyzing dose-response data include dose-response analysis 
     and trend tests. Dose-Response methods are based upon the US EPA's benchmark dose software 3.  Methods have
     been extended to include additional functionality based on World Health Organization 
@@ -63,17 +63,37 @@ Description: Toxicology routines for analyzing dose-response data include dose-r
     and Wheeler et al. (2022) <doi:10.1002/env.2728>.  NTP routines are described in 
     Bailer and Portier (1988) <doi:10.2307/2531856>, Bieler and Williams (1993) <doi:10.2307/2532200>, 
     Williams (1971) <doi:10.2307/2528930>, and Shirley (1977) <doi:10.2307/2529789>.
-Depends:
-    R (>= 4.1.0)
+Depends: R (>= 4.1.0)
 License: LGPL (>= 3)
 URL: https://github.com/NIEHS/ToxicR
 LazyData: true
-Imports: Rcpp (>= 1.0.0), ggplot2 (>= 3.3.2), shiny (>= 1.5.0),  coda (>= 0.19-4),
-         scales (>= 1.1.1),  forcats, ggridges (>= 0.5.3), doBy (>= 4.6.11),
-         multcomp (>= 1.4), dplyr (>= 1.0.7) 
+Imports: Rcpp (>= 1.0.0), ggplot2 (>= 3.3.2), shiny (>= 1.5.0), coda
+        (>= 0.19-4), scales (>= 1.1.1), forcats, ggridges (>= 0.5.3),
+        doBy (>= 4.6.11), multcomp (>= 1.4), dplyr (>= 1.0.7)
 LinkingTo: Rcpp, RcppEigen, RcppGSL
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
+Encoding: UTF-8
 VignetteBuilder: knitr
-Suggests: 
-    plotly (>= 4.9.2.1),  rmarkdown, actuar (>= 3.2-0),ggpubr (>= 0.4.0), testthat (>= 3.1.0),gridExtra (>= 2.3),
-    VIM (>= 6.1.1), knitr (>= 1.36), modules
+Suggests: plotly (>= 4.9.2.1), rmarkdown, actuar (>= 3.2-0),ggpubr (>=
+        0.4.0), testthat (>= 3.1.0),gridExtra (>= 2.3), VIM (>= 6.1.1),
+        knitr (>= 1.36), modules
+NeedsCompilation: yes
+Packaged: 2023-03-29 18:11:15 UTC; Brian.kidd
+Author: Matt Wheeler [aut, cre] (<https://orcid.org/0000-0002-8242-2391>),
+  Sooyeong Lim [aut],
+  Eric Wimberly [ctb],
+  Keith Shockley [com],
+  Jennifer Fostel [com],
+  Lonlong Yang [ctb] (Modfied Cochran-Armitage test.),
+  Dawan Taley [com],
+  Cari Martini [com],
+  Ashwin Raghuraman [ctb] (Modified code for (Jonckheere, Williams etc.)
+    to make them standalone functions.),
+  Steven Johnson [ctb] (Author of NLOPT.),
+  Aymeric Stamm [ctb] (Maintainer of nloptr Packag 2.0.1 from which all
+    compile scripts were taken.),
+  Dirk Eddelbuettel [ctb] (Contributed script to download GSL, as in
+    RcppGSL.),
+  U.S. Deptartment of Health and Human Services (US HHS), National
+    Institute of Environmental Health Sciences (NIEHS) [cph] (Owns
+    Copyright for all ToxicR code outside NLOPT and nloptr scripts.)
