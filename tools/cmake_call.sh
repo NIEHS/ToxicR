@@ -1,6 +1,5 @@
 #! /bin/sh
 
-
 : ${R_HOME=$(R RHOME)}
 RSCRIPT_BIN=${R_HOME}/bin/Rscript
 NCORES=`${RSCRIPT_BIN} -e "cat(min(2, parallel::detectCores(logical = FALSE)))"`
