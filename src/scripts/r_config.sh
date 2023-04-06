@@ -1,4 +1,5 @@
 #### R CONFIGURATION ####
+#! /bin/sh
 
 R_ARCH_BIN=$1
 

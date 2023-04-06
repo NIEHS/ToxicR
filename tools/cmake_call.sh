@@ -11,8 +11,12 @@ cd src
 
 # Compile NLOpt from source
 sh ./scripts/nlopt_download.sh ${RSCRIPT_BIN}
+echo "nlopt_download.sh"
+
 dot() { file=$1; shift; . "$file"; }
 dot ./scripts/r_config.sh ""
+echo "r_config.sh"
+
 ${RSCRIPT_BIN} --vanilla -e 'getRversion() > "4.0.0"' | grep TRUE > /dev/null
 if [ $? -eq 0 ]; then
   CMAKE_ADD_AR="-D CMAKE_AR=${AR}"
@@ -38,3 +42,4 @@ sh ./scripts/nlopt_install.sh ${CMAKE_BIN} ${NCORES} ""
 
 # Cleanup
 sh ./scripts/nlopt_cleanup.sh
+

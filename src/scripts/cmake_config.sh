@@ -1,4 +1,4 @@
-#### CMAKE CONFIGURATION ####
+#!/bin/sh
 
 if test -z "$CMAKE_BIN"; then
   # Look for a cmake3 binary in the current path
