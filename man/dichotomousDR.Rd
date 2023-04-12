@@ -25,7 +25,7 @@ More information at: \doi{10.1111/risa.13218}
 dichotomousDR
 }
 \description{
-A dataset containing 733 dichotomous dose-response studies that were involved in 
+A dataset containing 733 dichotomous dose-response studies that were involved in
 regulatory risk assessment.
 }
 \keyword{datasets}

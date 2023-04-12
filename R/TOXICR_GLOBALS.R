@@ -19,7 +19,10 @@
 .fit_types                <- c('laplace','mle','mcmc')
 
 #continuous global information
-.continuous_models        <- c("hill","exp-3","exp-5","power","FUNL","polynomial")
+.continuous_models        <- c("hill","exp-3","exp-5","power","FUNL","polynomial",
+                               "exp-aerts", "invexp-aerts", "gamma-aerts", "invgamma-aerts", "hill-aerts",
+                               "lomax-aerts", "invlomax-aerts", "lognormal-aerts", "logskew-aerts", 
+                               "invlogskew-aerts", "logistic-aerts", "probit-aerts", "LMS", "gamma-efsa")
 .continuous_distributions <- c("normal","normal-ncv","lognormal")
 .continuous_risk_types    <- c('abs','sd','rel','hybrid')
 

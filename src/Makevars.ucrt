@@ -1,4 +1,4 @@
-PKG_CXXFLAGS =  -I./code_base -I./include $(SHLIB_OPENMP_CXXFLAGS) -I$(R_TOOLS_SOFT)/include/nlopt -I$(R_TOOLS_SOFT)/include/gsl -DR_COMPILATION -ftree-vectorize -Os
+PKG_CXXFLAGS =  -I./code_base -I./include $(SHLIB_OPENMP_CXXFLAGS) -I$(R_TOOLS_SOFT)/include/nlopt -I$(R_TOOLS_SOFT)/include/gsl -DR_COMPILATION -ftree-vectorize -Os -DEIGEN_DONT_INLINE
 PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS) -lgsl -lgslcblas -lnlopt
 
 POLYK        = $(wildcard polyK/*.cpp)

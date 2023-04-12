@@ -7,29 +7,29 @@
 normprior(mean = 0, sd = 1, lb = -100, ub = 100)
 }
 \arguments{
-\item{mean}{mean of the prior}
+\item{mean}{mean of the prior distribution.}
 
 \item{sd}{sd of the prior distribution.}
 
-\item{lb}{lower bound on the distribution. Necessary for the optimization algorithms, 
+\item{lb}{lower bound on the distribution. Necessary for the optimization algorithms,
 To make sure it is a fully normal prior, make lb small relative to the mean/sd.}
 
-\item{ub}{Upper bound on the distribution. Necessary for the optimization algorithms, 
+\item{ub}{Upper bound on the distribution. Necessary for the optimization algorithms,
 To make sure it is a fully normal prior, make ub large relative to the mean/sd.}
 }
 \value{
-a normal prior model object.  This object essentially a vector with
+a normal prior model object.  This object is essentially a vector with
 the first element as 1 (for normal), the second element the mean, the third
-element the variance, the fourth and fifth elements the lower and upper bounds, respectively.
+element the standard deviation, the fourth and fifth elements the lower and upper bounds, respectively.
 }
 \description{
 Specify a normal prior for a ToxicR Bayesian model fit.
 }
 \examples{
- # Normal Prior with mean 0,sd-1
- normprior(mean = 0, sd = 1, lb = -1e4, ub=1e4)
+# Normal Prior with mean 0,sd-1
+normprior(mean = 0, sd = 1, lb = -1e4, ub = 1e4)
 
- # Truncated Normal prior, Truncated below at 0
- normprior(mean = 0, sd = 1, lb = 0, ub=1e4)
+# Truncated Normal prior, Truncated below at 0
+normprior(mean = 0, sd = 1, lb = 0, ub = 1e4)
 
 }

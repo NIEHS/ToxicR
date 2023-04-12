@@ -86,4 +86,3 @@ S3method(MAdensity_plot, BMDdichotomous_MA_mcmc, .plot.density.BMDdichotomous_MA
 S3method(MAdensity_plot, BMDcontinuous_MA_mcmc, .plot.density.BMDcontinous_MA_MCMC)
 
 
-

@@ -69,7 +69,8 @@ public:
   void scale_prior(double  scale, int parm){
     if (parm >= 0 && parm <  prior_spec.rows()){
        switch (prior_iidtype(prior_spec(parm,0))){
-         case prior_iidtype::iid_normal:
+        case prior_iidtype::iid_normal: case prior_iidtype::iid_cauchy:
+ 	    case prior_iidtype::iid_gamma: case prior_iidtype::iid_pert:
              prior_spec(parm,1) *= scale; 
              prior_spec(parm,2) *= fabs(scale); //note it is only scale because we are dealing with the SD 
              prior_spec(parm,3) *= scale;
@@ -90,21 +91,23 @@ public:
     }
   }
 	
+	
 	// mean shift the prior 
 	// do nothing with the  other stuff
 	// only if it is in the bounds
 	void add_mean_prior(double  scale, int parm){
 	  if (parm >= 0 && parm < prior_spec.rows()){
 	    switch (prior_iidtype(prior_spec(parm,0))){
-	    case prior_iidtype::iid_normal:
+	    case prior_iidtype::iid_normal: case prior_iidtype::iid_cauchy:
+	    case prior_iidtype::iid_gamma: case prior_iidtype::iid_pert:
 	      if (prior_spec(parm,1) + scale > prior_spec(parm,3) &&
-            prior_spec(parm,1) + scale < prior_spec(parm,3)){
+            prior_spec(parm,1) + scale < prior_spec(parm,4)){
 	          prior_spec(parm,1) += scale; 
 	      }
 	      break; 
 	    case prior_iidtype::iid_lognormal: 
 	      if (exp(prior_spec(parm,1) + scale) > prior_spec(parm,3) &&
-            exp(prior_spec(parm,1) + scale) < prior_spec(parm,3)){
+            exp(prior_spec(parm,1) + scale) < prior_spec(parm,4)){
 	         prior_spec(parm,1) += scale; 
 	      }
 	      break; 
@@ -115,7 +118,7 @@ public:
 	  }
 	}
   Eigen::MatrixXd get_prior(){
-    return prior_spec; 
+    return prior_spec;
   }
 	// Matrix that defines the prior specifications 
 	// for all of the parameters in theta

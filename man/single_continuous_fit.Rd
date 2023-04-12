@@ -10,7 +10,7 @@ single_continuous_fit(
   model_type = "hill",
   fit_type = "laplace",
   prior = NA,
-  BMD_TYPE = "sd",
+  BMR_TYPE = "sd",
   BMR = 0.1,
   point_p = 0.01,
   distribution = "normal-ncv",
@@ -18,8 +18,10 @@ single_continuous_fit(
   samples = 25000,
   degree = 2,
   burnin = 1000,
+  BMD_priors = FALSE,
   ewald = FALSE,
-  transform = FALSE
+  transform = FALSE,
+  BMD_TYPE = NA
 )
 }
 \arguments{
@@ -27,18 +29,49 @@ single_continuous_fit(
 
 \item{Y}{response matrix}
 
-\item{model_type}{Mean model. It should be one of 
-\code{"hill","exp-3","exp-5","power","polynomial"}}
+\item{model_type}{Specifies the mean model, or log-mean 
+for lognormal data.  For more information, see Aerts, Wheeler, and Abrahantes (2021)
+
+ \itemize{
+     \item \code{"exp-aerts"}:         \eqn{f(x) = a(1 + (c-1)(1-exp(-bx^{d}))) }
+     \item \code{"invexp-aerts"}:      \eqn{f(x) = a(1 + (c-1)(exp(-bx^{-d})))}
+     \item \code{"hill-aerts"}:        \eqn{f(x) = a(1 + (c-1)(1-\frac{b^d}{b^d + x^d}))}
+     \item \code{"gamma-aerts"}:       \eqn{f(x) = a(1 + (c-1)(\Gamma(bx^d;\xi)))}
+     \item \code{"invgamma-aerts"}:    \eqn{f(x) = a(1 + (c-1)(1-\Gamma(bx^{-d};\xi)))}
+     \item \code{"lomax-aerts"}:       \eqn{f(x) = a\left\{1 + (c-1)(1-\left(\frac{b}{b+x^d} \right))^\xi \right\}}
+     \item \code{"invlomax-aerts"}:    \eqn{f(x) = a\left\{1 + (c-1)(\left(\frac{b}{b+x^{-d}} \right))^\xi \right\}}
+     \item \code{"lognormal-aerts"}:   \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( \ln(b) + d\times \ln(x))\right) \right\}}
+     \item \code{"logskew-aerts"}:     \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi_{SN}( \ln(b) + d\times \ln(x); \xi )\right) \right\}}
+     \item \code{"invlogskew-aerts"}:  \eqn{f(x) = a\left\{1 + (c-1)\left(1 - \Phi_{SN}( \ln(b) - d\times \ln(x); \xi )\right) \right\}}
+     \item \code{"logistic-aerts"}:    \eqn{f(x) = a\left\{1 + (c-1)\left(\frac{1}{1+\exp(-bx)}\right) \right\}}
+     \item \code{"probit-aerts"}:      \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( b + d\times x)\right) \right\}}
+     \item \code{"gamma-efsa"}:        \eqn{f(x) = a(1 + (c-1)(\Gamma(bx; d)))}
+   }
+  Here: \eqn{\Phi(\cdot)} is the standard normal distribution and
+        \eqn{\Phi_{SN}(\cdot;\cdot)} is the skew-normal distribution
+
+   Legacy continuous models based upon US EPA BMDS software. 
+   These models can be fit using Bayesian and Maximum Likelihood. 
+   \itemize{
+     \item \code{"hill"}: \eqn{f(x) = a + b\frac{x^d}{c^d + x^d}}
+     \item \code{"exp-3"}: \eqn{f(x) = a(1-exp(-bx^{d})) }
+     \item \code{"exp-5"}: \eqn{f(x) = a(1 + (c-1)(1-exp(-bx^{d}))) }
+     \item \code{"power"}: \eqn{f(x) = a + b x^d}
+     \item \code{"polynomial"}: \eqn{\beta_0 + \beta_1 x + \ldots \beta_p x^p}, where p is equal to 
+     \code{degree} (defined) below. 
+   }}
 
 \item{fit_type}{the method used to fit (laplace, mle, or mcmc)}
 
 \item{prior}{Prior / model for the continuous fit. If this is specified, it overrides the parameters 'model_type' and 'distribution.'}
 
-\item{BMD_TYPE}{BMD_TYPE specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used. \cr
--    Standard deviation is the default option, but it can be explicitly specified with 'BMR_TYPE = "sd"' This definition defines the BMD as the dose associated with the mean/median changing a specified number of standard deviations from the mean at the control dose., i.e., it is the dose, BMD, that solves \eqn{\mid f(dose)-f(0) \mid = BMR \times \sigma} \cr
--    Relative deviation can be specified with 'BMR_TYPE = "rel"'. This defines the BMD as the dose that changes the control mean/median a certain percentage from the background dose, i.e. it is the dose, BMD that solves \eqn{\mid f(dose) - f(0) \mid = (1 \pm BMR) f(0)} \cr
--    Hybrid deviation can be specified with 'BMR_TYPE = "hybrid"'.  This defines the BMD that changes the probability of an adverse event by a stated amount relitive to no exposure (i.e 0).  That is, it is the dose, BMD, that solves \eqn{\frac{Pr(X > x| dose) - Pr(X >x|0)}{Pr(X < x|0)} = BMR}. For this definition, \eqn{Pr(X < x|0) = 1 - Pr(X > X|0) = \pi_0}, where \eqn{0 \leq \pi_0 < 1} is defined by the user as "point_p," and it defaults to 0.01.  Note: this discussion assumed increasing data.  The fitter determines the direction of the data and inverts the probability statements for decreasing data. \cr
--    Absolute deviation can be specified with 'BMR_TYPE="abs"'. This defines the BMD as an absolute change from the control dose of zero by a specified amount. That is the BMD is the dose that solves the equation \eqn{\mid f(dose) - f(0) \mid = BMR}.}
+\item{BMR_TYPE}{Specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used:
+\itemize{
+  \item Standard deviation is the default option, but it can be explicitly specified with 'BMR_TYPE = "sd"' This definition defines the BMD as the dose associated with the mean/median changing a specified number of standard deviations from the mean at the control dose., i.e., it is the dose, BMD, that solves \eqn{\mid f(dose)-f(0) \mid = BMR \times \sigma}
+  \item Relative deviation can be specified with 'BMR_TYPE = "rel"'. This defines the BMD as the dose that changes the control mean/median a certain percentage from the background dose, i.e. it is the dose, BMD that solves \eqn{\mid f(dose) - f(0) \mid = (1 \pm BMR) f(0)} 
+  \item Hybrid deviation can be specified with 'BMR_TYPE = "hybrid"'.  This defines the BMD that changes the probability of an adverse event by a stated amount relitive to no exposure (i.e 0).  That is, it is the dose, BMD, that solves \eqn{\frac{Pr(X > x| dose) - Pr(X >x|0)}{Pr(X < x|0)} = BMR}. For this definition, \eqn{Pr(X < x|0) = 1 - Pr(X > X|0) = \pi_0}, where \eqn{0 \leq \pi_0 < 1} is defined by the user as "point_p," and it defaults to 0.01.  Note: this discussion assumed increasing data.  The fitter determines the direction of the data and inverts the probability statements for decreasing data.
+  \item Absolute deviation can be specified with 'BMR_TYPE="abs"'. This defines the BMD as an absolute change from the control dose of zero by a specified amount. That is the BMD is the dose that solves the equation \eqn{\mid f(dose) - f(0) \mid = BMR}. 
+}}
 
 \item{BMR}{This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."\cr}
 
@@ -54,9 +87,13 @@ single_continuous_fit(
 
 \item{burnin}{the number of burnin samples to take (MCMC only)}
 
+\item{BMD_priors}{Logical specifying if BMD Express-3 priors should be used instead of ToxicR defaults}
+
 \item{ewald}{perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)}
 
 \item{transform}{Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.}
+
+\item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
 }
 \value{
 Returns a model object class with the following structure:
@@ -92,7 +129,7 @@ M2[,1] <- c(0,25,50,100,200)
 M2[,2] <- c(6,5.2,2.4,1.1,0.75)
 M2[,3] <- c(20,20,19,20,20)
 M2[,4] <- c(1.2,1.1,0.81,0.74,0.66)
-model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMD_TYPE="sd", BMR=1, ewald = TRUE,
+model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMR_TYPE="sd", BMR=1, ewald = TRUE,
                              distribution = "normal",fit_type="laplace",model_type = "hill")
 
 summary(model)

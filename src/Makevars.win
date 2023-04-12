@@ -1,4 +1,4 @@
-PKG_CPPFLAGS= -I../windows/gsl-2.7/include -I../windows/nlopt-2.7.1/include  -I./ -I./code_base  -I./include -DR_COMPILATION
+PKG_CPPFLAGS= -I../windows/gsl-2.7/include -I../windows/nlopt-2.7.1/include  -I./ -I./code_base  -I./include -DR_COMPILATION -ftree-vectorize -DEIGEN_DONT_INLINE
 PKG_LIBS= -L../windows/nlopt-2.7.1/lib${R_ARCH}${CRT}  -L../windows/gsl-2.7/lib${R_ARCH}${CRT} -lgsl -lgslcblas -lnlopt
 
 POLYK        = $(wildcard polyK/*.cpp)

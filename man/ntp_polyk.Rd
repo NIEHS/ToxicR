@@ -9,7 +9,7 @@ ntp_polyk(dose, tumor, daysOnStudy)
 }
 \arguments{
 \item{dose}{An equation of the form \eqn{Y \sim X.} Here the variable
-\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
+\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
 conditions. For example, if weight is the dependent variable, and you are
 interested in looking at the trend across sex one would have 'weight ~ sex'.}
 
@@ -29,5 +29,5 @@ Poly-k test
 This function implements the NTP's polyK trend test.
 }
 \examples{
-ntp_polyk(ntp_599_female$dose,ntp_599_female$adenoma,ntp_599_female$days_on_study)
+ntp_polyk(ntp_599_female$dose, ntp_599_female$adenoma, ntp_599_female$days_on_study)
 }

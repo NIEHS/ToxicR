@@ -18,7 +18,7 @@ For more information see: \doi{10.22427/NTP-DATA-TR-599}
 ntp_weight_data
 }
 \description{
-This dataset contains terminal body-weight data for male and 
+This dataset contains terminal body-weight data for male and
 female rats for the technical report TR-599: Sodium Tungstate Dihydrate.
 }
 \keyword{datasets}

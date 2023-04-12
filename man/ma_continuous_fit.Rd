@@ -9,12 +9,14 @@ ma_continuous_fit(
   Y,
   model_list = NA,
   fit_type = "laplace",
-  BMD_TYPE = "sd",
+  BMR_TYPE = "sd",
   BMR = 0.1,
   point_p = 0.01,
   alpha = 0.05,
+  EFSA = FALSE,
   samples = 21000,
-  burnin = 1000
+  burnin = 1000,
+  BMD_TYPE = NA
 )
 }
 \arguments{
@@ -22,16 +24,18 @@ ma_continuous_fit(
 
 \item{Y}{response matrix}
 
-\item{model_list}{a list of configurations for the single models (priors, model type).  To create a model list, one creates a list of 
+\item{model_list}{a list of configurations for the single models (priors, model type).  To create a model list, one creates a list of
 continuous model priors using \code{create_continuous_prior}.}
 
 \item{fit_type}{the method used to fit ("laplace", "mle", or "mcmc")}
 
-\item{BMD_TYPE}{BMD_TYPE specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used. \cr
--    Standard deviation is the default option, but it can be explicitly specified with 'BMR_TYPE = "sd"' This definition defines the BMD as the dose associated with the mean/median changing a specified number of standard deviations from the mean at the control dose., i.e., it is the dose, BMD, that solves \eqn{\mid f(dose)-f(0) \mid = BMR \times \sigma} \cr
--    Relative deviation can be specified with 'BMR_TYPE = "rel"'. This defines the BMD as the dose that changes the control mean/median a certain percentage from the background dose, i.e. it is the dose, BMD that solves \eqn{\mid f(dose) - f(0) \mid = (1 \pm BMR) f(0)} \cr
--    Hybrid deviation can be specified with 'BMR_TYPE = "hybrid"'.  This defines the BMD that changes the probability of an adverse event by a stated amount relitive to no exposure (i.e 0).  That is, it is the dose, BMD, that solves \eqn{\frac{Pr(X > x| dose) - Pr(X >x|0)}{Pr(X < x|0)} = BMR}. For this definition, \eqn{Pr(X < x|0) = 1 - Pr(X > X|0) = \pi_0}, where \eqn{0 \leq \pi_0 < 1} is defined by the user as "point_p," and it defaults to 0.01.  Note: this discussion assumed increasing data.  The fitter determines the direction of the data and inverts the probability statements for decreasing data. \cr
--    Absolute deviation can be specified with 'BMR_TYPE="abs"'. This defines the BMD as an absolute change from the control dose of zero by a specified amount. That is the BMD is the dose that solves the equation \eqn{\mid f(dose) - f(0) \mid = BMR}}
+\item{BMR_TYPE}{Specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used:
+\itemize{
+  \item Standard deviation is the default option, but it can be explicitly specified with 'BMR_TYPE = "sd"' This definition defines the BMD as the dose associated with the mean/median changing a specified number of standard deviations from the mean at the control dose., i.e., it is the dose, BMD, that solves \eqn{\mid f(dose)-f(0) \mid = BMR \times \sigma}
+  \item Relative deviation can be specified with 'BMR_TYPE = "rel"'. This defines the BMD as the dose that changes the control mean/median a certain percentage from the background dose, i.e. it is the dose, BMD that solves \eqn{\mid f(dose) - f(0) \mid = (1 \pm BMR) f(0)} 
+  \item Hybrid deviation can be specified with 'BMR_TYPE = "hybrid"'.  This defines the BMD that changes the probability of an adverse event by a stated amount relitive to no exposure (i.e 0).  That is, it is the dose, BMD, that solves \eqn{\frac{Pr(X > x| dose) - Pr(X >x|0)}{Pr(X < x|0)} = BMR}. For this definition, \eqn{Pr(X < x|0) = 1 - Pr(X > X|0) = \pi_0}, where \eqn{0 \leq \pi_0 < 1} is defined by the user as "point_p," and it defaults to 0.01.  Note: this discussion assumed increasing data.  The fitter determines the direction of the data and inverts the probability statements for decreasing data.
+  \item Absolute deviation can be specified with 'BMR_TYPE="abs"'. This defines the BMD as an absolute change from the control dose of zero by a specified amount. That is the BMD is the dose that solves the equation \eqn{\mid f(dose) - f(0) \mid = BMR}. 
+}}
 
 \item{BMR}{This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."}
 
@@ -39,9 +43,16 @@ continuous model priors using \code{create_continuous_prior}.}
 
 \item{alpha}{Alpha is the specified nominal coverage rate for computation of the lower bound on the BMDL and BMDU, i.e., one computes a \eqn{100\times(1-\alpha)\%} confidence interval.  For the interval (BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)\% }.  By default, it is set to 0.05.}
 
+\item{EFSA}{This option is a logical allowing users to use the default EFSA models to average instead of the original option in previous ToxicR versions. If false, the models are: 
+hill, hill normal-ncv, exp-3, exp-3 normal-ncv, exp-3 lognormal, exp-5, exp-5 normal-ncv, exp-5 lognormal, power, power normal-ncv. If true, it follows the EFSA guidelines;
+these models are (normal then lognormal for each model): exp-aerts, invexp-aerts, hill-aerts, lognormal-aerts, gamma-efsa, LMS, probit-aerts, and logistic-aerts. 
+See \code{\link{single_continuous_fit}} for details on the models.}
+
 \item{samples}{the number of samples to take (MCMC only)}
 
 \item{burnin}{the number of burnin samples to take (MCMC only)}
+
+\item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
 }
 \value{
 This function model object containing a list of individual fits and model averaging fits
@@ -49,9 +60,9 @@ This function model object containing a list of individual fits and model averag
  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
         is the number of models in the model average.  For each \code{X}, this is an individual model
         fit identical to what is returned in `\code{single_continuous_fit}.'
- \item \code{ma_bmd}: The CDF of the model averaged BMD distribution. 
- \item \code{posterior_probs}: The posterior model probabilities used in the MA. 
- \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals. 
+ \item \code{ma_bmd}: The CDF of the model averaged BMD distribution.
+ \item \code{posterior_probs}: The posterior model probabilities used in the MA.
+ \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals.
 }
 }
 \description{
@@ -59,14 +70,14 @@ Fit a model averaged continuous BMD model.
 }
 \examples{
 \donttest{
-hill_m <- function(doses){
-       returnV <-  481  -250.3*doses^1.3/(40^1.3 + doses^1.3)
-       return(returnV)
+hill_m <- function(doses) {
+  returnV <- 481 - 250.3 * doses^1.3 / (40^1.3 + doses^1.3)
+  return(returnV)
 }
-doses <- rep(c(0,6.25,12.5,25,50,100),each=10)
+doses <- rep(c(0, 6.25, 12.5, 25, 50, 100), each = 10)
 mean <- hill_m(doses)
-y <- rnorm(length(mean),mean,20.14)
-model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMD_TYPE = 'sd', BMR = 1)
+y <- rnorm(length(mean), mean, 20.14)
+model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMR_TYPE = "sd", BMR = 1)
 summary(model)
 }
 }

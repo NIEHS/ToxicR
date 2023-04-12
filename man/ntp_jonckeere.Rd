@@ -2,14 +2,14 @@
 % Please edit documentation in R/NTP.R
 \name{ntp_jonckeere}
 \alias{ntp_jonckeere}
-\title{ntp_jonckeere 
+\title{ntp_jonckeere
 Jonckherre's test for significant differences from background dose}
 \usage{
 ntp_jonckeere(formula, data, dose_name = "dose", pair = "Williams")
 }
 \arguments{
 \item{formula}{An equation of the form \eqn{Y \sim X.} Here the variable
-\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental 
+\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
 conditions. For example, if weight is the dependent variable, and you are
 interested in looking at the trend across sex one would have 'weight ~ sex'.}
 
@@ -25,10 +25,10 @@ It is expected multiple doses for each of the experimental conditions \eqn{X}.}
 The results of a global test for difference from background.
 }
 \description{
-ntp_jonckeere 
+ntp_jonckeere
 Jonckherre's test for significant differences from background dose
 }
 \examples{
 
-ntp_jonckeere(response ~ sex + response_type,data=ntp_599_hemotology,dose_name="concentration")
+ntp_jonckeere(response ~ sex + response_type, data = ntp_599_hemotology, dose_name = "concentration")
 }

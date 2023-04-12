@@ -17,12 +17,15 @@ Create a density plot from a model averaged model fit with MCMC.
 }
 \examples{
 \donttest{
-doses  <- cbind(c(0,25,50,100,200))
-y <- cbind(c(6,5.2,2.4,1.1,0.75),
-                c(20,20,19,20,20),
-                c(1.2,1.1,0.81,0.74,0.66))
-model <- ma_continuous_fit(doses,y,
-                        fit_type = "mcmc",BMD_TYPE = 'sd',BMR = 1)
+doses <- cbind(c(0, 25, 50, 100, 200))
+y <- cbind(
+  c(6, 5.2, 2.4, 1.1, 0.75),
+  c(20, 20, 19, 20, 20),
+  c(1.2, 1.1, 0.81, 0.74, 0.66)
+)
+model <- ma_continuous_fit(doses, y,
+  fit_type = "mcmc", BMR_TYPE = "sd", BMR = 1
+)
 MAdensity_plot(model)
 }
 }

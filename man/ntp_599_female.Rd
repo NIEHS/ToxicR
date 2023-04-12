@@ -18,7 +18,7 @@ For more information see: \doi{10.22427/NTP-DATA-TR-599}
 ntp_599_female
 }
 \description{
-This dataset contains Thyroid Adenoma data  for  
+This dataset contains Thyroid Adenoma data  for
 female rats for the technical report TR-599: Sodium Tungstate Dihydrate.
 }
 \keyword{datasets}
