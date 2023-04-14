@@ -166,7 +166,7 @@
     dist <- data_temp[!is.infinite(data_temp[, 1]) & !is.na(data_temp[, 1]), ]
     dist <- data_temp[!is.nan(data_temp[, 1])]
     if (length(dist) > 10 & !identical(dist, numeric(0))) {
-      temp_function <- splinefun(data_temp[, 2], data_temp[, 1], method = "monoH.FC")
+      temp_function <- splinefun(data_temp[, 2], data_temp[, 1], method = "monoH.FC",ties=mean)
       temp_bmds <- temp_function(1 - c(1 - alpha, 0.5, alpha))
       temp_mfit[ii] <- sub("Model: ", "", tmp_fit$full_model)
       temp_BMD[ii] <- round(temp_bmds[2], 3)
@@ -189,16 +189,24 @@
   returnV$fit_table <- returnV$fit_table[tmp_idx, c(2, 3, 4, 5, 1)]
 
   warnFunc <- function(w) {
-    return()
+   return(-2)
   }
-  tryCatch(
-    {
-      temp_function <- splinefun(model$ma_bmd[, 2], model$ma_bmd[, 1], method = "monoH.FC")
-    },
-    warning = warnFunc
+  errorFunc <- function(w){
+    return(-2)
+  }
+  ma_temp_function = tryCatch(
+     {
+         splinefun(model$ma_bmd[, 2], model$ma_bmd[, 1], method = "monoH.FC",ties=mean)
+     },
+      warning = warnFunc
+      ,
+      error = errorFunc
   )
-
-  returnV$BMD <- temp_function(1 - c(1 - alpha, 0.5, alpha))
+  if (is.numeric(ma_temp_function)){
+    returnV$BMD <- c(NA,NA,NA)
+  }
+  
+  returnV$BMD <- ma_temp_function(1 - c(1 - alpha, 0.5, alpha))
   names(returnV$BMD) <- c("BMDL", "BMD", "BMDU")
   returnV$alpha <- alpha
 
@@ -228,7 +236,7 @@
     dist <- data_temp[!is.infinite(data_temp[, 1]) & !is.na(data_temp[, 1]), ]
     dist <- data_temp[!is.nan(data_temp[, 1])]
     if (length(dist) > 10 & !identical(dist, numeric(0))) {
-      temp_function <- splinefun(data_temp[, 2], data_temp[, 1], method = "monoH.FC")
+      temp_function <- splinefun(data_temp[, 2], data_temp[, 1], method = "monoH.FC",ties=mean)
       temp_bmds <- temp_function(1 - c(1 - alpha, 0.5, alpha))
       temp_mfit[ii] <- sub("Model: ", "", tmp_fit$full_model)
       temp_BMD[ii] <- round(temp_bmds[2], 3)
@@ -251,14 +259,23 @@
   returnV$fit_table <- returnV$fit_table[tmp_idx, c(2, 3, 4, 5, 1)]
 
   warnFunc <- function(w) {
-    return()
+    return(-2)
   }
-  tryCatch(
+  errorFunc <- function(w){
+    return(-2)
+  }
+  ma_temp_function = tryCatch(
     {
-      temp_function <- splinefun(model$ma_bmd[, 2], model$ma_bmd[, 1], method = "monoH.FC")
+      splinefun(model$ma_bmd[, 2], model$ma_bmd[, 1], method = "monoH.FC",ties=mean)
     },
     warning = warnFunc
+    ,
+    error = errorFunc
   )
+  if (is.numeric(ma_temp_function)){
+    returnV$BMD <- c(NA,NA,NA)
+  }
+  
 
   returnV$BMD <- temp_function(1 - c(1 - alpha, 0.5, alpha))
   names(returnV$BMD) <- c("BMDL", "BMD", "BMDU")

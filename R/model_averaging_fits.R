@@ -255,7 +255,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 
         temp[[jj]]$bmd_dist <- data_temp
         if (length(data_temp) > 10) {
-          te <- splinefun(data_temp[, 2, drop = F], data_temp[, 1, drop = F], method = "hyman")
+          te <- splinefun(data_temp[, 2, drop = F], data_temp[, 1, drop = F], method = "hyman",ties=mean)
           temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
         }
       }
@@ -280,7 +280,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       temp$ma_bmd <- data_temp
       tempn$posterior_probs[is.nan(tempn$posterior_probs)] <- 0
       if (length(data_temp) > 10 && (abs(sum(tempn$posterior_probs,na.rm=TRUE) - 1) <= 1e-8)) {
-        te <- splinefun(data_temp[, 2, drop = F], data_temp[, 1, drop = F], method = "hyman")
+        te <- splinefun(data_temp[, 2, drop = F], data_temp[, 1, drop = F], method = "hyman",ties=mean)
         temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
       } else {
         # error with the posterior probabilities
@@ -311,7 +311,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       if (length(data_temp) > 0) {
         data_temp <- data_temp[!is.na(data_temp[, 1]), ]
         if (nrow(data_temp) > 6) {
-          te <- splinefun(sort(data_temp[, 2, drop = F]), sort(data_temp[, 1, drop = F]), method = "hyman")
+          te <- splinefun(sort(data_temp[, 2, drop = F]), sort(data_temp[, 1, drop = F]), method = "hyman",ties=mean)
           temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
           if (max(data_temp[, 2]) < 1 - alpha) {
             temp[[ii]]$bmd[3] <- 1e300
@@ -334,7 +334,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
       temp$posterior_probs[is.nan(temp$posterior_probs)] <- 0
       if ((nrow(temp_me) > 10) && abs(sum(temp$posterior_probs) - 1) <= 1e-8) {
-        te <- splinefun(sort(temp_me[, 2, drop = F]), sort(temp_me[, 1, drop = F]), method = "hyman")
+        te <- splinefun(sort(temp_me[, 2, drop = F]), sort(temp_me[, 1, drop = F]), method = "hyman",ties=mean)
         temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
 
         if (max(temp_me[, 2]) < 1 - alpha) {
@@ -484,7 +484,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     # TO DO : DELETE temp$BMD_CDF
     te <- splinefun(temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 2],
       temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 1],
-      method = "hyman"
+      method = "hyman", ties=mean
     )
     temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
     t_names <- names(temp)
@@ -498,7 +498,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
         temp[[ii]]$model <- "qlinear"
       }
 
-      te <- splinefun(temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 2], temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 1], method = "hyman")
+      te <- splinefun(temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 2], temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 1], method = "hyman",ties=mean)
       temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
       names(temp[[ii]]$bmd) <- c("BMD", "BMDL", "BMDU")
       names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
@@ -535,7 +535,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
       if (temp[[jj]]$model == "quantal-linear") {
         temp[[jj]]$model <- "qlinear"
       }
-      te <- splinefun(temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 2], temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 1], method = "hyman")
+      te <- splinefun(temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 2], temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 1], method = "hyman",ties=mean)
       temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
       class(temp[[jj]]) <- "BMDdich_fit_MCMC"
       jj <- jj + 1
@@ -543,7 +543,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     # for (ii in idx_mcmc)
     names(temp) <- sprintf("Individual_Model_%s", 1:length(priors))
     temp$ma_bmd <- tempn$BMD_CDF
-    te <- splinefun(temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 2], temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 1], method = "hyman")
+    te <- splinefun(temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 2], temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 1], method = "hyman",ties=mean)
     temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
     temp$posterior_probs <- tempn$posterior_probs
     temp$post_prob
