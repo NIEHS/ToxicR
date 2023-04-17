@@ -375,7 +375,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
           temp_me <- matrix(0, nr=2,nc=2)
         }
         if( nrow(temp_me) > 5){
-          te <- splinefun(temp_me[,2],temp_me[,1],method="hyman")
+          te <- splinefun(temp_me[,2],temp_me[,1],method="hyman",ties=mean)
           rvals$bmd[2:3]  <- c(te(alpha),te(1-alpha))
         }else{
           rvals$bmd[2:3] <- c(NA,NA)
@@ -422,7 +422,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
           temp_me <- matrix(0, nr=2,nc=2)
         }
         if( nrow(temp_me) > 5){
-          te <- splinefun(temp_me[,2],temp_me[,1],method="hyman")
+          te <- splinefun(temp_me[,2],temp_me[,1],method="hyman",ties=mean)
           rvals$bmd[2:3]  <- c(te(alpha),te(1-alpha))
         }else{
           rvals$bmd[2:3] <- c(NA,NA)

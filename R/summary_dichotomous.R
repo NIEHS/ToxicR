@@ -30,7 +30,7 @@
   }
   returnV$fit <- model$full_model
 
-  temp_function <- splinefun(model$bmd_dist[, 2], model$bmd_dist[, 1], method = "monoH.FC")
+  temp_function <- splinefun(model$bmd_dist[, 2], model$bmd_dist[, 1], method = "monoH.FC",ties=mean)
   returnV$BMD <- temp_function(1 - c(1 - alpha, 0.5, alpha))
   names(returnV$BMD) <- c("BMDL", "BMD", "BMDU")
   returnV$alpha <- alpha
