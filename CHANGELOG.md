@@ -1,4 +1,10 @@
 # Changes
+## Version 23.4.1.1.0
+## The following cumulative fixes are in version 23.4.1.1.0
+ - Fixed log-probit fit, which was giving log-logistic plots. 
+ - Fixe MA summary.  The Proper BMD (BMDL, BMDU) are now reported
+## New Features
+ - 
 ## Version 23.1.1.0.8
 ### The following cumulative fixes are in version 23.1.1.0.8
 	- Removed depricated C sprintf files. 

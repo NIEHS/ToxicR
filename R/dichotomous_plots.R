@@ -26,7 +26,7 @@
     g <- 1 / (1 + exp(-parms[1]))
     a <- parms[2]
     b <- parms[3]
-    rval <- g + (1 - g) * (1 / (1 + exp(-a - b * log(d))))
+    rval <- g + (1 - g) * (1-pnorm(-a - b * log(d)))
     return(rval)
   }
 
