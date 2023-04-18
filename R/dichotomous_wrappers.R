@@ -119,7 +119,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     temp_me <- temp_me[!is.na(temp_me[, 1]), ]
     temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
     if (nrow(temp_me) > 5) {
-      te <- splinefun(temp_me[, 2], temp_me[, 1], method = "hyman",ties=means)
+      te <- splinefun(temp_me[, 2], temp_me[, 1], method = "hyman",ties=mean)
       temp$bmd <- c(temp$bmd, te(alpha), te(1 - alpha))
     } else {
       temp$bmd <- c(temp$bmd, NA, NA)
