@@ -398,26 +398,26 @@ create_prior_list <- function(x1, x2, ...) {
   } else if (dmodel %in% c(6:7, 10, 13,18)){ #4 parameter Aerts models
     if (dvariance == 1) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         lnormprior(0, 3, 1e-6, 100),
-        normprior(0, 5, -200, 200),
+        cauchyprior(0, 10, -200, 200),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         normprior(0, 3, -30, 30)
       )
     } else if (dvariance == 2) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         lnormprior(0, 3, 1e-6, 100),
-        normprior(0, 5, -200, 200),
+        cauchyprior(0, 10, -200, 200),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         lnormprior(0, 2, 0, 100),
         normprior(-2, 3, -30, 30)
       )
     } else if (dvariance == 3) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         lnormprior(0, 2, 1e-6, 100),
-        normprior(0, 5, -200, 200),
+        cauchyprior(0, 10, -200, 200),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         normprior(0, 3, -30, 30)
       )
@@ -425,26 +425,26 @@ create_prior_list <- function(x1, x2, ...) {
   } else if (dmodel %in% c(16,17)){ #logistic/probit
     if (dvariance == 1) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         normprior(0, 3, -100, 100),
-        normprior(0, 5, -200, 200),
+        cauchyprior(0, 10, -200, 200),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         normprior(0, 3, -30, 30)
       )
     } else if (dvariance == 2) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         normprior(0, 3, -100, 100),
-        normprior(0, 5, -200, 200),
+        cauchyprior(0, 10, -200, 200),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         lnormprior(0, 2, 0, 100),
         normprior(-2, 3, -30, 30)
       )
     } else if (dvariance == 3) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         normprior(0, 3, -100, 100),
-        normprior(0, 5, -200, 200),
+        cauchyprior(0, 10, -200, 200),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         normprior(0, 3, -30, 30)
       )
@@ -452,18 +452,18 @@ create_prior_list <- function(x1, x2, ...) {
   } else if (dmodel %in% c(8:9,11:12,14:15)){ #5 parameter Aerts models
     if (dvariance == 1) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         lnormprior(1, 5, 0.1, 100),
-        normprior(1, 2, -200, 200),
+        cauchyprior(1, 5, -200, 200),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         lnormprior(0.2, 0.5, 1e-6, 18),
         normprior(0, 3, -30, 30)
       )
     } else if (dvariance == 2) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         lnormprior(1, 5, 0.1, 100),
-        normprior(1, 2, -200, 200),
+        cauchyprior(1, 5, -200, 200),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         lnormprior(0.2, 0.5, 1e-6, 18),
         lnormprior(0, 2, 0, 100),
@@ -471,9 +471,9 @@ create_prior_list <- function(x1, x2, ...) {
       )
     } else if (dvariance == 3) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         lnormprior(1, 5, 0.1, 100),
-        normprior(1, 2, -200, 200),
+        cauchyprior(1, 5, -200, 200),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         lnormprior(0.2, 0.5, 1e-6, 18),
         normprior(0, 3, -30, 30)
@@ -485,26 +485,26 @@ create_prior_list <- function(x1, x2, ...) {
   } else if (dmodel %in% c(19)){ #efsa family 1b, d not in exponent
     if (dvariance == 1) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         lnormprior(1, 2, 0.2, 20),
-        normprior(1, 2, -200, 200),
+        cauchyprior(1, 5, -200, 200),
         lnormprior(0.2, 0.5, 1e-6, 18),
         normprior(0, 3, -30, 30)
       )
     } else if (dvariance == 2) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         lnormprior(1, 2, 0.2, 20),
-        normprior(1, 2, -200, 200),
+        cauchyprior(1, 5, -200, 200),
         lnormprior(0.2, 0.5, 1e-6, 18),
         lnormprior(0, 2, 0, 100),
         normprior(-2, 3, -30, 30)
       )
     } else if (dvariance == 3) {
       prior <- create_prior_list(
-        normprior(0, 10, -100, 100),
+        cauchyprior(0, 10, -1000, 1000),
         lnormprior(1, 2, 0.2, 20),
-        normprior(1, 2, -200, 200),
+        cauchyprior(1, 5, -200, 200),
         lnormprior(0.2, 0.5, 1e-6, 18),
         normprior(0, 3, -30, 30)
       )
@@ -793,12 +793,12 @@ create_prior_list <- function(x1, x2, ...) {
   }
   
   if (dmodel %in% c(6:7, 10, 13,18)){ #4 parameter Aerts models
-    prior <- create_prior_list(normprior(0, 10, -100, 100),
+    prior <- create_prior_list(cauchyprior(0, 10, -1000, 1000),
                                lnormprior(0, 3, 1e-6, 100))
     if(is_increasing){
-      prior <- .combine_prior_lists(prior, normprior(1, 5, 0, 200))
+      prior <- .combine_prior_lists(prior, cauchyprior(1, 10, 0, 200))
     }else{
-      prior <- .combine_prior_lists(prior, normprior(-1, 5, -200, 0))
+      prior <- .combine_prior_lists(prior, cauchyprior(-1, 10, -200, 0))
     }
     
     prior <- .combine_prior_lists(prior, lnormprior(log(1.6), 0.4214036, 0, 18))
@@ -813,10 +813,10 @@ create_prior_list <- function(x1, x2, ...) {
     }
   } 
   if (dmodel %in% c(16,17)){ #4 parameter Aerts models (probit/logistic)
-    prior <- create_prior_list(normprior(0, 10, -100, 100),
+    prior <- create_prior_list(cauchyprior(0, 10, -1000, 1000),
                                normprior(0, 3, -100, 100))
     
-    prior <- .combine_prior_lists(prior, normprior(0, 5, -200, 200))
+    prior <- .combine_prior_lists(prior, cauchyprior(0, 10, -200, 200))
     prior <- .combine_prior_lists(prior, lnormprior(log(1.6), 0.4214036, 0, 18))
     
     if (dvariance == 1) {
@@ -829,10 +829,10 @@ create_prior_list <- function(x1, x2, ...) {
     }
   } 
   if (dmodel %in% c(8:9,11:12,14:15)){ #5 parameter Aerts models
-    prior <- create_prior_list(normprior(0, 10, -100, 100),
+    prior <- create_prior_list(cauchyprior(0, 10, -1000, 1000),
                                lnormprior(1, 5, 0.1, 100))
     if(dmodel == 8){ #gamma has numerical issues for large B
-      prior <- create_prior_list(normprior(0, 10, -100, 100),
+      prior <- create_prior_list(cauchyprior(0, 10, -1000, 1000),
                                  lnormprior(1, 5, 0.2, 20))
     }
     # if(dvariance == 3){#a has to be positive for lognormal models!
@@ -840,9 +840,9 @@ create_prior_list <- function(x1, x2, ...) {
     #                              lnormprior(1, 2, 0.2, 20))
     # }
     if(is_increasing){
-      prior <- .combine_prior_lists(prior, normprior(1, 5, 0, 200))
+      prior <- .combine_prior_lists(prior, cauchyprior(1, 5, 0, 200))
     }else{
-      prior <- .combine_prior_lists(prior, normprior(-1, 5, -200, 0))
+      prior <- .combine_prior_lists(prior, cauchyprior(-1, 5, -200, 0))
     }
     
     prior <- .combine_prior_lists(prior, lnormprior(log(1.6), 0.4214036, 0, 18))
@@ -870,12 +870,12 @@ create_prior_list <- function(x1, x2, ...) {
   if(dmodel %in% c(19)){ #efsa family 1b, d not in exponent
 
     #gamma has numerical issues for large B
-    prior <- create_prior_list(normprior(0, 10, -100, 100),
+    prior <- create_prior_list(cauchyprior(0, 10, -1000, 1000),
                                lnormprior(1, 5, 0.2, 20))
     if(is_increasing){
-      prior <- .combine_prior_lists(prior, normprior(1, 5, 0, 200))
+      prior <- .combine_prior_lists(prior, cauchyprior(1, 5, 0, 200))
     }else{
-      prior <- .combine_prior_lists(prior, normprior(-1, 5, -200, 0))
+      prior <- .combine_prior_lists(prior, cauchyprior(-1, 5, -200, 0))
     }
     
     prior <- .combine_prior_lists(prior, lnormprior(0.2, 0.5, 1e-6, 18))
