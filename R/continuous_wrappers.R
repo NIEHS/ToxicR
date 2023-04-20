@@ -229,7 +229,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
     if (fitmodel %in% 11:24 && fit_type == "mle"){
       stop("Aerts models are currently not supported with the frequentist approach.")
     }
-    if(any(PR[,1] >= 3)){
+    if(any(PR[,1] >= 4)){
       warning("Gamma and PERT priors are still under development and may be incorrect.")
     }
     
