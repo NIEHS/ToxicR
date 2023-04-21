@@ -46,7 +46,7 @@
 #' }
 ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
                               BMR_TYPE = "sd", BMR = 0.1, point_p = 0.01,
-                              alpha = 0.05, EFSA = FALSE, samples = 21000,
+                              alpha = 0.05, EFSA = TRUE, samples = 21000,
                               burnin = 1000, BMD_TYPE = NA) {
   myD <- Y
   Y <- as.matrix(Y)

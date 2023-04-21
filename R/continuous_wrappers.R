@@ -229,8 +229,8 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
     if (fitmodel %in% 11:24 && fit_type == "mle"){
       stop("Aerts models are currently not supported with the frequentist approach.")
     }
-    if(any(PR[,1] >= 3)){
-      warning("Gamma, Cauchy, and PERT priors are still under development and may be incorrect.")
+    if(any(PR[,1] >= 4)){
+      warning("Gamma and PERT priors are still under development and may be incorrect.")
     }
     
     #Fit to determine direction. 
@@ -369,10 +369,10 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
           temp_me = temp_me[!is.infinite(temp_me[,1]),]
           temp_me = temp_me[!is.na(temp_me[,1]),]
           temp_me = temp_me[!is.nan(temp_me[,1]),]
-        }, error = function(e) temp_me <- matrix(0, nr=2,nc=2))
+        }, error = function(e) temp_me <- matrix(0, nrow = 2, ncol = 2))
         #nrow can throw error too
         if(is.null(nrow(temp_me))){
-          temp_me <- matrix(0, nr=2,nc=2)
+          temp_me <- matrix(0, nrow = 2, ncol = 2)
         }
         if( nrow(temp_me) > 5){
           te <- splinefun(temp_me[,2],temp_me[,1],method="hyman",ties=mean)
@@ -416,10 +416,10 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
           temp_me = temp_me[!is.infinite(temp_me[,1]),]
           temp_me = temp_me[!is.na(temp_me[,1]),]
           temp_me = temp_me[!is.nan(temp_me[,1]),]
-        }, error = function(e) temp_me <- matrix(0, nr=2,nc=2))
+        }, error = function(e) temp_me <- matrix(0, nrow = 2, ncol = 2))
         #nrow can throw error too
         if(is.null(nrow(temp_me))){
-          temp_me <- matrix(0, nr=2,nc=2)
+          temp_me <- matrix(0, nrow = 2, ncol = 2)
         }
         if( nrow(temp_me) > 5){
           te <- splinefun(temp_me[,2],temp_me[,1],method="hyman",ties=mean)

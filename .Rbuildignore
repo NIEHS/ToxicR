@@ -1,2 +1,12 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.DS_Store$
+^\.(RData|Rhistory)$
+^\.gitignore$
+^\.git$
+\.vscode
+\.\.Rcheck/
+\.o$
+\.so$
+\.git/
+^\.dll$

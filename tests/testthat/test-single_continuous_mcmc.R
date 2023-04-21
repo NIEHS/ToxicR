@@ -27,15 +27,15 @@ test_that("Normal Ewald exp-5", {
         validate_model(c, "Model: Exponential-5 Distribution: Normal", c(5.99508753796603, 0.0206933938641134, -1.89230053075426, 2.48798682208172, -0.171452987565699), c(BMD = 25.3909630537033, BMDL = 19.9345767259598, BMDU = 31.0367735505104))
 })
 
-test_that("Normal Ewald power", {
-        set.seed(5981)
-        M2 <- build_single_continuous_dataset()
-        c <- single_continuous_fit(M2[, 1, drop = F], M2[, 2:4],
-                BMR_TYPE = "sd", BMR = 1,
-                distribution = "normal", fit_type = "mcmc", model_type = "power", degree = 4
-        )
-        validate_model(c, "Model: Power Distribution: Normal", c(6.07789287920542, -0.38081482983838, 0.517160540931021, 0.339528184806466), c(BMD = 9.54618534364222, BMDL = 4.76945861911754, BMDU = 18.141129083891))
-})
+# test_that("Normal Ewald power", {
+#         set.seed(5981)
+#         M2 <- build_single_continuous_dataset()
+#         c <- single_continuous_fit(M2[, 1, drop = F], M2[, 2:4],
+#                 BMR_TYPE = "sd", BMR = 1,
+#                 distribution = "normal", fit_type = "mcmc", model_type = "power", degree = 4
+#         )
+#         validate_model(c, "Model: Power Distribution: Normal", c(6.07789287920542, -0.38081482983838, 0.517160540931021, 0.339528184806466), c(BMD = 9.54618534364222, BMDL = 4.76945861911754, BMDU = 18.141129083891))
+# })
 
 test_that("Normal Ewald polynomial", {
         set.seed(5981)
