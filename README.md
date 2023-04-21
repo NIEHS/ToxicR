@@ -27,5 +27,9 @@ Wheeler, M.W., Blessinger, T., Shao, K., Allen, B.C., Olszyk, L., Davis, J.A. an
 
 Wheeler, M. W., Cortiñas Abrahantes, J., Aerts, M., Gift, J. S., & Allen Davis, J. (2022). Continuous model averaging for benchmark dose analysis: Averaging over distributional forms. Environmetrics, e2728. https://doi.org/10.1002/env.2728
 
+Interuniversity Institute for Biostatistics and statistical Bioinformatics, 2022. EFSA Platform for Bayesian Benchmark Dose Analysis. EFSA Supporting Publications, 19(12), p.7740E.
+
+Wheeler, M.W., Lim, S., House, J.S., Shockley, K.R., Bailer, A.J., Fostel, J., Yang, L., Talley, D., Raghuraman, A., Gift, J.S. and Davis, J.A., 2023. ToxicR: A computational platform in R for computational toxicology and dose–response analyses. Computational Toxicology, 25, p.100259.
+
 <img src="https://github.com/wheelemw/ToxicRDocs/blob/main/NIEHS.png" width="100" height="100"> <img src="https://github.com/wheelemw/ToxicRDocs/blob/main/NTP.gif" width="200" height="100">
   
