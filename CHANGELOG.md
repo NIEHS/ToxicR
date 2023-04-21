@@ -4,7 +4,9 @@
  - Fixed log-probit fit, which was giving log-logistic plots. 
  - Fixe MA summary.  The Proper BMD (BMDL, BMDU) are now reported
 ## New Features
- - 
+ - EFSA continuous models added with model averaging.  These are now the default
+   set of models. 
+ - Increased reliability of initialization.  
 ## Version 23.1.1.0.8
 ### The following cumulative fixes are in version 23.1.1.0.8
 	- Removed depricated C sprintf files. 
