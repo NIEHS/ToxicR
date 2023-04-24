@@ -56,7 +56,7 @@ For Ubuntu, type
 
 ### Windows R 4.2.3
 
-`download.file("https://github.com/NIEHS/ToxicR/releases/download/v1.10.0/ToxicR_23.4.1.1.0.R4.2.3.zip", 
+`download.file("https://github.com/NIEHS/ToxicR/releases/download/v1.10.0/ToxicR_23.4.1.1.0R4.2.3.zip", 
               "ToxicR_23.4.1.1.0.zip")`
 `install.packages("ToxicR_23.4.1.1.0.zip", repos = NULL, type = "win.binary")`
 
