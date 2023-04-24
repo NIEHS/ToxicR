@@ -13,7 +13,7 @@ ma_continuous_fit(
   BMR = 0.1,
   point_p = 0.01,
   alpha = 0.05,
-  EFSA = FALSE,
+  EFSA = TRUE,
   samples = 21000,
   burnin = 1000,
   BMD_TYPE = NA
