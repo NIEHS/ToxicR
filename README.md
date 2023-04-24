@@ -14,10 +14,51 @@ Version 1.1.0 is the most recent release. For precompiled binaries of this relea
 
 ### Installation
 
-For Windows, the .zip file is compiled in R 4.2. 
-For macOS, the .tgz file is compiled in R 4.2. 
-For Linux, the package must be compiled. 
-For more information, please visit the instructions on the [Wiki](https://github.com/NIEHS/ToxicR/wiki). 
+Depending on your system, cut and paste the following code into your R terminal. 
+
+## Recommended Method
+### Compile Yourself
+If you have the package devtools, you can download and install directly from GitHub!
+
+
+`library(devtools)`
+`devtools::install_github("NIEHS/ToxicR")`
+
+***Note:*** For Windows, you will need the rtools executable available at: https://cran.r-project.org/bin/windows/Rtools/
+
+***Note:*** If you have a MacOS, you will need to download the GNU Scientific Library. 
+To do this, go to a command line and type
+
+`brew install gsl`
+
+This assumes you have HomeBrew installed. If you do not go to https://brew.sh, which will give you the instructions on how to install. 
+
+***Note:*** For MacOS, you also need to install xcode.  To do this go to the command line and type
+
+`xcode-select -install`
+
+***Note:*** For Linux, you will also need the GNU Scientific Library.  The install depends on your flavor of Linux. 
+For Ubuntu, type
+
+`sudo apt-get install libgsl-dev`
+
+## Alternative Methodology
+
+**First, install the required packages**
+ 
+`install.packages(c("Rcpp","RcppEigen","RcppGSL","ggplot2","shiny","coda","scales","tidyverse","forcats","ggridges","doBy","multcomp","dplyr","rmarkdown", "actuar","ggpubr", "testthat","gridExtra","VIM","knitr", "modules", "plotly" ))`
+
+### Windows R 4.3.0
+
+`download.file("https://github.com/NIEHS/ToxicR/releases/download/v1.10.0/ToxicR_23.4.1.1.0.R4.3.zip", 
+              "ToxicR_23.4.1.1.0.zip")`
+`install.packages("ToxicR_23.4.1.1.0.zip", repos = NULL, type = "win.binary")`
+
+### Windows R 4.2.3
+
+`download.file("https://github.com/NIEHS/ToxicR/releases/download/v1.10.0/ToxicR_23.4.1.1.0.R4.2.3.zip", 
+              "ToxicR_23.4.1.1.0.zip")`
+`install.packages("ToxicR_23.4.1.1.0.zip", repos = NULL, type = "win.binary")`
 
 ## Citing ToxicR
 
