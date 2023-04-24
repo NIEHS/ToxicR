@@ -21,6 +21,7 @@ If you have the package devtools, you can download and install directly from Git
 
 
 `library(devtools)`
+
 `devtools::install_github("NIEHS/ToxicR")`
 
 ***Note:*** For Windows, you will need the rtools executable available at: https://cran.r-project.org/bin/windows/Rtools/
