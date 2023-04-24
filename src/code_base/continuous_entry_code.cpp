@@ -3248,7 +3248,7 @@ mcmcSamples mcmc_Normal(Eigen::MatrixXd Y,Eigen::MatrixXd X,
     a =  MCMC_bmd_analysis_CONTINUOUS_NORMAL<normalPOWER_BMD_NC, IDPriorMCMC>
                                               (Y,  X, prior, fixedB, fixedV, is_increasing,
                                               bk_prob,suff_stat,bmrf, riskType,bConstVar, alpha,
-                                              samples,adverseR,initV);
+                                              samples,0,initV);
     
   
   break; 
@@ -4408,7 +4408,7 @@ void estimate_sm_laplace(continuous_analysis *CA ,
   // std::cout << b.MAP_ESTIMATE << endl;
   ///////////////////////////////////////////////////////
   std::vector<double> v(orig_X.rows()); 
-  for (int i ; i < orig_X.rows(); i++){
+  for (int i=0 ; i < orig_X.rows(); i++){
     v[i] = orig_X(i,0); 
   } 
   transfer_continuous_model(b,res);
