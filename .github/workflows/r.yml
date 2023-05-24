@@ -10,7 +10,7 @@ name: R
 
 on:
   push:
-    branches: [ "main", "cran-comp" ]
+    branches: [ "main", "cran-comp", "github-actions-build" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
