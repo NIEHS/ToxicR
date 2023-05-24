@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install cmake and gsl
         run: |
-          sudo apt-get install -y cmake gsl-config
+          sudo apt-get install -y cmake libgsl-dev
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@f57f1301a053485946083d7a45022b278929a78a
         with:
