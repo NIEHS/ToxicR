@@ -27,9 +27,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install cmake and gsl
+      - name: Install cmake, gsl, curl and pandoc
         run: |
-          sudo apt-get install -y cmake libgsl-dev curl libcurl4-openssl-dev
+          sudo apt-get install -y cmake libgsl-dev curl libcurl4-openssl-dev pandoc
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@v2-branch
         with:
