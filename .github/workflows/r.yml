@@ -41,6 +41,11 @@ jobs:
         shell: Rscript {0}
       - name: Check
         run: |
-          library(rcmdcheck);
-          rcmdcheck(args = "--no-manual", error_on = "error");
-        shell: Rscript {0}
+          R CMD build .
+          mv ToxicR*.tar.gz ToxicR-ubuntu.tar.gz
+          R CMD check --as-cran ToxicR-ubuntu.tar.gz
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: CRAN Check Results
+          path: ToxicR-ubuntu.tar.gz
