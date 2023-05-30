@@ -42,8 +42,8 @@ jobs:
       - name: Check
         run: |
           R CMD build .
-          mv ToxicR*.tar.gz ToxicR-ubuntu.tar.gz
-          R CMD check --as-cran ToxicR-ubuntu.tar.gz
+          mv ToxicR*.tar.gz ToxicR_ubuntu.tar.gz
+          R CMD check --as-cran ToxicR_ubuntu.tar.gz
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
