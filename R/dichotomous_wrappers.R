@@ -147,7 +147,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
       c(BMR, alpha, samples, burnin)
     )
     # class(temp$fitted_model$bmd_dist) <- "BMD_CDF"
-    temp$bmd_dist <- cbind(quantile(temp$mcmc_result$BMD_samples, seq(0.005, 0.995, 0.005)), seq(0.005, 0.995, 0.005))
+    temp$bmd_dist <- cbind(quantile(temp$mcmc_result$BMD_samples, seq(0.005, 0.995, 0.005),na.rm=TRUE), seq(0.005, 0.995, 0.005))
 
     temp$options <- options <- c(BMR, alpha, samples, burnin)
     temp$prior <- prior <- list(prior = prior)
@@ -157,7 +157,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     temp$parameters <- temp$fitted_model$parameters
     temp$covariance <- temp$fitted_model$covariance
     temp$maximum <- temp$fitted_model$maximum
-    temp$bmd <- as.numeric(c(mean(temp$mcmc_result$BMD_samples), quantile(temp$mcmc_result$BMD_samples, c(alpha, 1 - alpha), na.rm = TRUE)))
+    temp$bmd <- as.numeric(c(mean(temp$mcmc_result$BMD_samples,na.rm=TRUE), quantile(temp$mcmc_result$BMD_samples, c(alpha, 1 - alpha), na.rm = TRUE)))
     temp$fitted_model <- NULL
     class(temp) <- "BMDdich_fit_MCMC"
   }
