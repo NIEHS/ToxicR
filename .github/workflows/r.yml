@@ -38,7 +38,7 @@ jobs:
       - uses: r-lib/actions/setup-tinytex@v2
       - uses: r-lib/actions/setup-r-dependencies@v2
           with:
-          cache-version: 2
+            cache-version: 2
       - name: Build package
         run: R CMD build .
       - uses: r-lib/actions/check-r-package@v2
