@@ -41,6 +41,9 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 2
+          extra-packages: |
+            any::ggplot2
+            any::rcmdcheck
       - name: Build package
         shell: cmd
         run: R CMD build .
@@ -66,6 +69,9 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 2
+          extra-packages: |
+            any::ggplot2
+            any::rcmdcheck
       - name: Build package
         run: R CMD build .
       - uses: r-lib/actions/check-r-package@v2
