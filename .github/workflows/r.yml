@@ -10,7 +10,7 @@ name: R
 
 on:
   push:
-    branches: [ "main", "cran-comp", "github-actions-build" ]
+    branches: [ "github-actions-build" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -19,32 +19,57 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  builder:
+    runs-on: ${{ matrix.os }}
+    needs: [build-linux, build-windows]
+    strategy: 
+      matrix:
+        r-version: ['4.2.0']
+
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        r-version: ['4.2.0']
+    steps:
+      - uses: actions/checkout@v3
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-tinytex@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
+          with:
+          cache-version: 2
+      - name: Build package
+        run: R CMD build .
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+        args: 'c("--as-cran")'
+      - name: Upload package
+        uses: actions/upload-artifact@v3
+        with:
+          name: ToxicR_23.4.1.1.0-win.tar.gz
+          path: ToxicR_23.4.1.1.0.tar.gz
+
+  build-linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        r-version: ['4.1.1', '4.2.0']
-
+        r-version: ['4.2.0']
     steps:
       - uses: actions/checkout@v3
-      - name: Install cmake, gsl, curl and pandoc
-        run: |
-          sudo apt-get install -y cmake libgsl-dev curl libcurl4-openssl-dev pandoc texlive-latex-base texlive-latex-recommended texlive-fonts-recommended texlive-latex-extra
-      - name: Set up R ${{ matrix.r-version }}
-        uses: r-lib/actions/setup-r@v2-branch
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-tinytex@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
+          with:
+          cache-version: 2
+      - name: Build package
+        run: R CMD build .
+      - uses: r-lib/actions/check-r-package@v2
         with:
-          r-version: ${{ matrix.r-version }}
-      - name: Install dependencies
-        run: |
-          install.packages(c("remotes", "rcmdcheck", "Rcpp", "ggplot2", "shiny", "coda", "scales", "forcats", "ggridges", "doBy", "multcomp", "dplyr", "RcppEigen", "RcppGSL"), repos="https://cloud.r-project.org")
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
-      - name: Check
-        run: |
-          R CMD build .
-          R CMD check --as-cran ToxicR_23.4.1.1.0.tar.gz
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        args: 'c("--as-cran")'
+      - name: Upload package
+        uses: actions/upload-artifact@v3
         with:
-          name: CRAN Check Results
+          name: ToxicR_23.4.1.1.0-deb.tar.gz
           path: ToxicR_23.4.1.1.0.tar.gz
