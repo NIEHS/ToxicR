@@ -69,7 +69,7 @@ jobs:
         run: R CMD build .
       - uses: r-lib/actions/check-r-package@v2
         with:
-        args: 'c("--as-cran")'
+          args: 'c("--as-cran")'
       - name: Upload package
         uses: actions/upload-artifact@v3
         with:
