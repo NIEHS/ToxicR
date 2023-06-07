@@ -21,7 +21,7 @@ permissions:
 jobs:
   builder:
     runs-on: ${{ matrix.os }}
-    needs: [build-linux, build-windows]
+    needs: [build-windows]
     strategy: 
       matrix:
         r-version: ['4.2.0']
@@ -49,7 +49,7 @@ jobs:
         run: R CMD build .
       - name: Create manuals
         shell: cmd
-        run: R CMD Rd2pdf ToxicR_23.4.1.1.0.tar.gz
+        run: R CMD Rd2pdf --encoding=UTF-8 --no-preview ToxicR_23.4.1.1.0.tar.gz
       - uses: r-lib/actions/check-r-package@v2
         with:
           args: 'c("--as-cran")'
