@@ -13,7 +13,7 @@ on:
     branches: [ "github-actions-build" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch
+  workflow_dispatch: 
   
 permissions:
   contents: read
