@@ -42,7 +42,10 @@ jobs:
           extra-packages: |
             any::ggplot2
             any::rcmdcheck
-          needs: check
+            any::roxygen2
+          needs: |
+            check
+            roxygen2
       # - name: Build package
       #   shell: cmd
       #   run: R CMD build .
