@@ -294,7 +294,7 @@
   }else{
     data_in<-data.frame(cbind(doses,Response))
     plot_gg<-plot_gg +
-      geom_point(data=data_in,aes(x=Dose,y=Response))
+      geom_point(data=data_in,aes(x=doses,y=Response))
   }
 
   plot_gg <-plot_gg +
