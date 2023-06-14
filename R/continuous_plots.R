@@ -471,7 +471,7 @@
      density_col="blueviolet"
      credint_col="azure2"
      class_list <- names(A)
-     fit_idx    <- grep("Individual_Model",class_list)
+     fit_idx    <- grep("Indiv_",class_list)
   
      #plot the model average curve
      if ("BMDcontinuous_MA_mcmc" %in% class(A)){ # mcmc run

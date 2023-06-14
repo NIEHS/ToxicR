@@ -344,7 +344,7 @@
     credint_col <- "azure2"
     fit_origin <- A # Updated SL
     class_list <- names(A)
-    fit_idx <- grep("Individual_Model", class_list) # 06/18/21 SL
+    fit_idx <- grep("Indiv_", class_list) # 06/18/21 SL
 
 
     # plot the model average curve
@@ -540,7 +540,7 @@
     } else if ("BMDdichotomous_MA_laplace" %in% class(A)) { # mcmc run
 
       class_list <- names(A)
-      fit_idx <- grep("Individual_Model", class_list)
+      fit_idx <- grep("Indiv_", class_list)
       num_model <- length(A$posterior_probs)
 
       data_d <- A[[1]]$data
