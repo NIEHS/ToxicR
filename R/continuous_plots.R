@@ -674,9 +674,9 @@
                     f <- .cont_power_f(fit$parameters,test_doses)
                }
                col = 'coral3'
-               temp_df<-data.frame(x_axis=test_doses,y_axis=f,cols=col,model_no=ii, alpha_lev=A$posterior_probs[ii])
+               temp_df<-data.frame(x_axis=test_doses,y_axis=f,cols=col,model_no=ii, alpha_lev=unname(A$posterior_probs[ii]))
                # # 06/19/21 SL update 
-               df     <-data.frame(x_axis=test_doses,y_axis=f,cols=col,model_no=ii, alpha_lev=A$posterior_probs[ii])
+               df     <-data.frame(x_axis=test_doses,y_axis=f,cols=col,model_no=ii, alpha_lev=unname(A$posterior_probs[ii]))
                
                df <-rbind(df,temp_df)
         
@@ -875,7 +875,7 @@
 
            col = 'coral3'
            # Not using loop, but save data in the external data and load it later
-           temp_df<-data.frame(x_axis=test_doses,y_axis=f,cols=col,model_no=ii, alpha_lev=A$posterior_probs[ii])
+           temp_df<-data.frame(x_axis=test_doses,y_axis=f,cols=col,model_no=ii, alpha_lev=unname(A$posterior_probs[ii]))
            df<-temp_df #rbind(df,temp_df)
            plot_gg<- plot_gg+
                 geom_line(data=df, aes(x=x_axis,y=y_axis,color=col),alpha=0.5,show.legend=F)

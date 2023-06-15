@@ -28,7 +28,7 @@ MAdensity_plot <- function(A) {
   # Construct bmd sample plots for mcmc
   X1 <- X2 <- X3 <- NULL
   class_list <- names(A)
-  fit_idx <- grep("Individual_Model", class_list)
+  fit_idx <- grep("Indiv_", class_list)
   qprob <- 0.05
 
   # Dose levels
@@ -192,7 +192,7 @@ MAdensity_plot <- function(A) {
     data <- A$Fitted_Model_1$data
     doses <- data[, 1]
   } else {
-    fit_idx <- grep("Individual_Model", class_list)
+    fit_idx <- grep("Indiv_", class_list)
     qprob <- 0.05
 
     # Dose levels
@@ -309,7 +309,7 @@ MAdensity_plot <- function(A) {
   # Construct bmd sample plots for mcmc
   X1 <- X2 <- X3 <- NULL
   class_list <- names(A)
-  fit_idx <- grep("Individual_Model", class_list)
+  fit_idx <- grep("Indiv_", class_list)
   qprob <- 0.05
 
   # Dose levels

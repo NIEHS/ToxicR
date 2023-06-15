@@ -292,6 +292,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 
     names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
     temp$posterior_probs <- tempn$posterior_probs
+    names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
     class(temp) <- c("BMDcontinuous_MA", "BMDcontinuous_MA_mcmc")
     return(temp)
   } else {
@@ -349,6 +350,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     }
     names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
     temp$posterior_probs <- temp$posterior_probs
+    names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
     class(temp) <- c("BMDcontinuous_MA", "BMDcontinuous_MA_laplace")
     return(temp)
   }
@@ -553,6 +555,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     te <- splinefun(temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 2], temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 1], method = "hyman",ties=mean)
     temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
     temp$posterior_probs <- tempn$posterior_probs
+    names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
     temp$post_prob
     class(temp) <- c("BMDdichotomous_MA", "BMDdichotomous_MA_mcmc")
   }
