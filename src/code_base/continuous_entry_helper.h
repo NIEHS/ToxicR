@@ -104,277 +104,277 @@ Eigen::MatrixXd powerSearchRegression(Eigen::MatrixXd Y_N, Eigen::MatrixXd X){
   return rbetas;
 }
 
-// Eigen::MatrixXd init_funl_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+Eigen::MatrixXd init_funl_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
   
   
-//   std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
-//   std::sort(vec.begin(), vec.end());
-//   vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
-//   //udoses = vec; // this should be the unique dose group
+  std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
+  std::sort(vec.begin(), vec.end());
+  vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
+  //udoses = vec; // this should be the unique dose group
   
-//   Eigen::MatrixXd betas = quadraticRegression(Y_N,  X);
-//   prior(0,1) = betas(0,0); 
-//   double max_d = vec[vec.size()-1]; 
-//   double max_r = (betas(0,0)+betas(1,0)*max_d + betas(2,0)*max_d*max_d);
-//   prior(1,1)   = (betas(0,0)+betas(1,0)*max_d + betas(2,0)*max_d*max_d - prior(0,1))/max_d; 
-//   prior(2,1)   = max_r; 
-//   prior(3,1)   = 0.5;
-//   prior(4,1)   = 1;
-//   prior(5,1)   = 0.75;
-//   prior(6,1)   = 1;
+  Eigen::MatrixXd betas = quadraticRegression(Y_N,  X);
+  prior(0,1) = betas(0,0); 
+  double max_d = vec[vec.size()-1]; 
+  double max_r = (betas(0,0)+betas(1,0)*max_d + betas(2,0)*max_d*max_d);
+  prior(1,1)   = (betas(0,0)+betas(1,0)*max_d + betas(2,0)*max_d*max_d - prior(0,1))/max_d; 
+  prior(2,1)   = max_r; 
+  prior(3,1)   = 0.5;
+  prior(4,1)   = 1;
+  prior(5,1)   = 0.75;
+  prior(6,1)   = 1;
   
-//   for (int i = 0; i < 7; i++){
-//     if (prior(i,1) < prior(i,3)) prior(i,1) = prior(i,3); 
-//     if (prior(i,1) > prior(i,4)) prior(i,1) = prior(i,4);
-//   }
-  
-  
-//   return prior; 
-// }
-
-// Eigen::MatrixXd init_test4_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-
-//   double minDose = X.minCoeff();
-//   double maxDose = X.maxCoeff();
-//   double init = 0;
-//   int nmin = 0, nmax = 0;
-
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==minDose){
-//       nmin++;
-//       init += Y_N(i,0);
-//     }
-//   }
-//   init *= init/double(nmin);
-//   prior(0,1) = init;
-
-//   init = 0;
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==maxDose){
-//       nmax++;
-//       init += Y_N(i,0);
-//     }
-//   }
-//   init *= init/double(nmax);
-
-//   prior(2,1)   =  init / prior(0,1);
-//   prior(1,1)   = 0.0001*maxDose;
-//   prior(3,1)   = 5;
-
-//   //make sure the starting point is within bounds; if not, put on boundary
-//   for(int i = 0; i < 4; i++){
-// 	  if (prior(i,1) < prior(i,3)) prior(i,1) = prior(i,3);
-// 	  if (prior(i,1) > prior(i,4)) prior(i,1) = prior(i,4);
-//   }
-//   //cerr << prior << endl;
-//   return prior;
-// }
-
-// Eigen::MatrixXd init_test4_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-//   Y_LN.col(0) = exp(Y_LN.col(0).array());
-//   if (Y_LN.cols() ==3 ){
-//     Y_LN.col(1) = exp(Y_LN.col(1).array());
-//   }
-//   return init_test4_nor(Y_LN,  X, prior);
-
-// }
-
-// Eigen::MatrixXd init_test5_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-
-//   double minDose = X.minCoeff();
-//   double maxDose = X.maxCoeff();
-//   double init = 0;
-//   int nmin = 0, nmax = 0;
-
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==minDose){
-//       nmin++;
-//       init += Y_N(i,0);
-//     }
-//   }
-//   init *= init/double(nmin);
-//   prior(0,1) = init;
-
-//   init = 0;
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==maxDose){
-//       nmax++;
-//       init += Y_N(i,0);
-//     }
-//   }
-//   init *= init/double(nmax);
-
-//   prior(2,1)   =  init / prior(0,1);
-//   prior(1,1)   = 0.0001*maxDose;
-//   prior(3,1)   = 5;
-//   prior(4,1)   = 2;
-
-//   //make sure the starting point is within bounds; if not, put on boundary
-//   for(int i = 0; i < 5; i++){
-// 	  if (prior(i,1) < prior(i,3)) prior(i,1) = prior(i,3);
-// 	  if (prior(i,1) > prior(i,4)) prior(i,1) = prior(i,4);
-//   }
-//   //cerr << prior << endl;
-//   return prior;
-// }
-
-// Eigen::MatrixXd init_test5_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-//   Y_LN.col(0) = exp(Y_LN.col(0).array());
-//   if (Y_LN.cols() ==3 ){
-//     Y_LN.col(1) = exp(Y_LN.col(1).array());
-//   }
-//   return init_test5_nor(Y_LN,  X, prior);
-
-// }
-
-
-// Eigen::MatrixXd init_hill_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+  for (int i = 0; i < 7; i++){
+    if (prior(i,1) < prior(i,3)) prior(i,1) = prior(i,3); 
+    if (prior(i,1) > prior(i,4)) prior(i,1) = prior(i,4);
+  }
   
   
-//   std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
-//   std::sort(vec.begin(), vec.end());
-//   vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
-//   //udoses = vec; // this should be the unique dose group
-//   double minDose = X.minCoeff(); 
-//   double maxDose = X.maxCoeff(); 
-//   double init = 0; 
-//   int nmin = 0, nmax = 0;  
-  
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==minDose){
-//       nmin++; 
-//       init += Y_N(i,0); 
-//     }
-//   }
-//   init *= init/double(nmin); 
-  
-//   Eigen::MatrixXd betas = quadraticRegression(Y_N,  X);
-//   prior(0,1) = init; 
-//   init = 0;
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==maxDose){
-//       nmax++; 
-//       init += Y_N(i,0); 
-//     }
-//   }
-//   init *= init/double(nmin); 
-  
-//   prior(1,1)   =  (init - prior(0,1))/(maxDose-minDose); 
-//   prior(2,1)   = 0;//0.0001*maxDose; 
-//   prior(3,1)   = 10;
-  
-//   if (prior(0,1) < prior(0,3)) prior(0,1) = prior(0,3); 
-//   if (prior(0,1) > prior(0,4)) prior(0,1) = prior(0,4);
-  
-//   if (prior(1,1) < prior(1,3)) prior(1,1) = prior(1,3); 
-//   if (prior(1,1) > prior(1,4)) prior(1,1) = prior(1,4);
-//   //cerr << prior << endl; 
-//   return prior; 
-// }
+  return prior; 
+}
+
+Eigen::MatrixXd init_test4_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+
+  double minDose = X.minCoeff();
+  double maxDose = X.maxCoeff();
+  double init = 0;
+  int nmin = 0, nmax = 0;
+
+  for (int i = 0; i < X.rows(); i++){
+    if (X(i,0)==minDose){
+      nmin++;
+      init += Y_N(i,0);
+    }
+  }
+  init *= init/double(nmin);
+  prior(0,1) = init;
+
+  init = 0;
+  for (int i = 0; i < X.rows(); i++){
+    if (X(i,0)==maxDose){
+      nmax++;
+      init += Y_N(i,0);
+    }
+  }
+  init *= init/double(nmax);
+
+  prior(2,1)   =  init / prior(0,1);
+  prior(1,1)   = 0.0001*maxDose;
+  prior(3,1)   = 5;
+
+  //make sure the starting point is within bounds; if not, put on boundary
+  for(int i = 0; i < 4; i++){
+	  if (prior(i,1) < prior(i,3)) prior(i,1) = prior(i,3);
+	  if (prior(i,1) > prior(i,4)) prior(i,1) = prior(i,4);
+  }
+  //cerr << prior << endl;
+  return prior;
+}
+
+Eigen::MatrixXd init_test4_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+  Y_LN.col(0) = exp(Y_LN.col(0).array());
+  if (Y_LN.cols() ==3 ){
+    Y_LN.col(1) = exp(Y_LN.col(1).array());
+  }
+  return init_test4_nor(Y_LN,  X, prior);
+
+}
+
+Eigen::MatrixXd init_test5_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+
+  double minDose = X.minCoeff();
+  double maxDose = X.maxCoeff();
+  double init = 0;
+  int nmin = 0, nmax = 0;
+
+  for (int i = 0; i < X.rows(); i++){
+    if (X(i,0)==minDose){
+      nmin++;
+      init += Y_N(i,0);
+    }
+  }
+  init *= init/double(nmin);
+  prior(0,1) = init;
+
+  init = 0;
+  for (int i = 0; i < X.rows(); i++){
+    if (X(i,0)==maxDose){
+      nmax++;
+      init += Y_N(i,0);
+    }
+  }
+  init *= init/double(nmax);
+
+  prior(2,1)   =  init / prior(0,1);
+  prior(1,1)   = 0.0001*maxDose;
+  prior(3,1)   = 5;
+  prior(4,1)   = 2;
+
+  //make sure the starting point is within bounds; if not, put on boundary
+  for(int i = 0; i < 5; i++){
+	  if (prior(i,1) < prior(i,3)) prior(i,1) = prior(i,3);
+	  if (prior(i,1) > prior(i,4)) prior(i,1) = prior(i,4);
+  }
+  //cerr << prior << endl;
+  return prior;
+}
+
+Eigen::MatrixXd init_test5_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+  Y_LN.col(0) = exp(Y_LN.col(0).array());
+  if (Y_LN.cols() ==3 ){
+    Y_LN.col(1) = exp(Y_LN.col(1).array());
+  }
+  return init_test5_nor(Y_LN,  X, prior);
+
+}
 
 
-// Eigen::MatrixXd init_pow_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+Eigen::MatrixXd init_hill_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
   
   
-//   std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
-//   std::sort(vec.begin(), vec.end());
-//   vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
-//   //udoses = vec; // this should be the unique dose group
+  std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
+  std::sort(vec.begin(), vec.end());
+  vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
+  //udoses = vec; // this should be the unique dose group
+  double minDose = X.minCoeff(); 
+  double maxDose = X.maxCoeff(); 
+  double init = 0; 
+  int nmin = 0, nmax = 0;  
   
-//   Eigen::MatrixXd betas = powerSearchRegression(Y_N,  X);
-//   prior(0,1)   = betas(0,0); 
-//   prior(1,1)   = betas(1,0);  
-//   prior(2,1)   = betas(2,0);
+  for (int i = 0; i < X.rows(); i++){
+    if (X(i,0)==minDose){
+      nmin++; 
+      init += Y_N(i,0); 
+    }
+  }
+  init *= init/double(nmin); 
   
-//   if (prior(0,1) < prior(0,3)) prior(0,1) = prior(0,3); 
-//   if (prior(0,1) > prior(0,4)) prior(0,1) = prior(0,4);
+  Eigen::MatrixXd betas = quadraticRegression(Y_N,  X);
+  prior(0,1) = init; 
+  init = 0;
+  for (int i = 0; i < X.rows(); i++){
+    if (X(i,0)==maxDose){
+      nmax++; 
+      init += Y_N(i,0); 
+    }
+  }
+  init *= init/double(nmin); 
   
-//   if (prior(1,1) < prior(1,3)) prior(1,1) = prior(1,3); 
-//   if (prior(1,1) > prior(1,4)) prior(1,1) = prior(1,4);
+  prior(1,1)   =  (init - prior(0,1))/(maxDose-minDose); 
+  prior(2,1)   = 0;//0.0001*maxDose; 
+  prior(3,1)   = 10;
   
-//   if (prior(2,1) < prior(1,3)) prior(2,1) = prior(1,3); 
-//   if (prior(2,1) > prior(1,4)) prior(2,1) = prior(1,4);
+  if (prior(0,1) < prior(0,3)) prior(0,1) = prior(0,3); 
+  if (prior(0,1) > prior(0,4)) prior(0,1) = prior(0,4);
   
-//   return prior; 
-// }
+  if (prior(1,1) < prior(1,3)) prior(1,1) = prior(1,3); 
+  if (prior(1,1) > prior(1,4)) prior(1,1) = prior(1,4);
+  //cerr << prior << endl; 
+  return prior; 
+}
 
-// Eigen::MatrixXd init_hill_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-//   Y_LN.col(0) = exp(Y_LN.col(0).array());
-//   if (Y_LN.cols() ==3 ){
-//     Y_LN.col(1) = exp(Y_LN.col(1).array());
-//   }
-//   return init_hill_nor(Y_LN,  X, prior); 
+
+Eigen::MatrixXd init_pow_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
   
-// }
+  
+  std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
+  std::sort(vec.begin(), vec.end());
+  vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
+  //udoses = vec; // this should be the unique dose group
+  
+  Eigen::MatrixXd betas = powerSearchRegression(Y_N,  X);
+  prior(0,1)   = betas(0,0); 
+  prior(1,1)   = betas(1,0);  
+  prior(2,1)   = betas(2,0);
+  
+  if (prior(0,1) < prior(0,3)) prior(0,1) = prior(0,3); 
+  if (prior(0,1) > prior(0,4)) prior(0,1) = prior(0,4);
+  
+  if (prior(1,1) < prior(1,3)) prior(1,1) = prior(1,3); 
+  if (prior(1,1) > prior(1,4)) prior(1,1) = prior(1,4);
+  
+  if (prior(2,1) < prior(1,3)) prior(2,1) = prior(1,3); 
+  if (prior(2,1) > prior(1,4)) prior(2,1) = prior(1,4);
+  
+  return prior; 
+}
+
+Eigen::MatrixXd init_hill_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+  Y_LN.col(0) = exp(Y_LN.col(0).array());
+  if (Y_LN.cols() ==3 ){
+    Y_LN.col(1) = exp(Y_LN.col(1).array());
+  }
+  return init_hill_nor(Y_LN,  X, prior); 
+  
+}
 
 
-// Eigen::MatrixXd init_exp_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+Eigen::MatrixXd init_exp_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
   
-//   std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
-//   std::sort(vec.begin(), vec.end());
-//   vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
-//   //udoses = vec; // this should be the unique dose group
+  std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
+  std::sort(vec.begin(), vec.end());
+  vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
+  //udoses = vec; // this should be the unique dose group
   
-//   Eigen::MatrixXd betas = quadraticRegression(Y_N,  X);
-//   prior(0,1) = betas(0,0); 
-//   double max_d = vec[vec.size()-1]; 
-//   double max_r = (betas(0,0)+betas(1,0)*max_d + betas(2,0)*max_d*max_d);
-//   prior(2,1)   = log(0.001);  
-//   double temp = max_r/prior(0,1);
+  Eigen::MatrixXd betas = quadraticRegression(Y_N,  X);
+  prior(0,1) = betas(0,0); 
+  double max_d = vec[vec.size()-1]; 
+  double max_r = (betas(0,0)+betas(1,0)*max_d + betas(2,0)*max_d*max_d);
+  prior(2,1)   = log(0.001);  
+  double temp = max_r/prior(0,1);
   
-//   temp =  -(temp-exp(prior(2,1)))/(exp(prior(2,1))-1.0);
+  temp =  -(temp-exp(prior(2,1)))/(exp(prior(2,1))-1.0);
   
-//   prior(1,1) = 0.05; 
-//   prior(3,1)   = 2.5; 
+  prior(1,1) = 0.05; 
+  prior(3,1)   = 2.5; 
   
-//   if (prior(0,1) < prior(0,3)) prior(0,1) = prior(0,3); 
-//   if (prior(0,1) > prior(0,4)) prior(0,1) = prior(0,4);
+  if (prior(0,1) < prior(0,3)) prior(0,1) = prior(0,3); 
+  if (prior(0,1) > prior(0,4)) prior(0,1) = prior(0,4);
   
-//   if (prior(1,1) < prior(1,3)) prior(1,1) = prior(1,3); 
-//   if (prior(1,1) > prior(1,4)) prior(1,1) = prior(1,4);
+  if (prior(1,1) < prior(1,3)) prior(1,1) = prior(1,3); 
+  if (prior(1,1) > prior(1,4)) prior(1,1) = prior(1,4);
   
   
-//   return prior; 
-// }
+  return prior; 
+}
 
-// Eigen::MatrixXd init_exp_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-//  //right here
-//   Y_LN.col(0) = exp(Y_LN.col(0).array());
-//   if (Y_LN.cols() ==3 ){
-//       Y_LN.col(1) = exp(Y_LN.col(1).array());
-//   }
-//   return init_exp_nor(Y_LN, X, prior); 
-// }
+Eigen::MatrixXd init_exp_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
+ //right here
+  Y_LN.col(0) = exp(Y_LN.col(0).array());
+  if (Y_LN.cols() ==3 ){
+      Y_LN.col(1) = exp(Y_LN.col(1).array());
+  }
+  return init_exp_nor(Y_LN, X, prior); 
+}
 
-// Eigen::MatrixXd init_poly(Eigen::MatrixXd Y, Eigen::MatrixXd tX, 
-//                           Eigen::MatrixXd prior, int deg = 2){
+Eigen::MatrixXd init_poly(Eigen::MatrixXd Y, Eigen::MatrixXd tX, 
+                          Eigen::MatrixXd prior, int deg = 2){
 
-//   Eigen::MatrixXd X = Eigen::MatrixXd::Ones(tX.rows(),deg+1);
-//   Eigen::MatrixXd W = Eigen::MatrixXd::Identity(tX.rows(),tX.rows());
+  Eigen::MatrixXd X = Eigen::MatrixXd::Ones(tX.rows(),deg+1);
+  Eigen::MatrixXd W = Eigen::MatrixXd::Identity(tX.rows(),tX.rows());
  
-//   for (int i = 0; i < X.rows(); i++){
-//     if (Y.cols()>1){
-//       W(i,i) = Y(i,2)/Y(i,1)*Y(i,1); // Weights: \sigma^2/N
-//     }
-//     for (int j = 1; j < X.cols(); j++){
-//       X(i,j) = pow(tX(i,0),j);  
-//     }
-//   }
-//   Eigen::MatrixXd B = Eigen::MatrixXd::Ones(deg+1,1);
-//   B = X.transpose()*W*X;
-//   B = B.inverse()*X.transpose()*W*Y.col(0); 
-//   for(int i = 0; i < B.rows(); i++){
-//     if ( B(i,0) < prior(i,3) ){
-//       prior(i,1) = prior(i,3); 
-//     } else if (B(i,0) > prior(i,4)){
-//       prior(i,1) = prior(i,4); 
-//     }else{
-//       prior(i,1) = B(i,0);
-//     }
-//   } 
+  for (int i = 0; i < X.rows(); i++){
+    if (Y.cols()>1){
+      W(i,i) = Y(i,2)/Y(i,1)*Y(i,1); // Weights: \sigma^2/N
+    }
+    for (int j = 1; j < X.cols(); j++){
+      X(i,j) = pow(tX(i,0),j);  
+    }
+  }
+  Eigen::MatrixXd B = Eigen::MatrixXd::Ones(deg+1,1);
+  B = X.transpose()*W*X;
+  B = B.inverse()*X.transpose()*W*Y.col(0); 
+  for(int i = 0; i < B.rows(); i++){
+    if ( B(i,0) < prior(i,3) ){
+      prior(i,1) = prior(i,3); 
+    } else if (B(i,0) > prior(i,4)){
+      prior(i,1) = prior(i,4); 
+    }else{
+      prior(i,1) = B(i,0);
+    }
+  } 
   
-//   return prior; 
-// }
+  return prior; 
+}
 
 // /*initialize_mle
 //  * This function is for MLE optimization it takes the data/model type and then tries 
