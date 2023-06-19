@@ -1156,72 +1156,72 @@ double compute_normal_dof(Eigen::MatrixXd Y,Eigen::MatrixXd X, Eigen::MatrixXd e
   
 
 
-bool convertSStat(Eigen::MatrixXd Y, Eigen::MatrixXd X,
-                  Eigen::MatrixXd *SSTAT, Eigen::MatrixXd *SSTAT_LN,
-                  Eigen::MatrixXd *UX){
-  bool convert = true; 
+// bool convertSStat(Eigen::MatrixXd Y, Eigen::MatrixXd X,
+//                   Eigen::MatrixXd *SSTAT, Eigen::MatrixXd *SSTAT_LN,
+//                   Eigen::MatrixXd *UX){
+//   bool convert = true; 
   
-  if (Y.cols() == 1 ){
-    // check to see if it can be converted into sufficient statistics4
-    int temp = 0; 
-    // go through each row to see if there are duplicates
-    for (int i = 0; i < X.rows(); i++){
-      for (int j = 0 ; j < X.rows(); j++){
-        if (X(i,0) == X(j,0)){
-          temp++; 
-        }
-      }
-      if( temp == 1){
-        convert = false; 
-      }
-      temp = 0; 
-    }
+//   if (Y.cols() == 1 ){
+//     // check to see if it can be converted into sufficient statistics4
+//     int temp = 0; 
+//     // go through each row to see if there are duplicates
+//     for (int i = 0; i < X.rows(); i++){
+//       for (int j = 0 ; j < X.rows(); j++){
+//         if (X(i,0) == X(j,0)){
+//           temp++; 
+//         }
+//       }
+//       if( temp == 1){
+//         convert = false; 
+//       }
+//       temp = 0; 
+//     }
     
-    if (convert){
-      // we can convert the data
-       *SSTAT    = createSuffStat( Y, X, false);
-       *SSTAT_LN = createSuffStat(Y,X,true); 
-        std::vector<double> uniqueX = unique_list(X );
-        Eigen::MatrixXd temp_X(uniqueX.size(),1);
-        for (int i = 0; i < uniqueX.size(); i++){
-          temp_X(i,0) = uniqueX[i]; 
-        }
-        *UX = temp_X; 
-        return true; 
+//     if (convert){
+//       // we can convert the data
+//        *SSTAT    = createSuffStat( Y, X, false);
+//        *SSTAT_LN = createSuffStat(Y,X,true); 
+//         std::vector<double> uniqueX = unique_list(X );
+//         Eigen::MatrixXd temp_X(uniqueX.size(),1);
+//         for (int i = 0; i < uniqueX.size(); i++){
+//           temp_X(i,0) = uniqueX[i]; 
+//         }
+//         *UX = temp_X; 
+//         return true; 
  
-     }
+//      }
   
-  }else{
-    *SSTAT    = createSuffStat( Y, X, false);
-    *SSTAT_LN = createSuffStat(Y,X,true); 
-  }
+//   }else{
+//     *SSTAT    = createSuffStat( Y, X, false);
+//     *SSTAT_LN = createSuffStat(Y,X,true); 
+//   }
   
   
     
-  return false; 
-}
-void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
-{
-  unsigned int numRows = matrix.rows()-1;
-  unsigned int numCols = matrix.cols();
+//   return false; 
+// }
+// void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
+// {
+//   unsigned int numRows = matrix.rows()-1;
+//   unsigned int numCols = matrix.cols();
   
-  if( rowToRemove < numRows )
-    matrix.block(rowToRemove,0,numRows-rowToRemove,numCols) = matrix.block(rowToRemove+1,0,numRows-rowToRemove,numCols);
+//   if( rowToRemove < numRows )
+//     matrix.block(rowToRemove,0,numRows-rowToRemove,numCols) = matrix.block(rowToRemove+1,0,numRows-rowToRemove,numCols);
   
-  matrix.conservativeResize(numRows,numCols);
-}
+//   matrix.conservativeResize(numRows,numCols);
+// }
 
 
-void removeCol(Eigen::MatrixXd& matrix, unsigned int colToRemove)
-{
-  unsigned int numRows = matrix.rows();
-  unsigned int numCols = matrix.cols()-1;
+// void removeCol(Eigen::MatrixXd& matrix, unsigned int colToRemove)
+// {
+//   unsigned int numRows = matrix.rows();
+//   unsigned int numCols = matrix.cols()-1;
   
-  if( colToRemove < numCols )
-    matrix.block(0,colToRemove,numRows,numCols-colToRemove) = matrix.block(0,colToRemove+1,numRows,numCols-colToRemove);
+//   if( colToRemove < numCols )
+//     matrix.block(0,colToRemove,numRows,numCols-colToRemove) = matrix.block(0,colToRemove+1,numRows,numCols-colToRemove);
   
-  matrix.conservativeResize(numRows,numCols);
-}
+//   matrix.conservativeResize(numRows,numCols);
+// }
 
 
 bmd_analysis laplace_logNormal(Eigen::MatrixXd Y,Eigen::MatrixXd X,
@@ -2124,24 +2124,24 @@ bmd_analysis laplace_Normal(Eigen::MatrixXd Y,Eigen::MatrixXd X,
   return a; 
 }
 
-void transfer_continuous_model(bmd_analysis a, continuous_model_result *model){
-	if (model){
-	  model->nparms = a.COV.rows(); 
-		model->max = a.MAP; 
-		model->bmd = a.MAP_BMD; 
-		for (int i = 0; i< model->dist_numE; i ++){
-				double temp = double(i)/double(model->dist_numE); 
-				model->bmd_dist[i] = a.BMD_CDF.inv(temp);     // BMD @ probability
-				model->bmd_dist[model->dist_numE + i] = temp; // probability 
-		}
-		for (int i = 0; i < model->nparms; i++){
-				model->parms[i] = a.MAP_ESTIMATE(i,0); 
-				for (int j = 0; j < model->nparms; j++){
-					model->cov[i + j*model->nparms] = a.COV(i,j); 
-				}
-		}
-	}
-}
+// void transfer_continuous_model(bmd_analysis a, continuous_model_result *model){
+// 	if (model){
+// 	  model->nparms = a.COV.rows(); 
+// 		model->max = a.MAP; 
+// 		model->bmd = a.MAP_BMD; 
+// 		for (int i = 0; i< model->dist_numE; i ++){
+// 				double temp = double(i)/double(model->dist_numE); 
+// 				model->bmd_dist[i] = a.BMD_CDF.inv(temp);     // BMD @ probability
+// 				model->bmd_dist[model->dist_numE + i] = temp; // probability 
+// 		}
+// 		for (int i = 0; i < model->nparms; i++){
+// 				model->parms[i] = a.MAP_ESTIMATE(i,0); 
+// 				for (int j = 0; j < model->nparms; j++){
+// 					model->cov[i + j*model->nparms] = a.COV(i,j); 
+// 				}
+// 		}
+// 	}
+// }
 
 // void inverse_transform_dose(continuous_model_result *model){
 //   if (model){
@@ -2154,30 +2154,30 @@ void transfer_continuous_model(bmd_analysis a, continuous_model_result *model){
 // }
 
 
-void bmd_range_find(continuousMA_result *res, 
-					double *range){
- // assume the minimum BMD for the MA is always 0
- range[0] = 0.0; 
- double current_max = 0.0; 
- for (int j = 10; j > 1; j--){
-	 for (int i = 0; i < res->nmodels;i++){
-		int temp_idx = res->models[i]->dist_numE -j; 
+// void bmd_range_find(continuousMA_result *res, 
+// 					double *range){
+//  // assume the minimum BMD for the MA is always 0
+//  range[0] = 0.0; 
+//  double current_max = 0.0; 
+//  for (int j = 10; j > 1; j--){
+// 	 for (int i = 0; i < res->nmodels;i++){
+// 		int temp_idx = res->models[i]->dist_numE -j; 
 		
-		// make sure we are not dealing with an infinite value
-		// or not a number
-		if (isfinite(res->models[i]->bmd_dist[temp_idx]) && 
-			  !isnan(res->models[i]->bmd_dist[temp_idx])){
-			if ( res->models[i]->bmd_dist[temp_idx] > current_max){
-				current_max = res->models[i]->bmd_dist[temp_idx]; 
-			}
-		}
+// 		// make sure we are not dealing with an infinite value
+// 		// or not a number
+// 		if (isfinite(res->models[i]->bmd_dist[temp_idx]) && 
+// 			  !isnan(res->models[i]->bmd_dist[temp_idx])){
+// 			if ( res->models[i]->bmd_dist[temp_idx] > current_max){
+// 				current_max = res->models[i]->bmd_dist[temp_idx]; 
+// 			}
+// 		}
 		 
-	 }
- }
- // if we don't find a max then the upper limit is NAN
- range[1] = current_max == 0.0 ? std::numeric_limits<double>::quiet_NaN():current_max; 
+// 	 }
+//  }
+//  // if we don't find a max then the upper limit is NAN
+//  range[1] = current_max == 0.0 ? std::numeric_limits<double>::quiet_NaN():current_max; 
   
-}
+// }
 
 void estimate_ma_laplace(continuousMA_analysis *MA,
                          continuous_analysis *CA ,
@@ -3275,76 +3275,7 @@ mcmcSamples mcmc_Normal(Eigen::MatrixXd Y,Eigen::MatrixXd X,
   return a; 
 }
 
-bmd_analysis create_bmd_analysis_from_mcmc(unsigned int burnin, mcmcSamples s,double max_d){
-  bmd_analysis rV;
-  rV.MAP          = s.map; 
-  rV.MAP_ESTIMATE = s.map_estimate; 
-  rV.COV          = s.map_cov; 
-  rV.MAP_BMD      = 0; 
-  int total = 0; 
-  int bad   = 0; 
- 
-  std::vector<double> v; 
-  for (int i = burnin; i < s.BMD.cols(); i++){
-    total ++;
-    if ( isfinite(s.BMD(0,i)) && s.BMD(0,i) < 10*max_d){ // always look at 5x max dose tested
-	        v.push_back(s.BMD(0,i));   // get rid of the burn in samples
-    }else{
-      bad++; 
-    }
-  }
-  
-  double sum = std::accumulate(v.begin(), v.end(), 0.0); 
-//= sum/v.size(); //average of the non-infinite bmds
-  std::vector<double>  prob;
-  std::vector<double> bmd_q; 
-  double inf_prob =  double(bad)/double(total); // bad observations 
-  if (v.size() > 0){
-    std::sort(v.begin(), v.end());
-   for (double k = 0.004; k <= 0.9999; k += 0.005){
-    	    prob.push_back(k*(1.0-inf_prob)); 
-          int idx = int(k*double(v.size()));
-          idx = idx == 0? 0: idx-1; 
-    	    bmd_q.push_back(v[idx]);
-   }
- 
-    // fix numerical quantile issues.
-    for (int i = 1; i < bmd_q.size(); i++){
-      if (bmd_q[i] <= bmd_q[i-1]){
-    	  bmd_q[i] = bmd_q[i-1] + 1e-6;
-//         for (int kk = i; kk <  bmd_q.size(); kk++){
-//            bmd_q[kk] = bmd_q[kk-1] + 1e-6;
-//         }
-      } 
- 
-    }
-  
-    if (prob.size() > 10 && *min_element(bmd_q.begin(), bmd_q.end())  < 1e8 
-                         && bmd_q[0] > 0 ){  
-        rV.BMD_CDF = bmd_cdf(prob,bmd_q);
-    }
-    rV.MAP_BMD = rV.BMD_CDF.inv(0.5/(1.0-inf_prob));
 
-  }
-   // approximate median; 
-  return rV; 
-}
-
-void transfer_mcmc_output(mcmcSamples a, bmd_analysis_MCMC *b){
-
-  if (b){
-    b->samples = a.samples.cols(); 
-    b->nparms  = a.samples.rows(); 
-
-    for(unsigned int i= 0; i < a.BMD.cols();  i++){
-      b->BMDS[i] = a.BMD(0,i); 
-      for(unsigned int j = 0; j < a.samples.rows(); j++){
-        b->parms[i + j*a.BMD.cols()] = a.samples(j,i); 
-      }
-    }
-  }
-
-}
 
 // void inverse_transform_dose(bmd_analysis_MCMC *b){
   
