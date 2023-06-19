@@ -10,89 +10,99 @@
 #include <set>
 #include <numeric>
 
-// void inverse_transform_dose(continuous_model_result *model){
-//   if (model){
-//     model->bmd = sinh(model->bmd); 
-//     for (int i = 0; i< model->dist_numE; i ++){
-//       double temp = double(i)/double(model->dist_numE); 
-//       model->bmd_dist[i] = sinh(model->bmd_dist[i]);     // BMD @ probability
-//     }
-//   }
-// }
+void inverse_transform_dose(continuous_model_result *model){
+  if (model){
+    model->bmd = sinh(model->bmd); 
+    for (int i = 0; i< model->dist_numE; i ++){
+      double temp = double(i)/double(model->dist_numE); 
+      model->bmd_dist[i] = sinh(model->bmd_dist[i]);     // BMD @ probability
+    }
+  }
+}
 
-// Eigen::MatrixXd quadraticRegression(Eigen::MatrixXd Y_N, Eigen::MatrixXd X){
+void inverse_transform_dose(bmd_analysis_MCMC *b){
   
-//   Eigen::MatrixXd mX = Eigen::MatrixXd::Zero(Y_N.rows(), 3); 
-//   Eigen::MatrixXd W  = Eigen::MatrixXd::Zero(Y_N.rows(), Y_N.rows());
-//   for (int i = 0; i < mX.rows(); i++)
-//   {  
-//     W(i, i) = Y_N.cols() == 3? pow(1/Y_N(i,1),2) * Y_N(i,2) : 1;
-//     for (int j = 0; j < 3; j++) {
-//       switch(j){
-//       case 2:
-//         mX(i, j) = X(i,0)*X(i,0);
-//         break; 
-//       case 1:
-//         mX(i, j) = X(i,0); 
-//         break; 
-//       default: 
-//         mX(i, j) = 1 ;
-//       break;  
-//       } 
-//     }
-//   }
+  if (b){
+    for(unsigned int i= 0; i < b->samples;  i++){
+      b->BMDS[i] = sinh(b->BMDS[i]); 
+    }
+  }
+  
+}
 
-//   Eigen::MatrixXd betas = mX.transpose()*W*mX;
-//   betas = betas.inverse()*mX.transpose()*W*Y_N.col(0);
-//   return betas;
-// }
+Eigen::MatrixXd quadraticRegression(Eigen::MatrixXd Y_N, Eigen::MatrixXd X){
+  
+  Eigen::MatrixXd mX = Eigen::MatrixXd::Zero(Y_N.rows(), 3); 
+  Eigen::MatrixXd W  = Eigen::MatrixXd::Zero(Y_N.rows(), Y_N.rows());
+  for (int i = 0; i < mX.rows(); i++)
+  {  
+    W(i, i) = Y_N.cols() == 3? pow(1/Y_N(i,1),2) * Y_N(i,2) : 1;
+    for (int j = 0; j < 3; j++) {
+      switch(j){
+      case 2:
+        mX(i, j) = X(i,0)*X(i,0);
+        break; 
+      case 1:
+        mX(i, j) = X(i,0); 
+        break; 
+      default: 
+        mX(i, j) = 1 ;
+      break;  
+      } 
+    }
+  }
 
-// Eigen::MatrixXd powerSearchRegression(Eigen::MatrixXd Y_N, Eigen::MatrixXd X){
+  Eigen::MatrixXd betas = mX.transpose()*W*mX;
+  betas = betas.inverse()*mX.transpose()*W*Y_N.col(0);
+  return betas;
+}
+
+Eigen::MatrixXd powerSearchRegression(Eigen::MatrixXd Y_N, Eigen::MatrixXd X){
   
-//   double min = 0; 
-//   double sum ; 
+  double min = 0; 
+  double sum ; 
   
-//   Eigen::MatrixXd mX = Eigen::MatrixXd::Zero(Y_N.rows(), 2); 
-//   Eigen::MatrixXd W  = Eigen::MatrixXd::Zero(Y_N.rows(), Y_N.rows());
-//   Eigen::MatrixXd E  = mX; 
-//   Eigen::MatrixXd betas;
-//   Eigen::MatrixXd rbetas(3,1);
+  Eigen::MatrixXd mX = Eigen::MatrixXd::Zero(Y_N.rows(), 2); 
+  Eigen::MatrixXd W  = Eigen::MatrixXd::Zero(Y_N.rows(), Y_N.rows());
+  Eigen::MatrixXd E  = mX; 
+  Eigen::MatrixXd betas;
+  Eigen::MatrixXd rbetas(3,1);
   
-//   for (double pows = 1.0; pows < 17; pows += 0.5){
+  for (double pows = 1.0; pows < 17; pows += 0.5){
  
-//     for (int i = 0; i < mX.rows(); i++)
-//     {  
-//       W(i, i) = Y_N.cols() == 3? pow(1/Y_N(i,1),2) * Y_N(i,2) : 1;
-//       for (int j = 0; j < 2; j++) {
-//         switch(j){
-//         case 1:
-//           mX(i, j) = pow(X(i,0),pows);
-//           break; 
-//         default: 
-//           mX(i, j) = 1 ;
-//           break;  
-//         } 
-//       }
-//     }
+    for (int i = 0; i < mX.rows(); i++)
+    {  
+      W(i, i) = Y_N.cols() == 3? pow(1/Y_N(i,1),2) * Y_N(i,2) : 1;
+      for (int j = 0; j < 2; j++) {
+        switch(j){
+        case 1:
+          mX(i, j) = pow(X(i,0),pows);
+          break; 
+        default: 
+          mX(i, j) = 1 ;
+          break;  
+        } 
+      }
+    }
     
-//     betas = mX.transpose()*W*mX;
-//     betas = betas.inverse()*mX.transpose()*W*Y_N.col(0);
+    betas = mX.transpose()*W*mX;
+    betas = betas.inverse()*mX.transpose()*W*Y_N.col(0);
     
-//     E = (Y_N.col(0) - mX * betas);
-//     E = E.array() * E.array(); 
-//     E = W*E; 
-//     sum = E.array().sum();
+    E = (Y_N.col(0) - mX * betas);
+    E = E.array() * E.array(); 
+    E = W*E; 
+    sum = E.array().sum();
     
-//     if (pows == 1.0 || sum < min){
-//       rbetas(0,0) = betas(0,0);  
-//       rbetas(1,0) = betas(1,0); 
-//       rbetas(2,0) = pows; 
-//       min    =  sum; 
-//     }
+    if (pows == 1.0 || sum < min){
+      rbetas(0,0) = betas(0,0);  
+      rbetas(1,0) = betas(1,0); 
+      rbetas(2,0) = pows; 
+      min    =  sum; 
+    }
 
-//   }
-//   return rbetas;
-// }
+  }
+  return rbetas;
+}
 
 // Eigen::MatrixXd init_funl_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
   
