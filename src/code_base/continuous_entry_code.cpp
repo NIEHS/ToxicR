@@ -168,8 +168,9 @@ double compute_lognormal_dof(Eigen::MatrixXd Y,Eigen::MatrixXd X, Eigen::MatrixX
         pr = X_logPrior<IDPrior>(estimate, prior);
         return computeDOF(Xd, cv_t, pr, models[i].blockSize);
     }
-    return 0.0; 
   }
+  
+  return 0.0; 
   // switch(CM){
   // case cont_model::hill:
   //   Xd = X_gradient_cont<lognormalHILL_BMD_NC>(estimate,Y,X,suff_stat);
