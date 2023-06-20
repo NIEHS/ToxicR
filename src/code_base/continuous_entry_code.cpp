@@ -44,353 +44,6 @@
 
 using namespace std; 
 
-// Eigen::MatrixXd quadraticRegression(Eigen::MatrixXd Y_N, Eigen::MatrixXd X){
-  
-//   Eigen::MatrixXd mX = Eigen::MatrixXd::Zero(Y_N.rows(), 3); 
-//   Eigen::MatrixXd W  = Eigen::MatrixXd::Zero(Y_N.rows(), Y_N.rows());
-//   for (int i = 0; i < mX.rows(); i++)
-//   {  
-//     W(i, i) = Y_N.cols() == 3? pow(1/Y_N(i,1),2) * Y_N(i,2) : 1;
-//     for (int j = 0; j < 3; j++) {
-//       switch(j){
-//       case 2:
-//         mX(i, j) = X(i,0)*X(i,0);
-//         break; 
-//       case 1:
-//         mX(i, j) = X(i,0); 
-//         break; 
-//       default: 
-//         mX(i, j) = 1 ;
-//       break;  
-//       } 
-//     }
-//   }
-
-//   Eigen::MatrixXd betas = mX.transpose()*W*mX;
-//   betas = betas.inverse()*mX.transpose()*W*Y_N.col(0);
-//   return betas;
-// }
-
-// Eigen::MatrixXd powerSearchRegression(Eigen::MatrixXd Y_N, Eigen::MatrixXd X){
-  
-//   double min = 0; 
-//   double sum ; 
-  
-//   Eigen::MatrixXd mX = Eigen::MatrixXd::Zero(Y_N.rows(), 2); 
-//   Eigen::MatrixXd W  = Eigen::MatrixXd::Zero(Y_N.rows(), Y_N.rows());
-//   Eigen::MatrixXd E  = mX; 
-//   Eigen::MatrixXd betas;
-//   Eigen::MatrixXd rbetas(3,1);
-  
-//   for (double pows = 1.0; pows < 17; pows += 0.5){
- 
-//     for (int i = 0; i < mX.rows(); i++)
-//     {  
-//       W(i, i) = Y_N.cols() == 3? pow(1/Y_N(i,1),2) * Y_N(i,2) : 1;
-//       for (int j = 0; j < 2; j++) {
-//         switch(j){
-//         case 1:
-//           mX(i, j) = pow(X(i,0),pows);
-//           break; 
-//         default: 
-//           mX(i, j) = 1 ;
-//           break;  
-//         } 
-//       }
-//     }
-    
-//     betas = mX.transpose()*W*mX;
-//     betas = betas.inverse()*mX.transpose()*W*Y_N.col(0);
-    
-//     E = (Y_N.col(0) - mX * betas);
-//     E = E.array() * E.array(); 
-//     E = W*E; 
-//     sum = E.array().sum();
-    
-//     if (pows == 1.0 || sum < min){
-//       rbetas(0,0) = betas(0,0);  
-//       rbetas(1,0) = betas(1,0); 
-//       rbetas(2,0) = pows; 
-//       min    =  sum; 
-//     }
-
-//   }
-//   return rbetas;
-// }
-////////////////////////////////////////////////////////////////////////
-// Eigen::MatrixXd init_funl_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-  
-  
-//   std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
-//   std::sort(vec.begin(), vec.end());
-//   vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
-//   //udoses = vec; // this should be the unique dose group
-  
-//   Eigen::MatrixXd betas = quadraticRegression(Y_N,  X);
-//   prior(0,1) = betas(0,0); 
-//   double max_d = vec[vec.size()-1]; 
-//   double max_r = (betas(0,0)+betas(1,0)*max_d + betas(2,0)*max_d*max_d);
-//   prior(1,1)   = (betas(0,0)+betas(1,0)*max_d + betas(2,0)*max_d*max_d - prior(0,1))/max_d; 
-//   prior(2,1)   = max_r; 
-//   prior(3,1)   = 0.5;
-//   prior(4,1)   = 1;
-//   prior(5,1)   = 0.75;
-//   prior(6,1)   = 1;
-  
-//   for (int i = 0; i < 7; i++){
-//     if (prior(i,1) < prior(i,3)) prior(i,1) = prior(i,3); 
-//     if (prior(i,1) > prior(i,4)) prior(i,1) = prior(i,4);
-//   }
-  
-  
-//   return prior; 
-// }
-///////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-// Eigen::MatrixXd init_test4_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-
-//   double minDose = X.minCoeff();
-//   double maxDose = X.maxCoeff();
-//   double init = 0;
-//   int nmin = 0, nmax = 0;
-
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==minDose){
-//       nmin++;
-//       init += Y_N(i,0);
-//     }
-//   }
-//   init *= init/double(nmin);
-//   prior(0,1) = init;
-
-//   init = 0;
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==maxDose){
-//       nmax++;
-//       init += Y_N(i,0);
-//     }
-//   }
-//   init *= init/double(nmax);
-
-//   prior(2,1)   =  init / prior(0,1);
-//   prior(1,1)   = 0.0001*maxDose;
-//   prior(3,1)   = 5;
-
-//   //make sure the starting point is within bounds; if not, put on boundary
-//   for(int i = 0; i < 4; i++){
-// 	  if (prior(i,1) < prior(i,3)) prior(i,1) = prior(i,3);
-// 	  if (prior(i,1) > prior(i,4)) prior(i,1) = prior(i,4);
-//   }
-//   //cerr << prior << endl;
-//   return prior;
-// }
-
-// Eigen::MatrixXd init_test4_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-//   Y_LN.col(0) = exp(Y_LN.col(0).array());
-//   if (Y_LN.cols() ==3 ){
-//     Y_LN.col(1) = exp(Y_LN.col(1).array());
-//   }
-//   return init_test4_nor(Y_LN,  X, prior);
-
-// }
-
-// Eigen::MatrixXd init_test5_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-
-//   double minDose = X.minCoeff();
-//   double maxDose = X.maxCoeff();
-//   double init = 0;
-//   int nmin = 0, nmax = 0;
-
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==minDose){
-//       nmin++;
-//       init += Y_N(i,0);
-//     }
-//   }
-//   init *= init/double(nmin);
-//   prior(0,1) = init;
-
-//   init = 0;
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==maxDose){
-//       nmax++;
-//       init += Y_N(i,0);
-//     }
-//   }
-//   init *= init/double(nmax);
-
-//   prior(2,1)   =  init / prior(0,1);
-//   prior(1,1)   = 0.0001*maxDose;
-//   prior(3,1)   = 5;
-//   prior(4,1)   = 2;
-
-//   //make sure the starting point is within bounds; if not, put on boundary
-//   for(int i = 0; i < 5; i++){
-// 	  if (prior(i,1) < prior(i,3)) prior(i,1) = prior(i,3);
-// 	  if (prior(i,1) > prior(i,4)) prior(i,1) = prior(i,4);
-//   }
-//   //cerr << prior << endl;
-//   return prior;
-// }
-
-// Eigen::MatrixXd init_test5_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-//   Y_LN.col(0) = exp(Y_LN.col(0).array());
-//   if (Y_LN.cols() ==3 ){
-//     Y_LN.col(1) = exp(Y_LN.col(1).array());
-//   }
-//   return init_test5_nor(Y_LN,  X, prior);
-
-// }
-
-
-// Eigen::MatrixXd init_hill_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-  
-  
-//   std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
-//   std::sort(vec.begin(), vec.end());
-//   vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
-//   //udoses = vec; // this should be the unique dose group
-//   double minDose = X.minCoeff(); 
-//   double maxDose = X.maxCoeff(); 
-//   double init = 0; 
-//   int nmin = 0, nmax = 0;  
-  
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==minDose){
-//       nmin++; 
-//       init += Y_N(i,0); 
-//     }
-//   }
-//   init *= init/double(nmin); 
-  
-//   Eigen::MatrixXd betas = quadraticRegression(Y_N,  X);
-//   prior(0,1) = init; 
-//   init = 0;
-//   for (int i = 0; i < X.rows(); i++){
-//     if (X(i,0)==maxDose){
-//       nmax++; 
-//       init += Y_N(i,0); 
-//     }
-//   }
-//   init *= init/double(nmin); 
-  
-//   prior(1,1)   =  (init - prior(0,1))/(maxDose-minDose); 
-//   prior(2,1)   = 0;//0.0001*maxDose; 
-//   prior(3,1)   = 10;
-  
-//   if (prior(0,1) < prior(0,3)) prior(0,1) = prior(0,3); 
-//   if (prior(0,1) > prior(0,4)) prior(0,1) = prior(0,4);
-  
-//   if (prior(1,1) < prior(1,3)) prior(1,1) = prior(1,3); 
-//   if (prior(1,1) > prior(1,4)) prior(1,1) = prior(1,4);
-//   //cerr << prior << endl; 
-//   return prior; 
-// }
-
-
-// Eigen::MatrixXd init_pow_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-  
-  
-//   std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
-//   std::sort(vec.begin(), vec.end());
-//   vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
-//   //udoses = vec; // this should be the unique dose group
-  
-//   Eigen::MatrixXd betas = powerSearchRegression(Y_N,  X);
-//   prior(0,1)   = betas(0,0); 
-//   prior(1,1)   = betas(1,0);  
-//   prior(2,1)   = betas(2,0);
-  
-//   if (prior(0,1) < prior(0,3)) prior(0,1) = prior(0,3); 
-//   if (prior(0,1) > prior(0,4)) prior(0,1) = prior(0,4);
-  
-//   if (prior(1,1) < prior(1,3)) prior(1,1) = prior(1,3); 
-//   if (prior(1,1) > prior(1,4)) prior(1,1) = prior(1,4);
-  
-//   if (prior(2,1) < prior(1,3)) prior(2,1) = prior(1,3); 
-//   if (prior(2,1) > prior(1,4)) prior(2,1) = prior(1,4);
-  
-//   return prior; 
-// }
-
-// Eigen::MatrixXd init_hill_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-//   Y_LN.col(0) = exp(Y_LN.col(0).array());
-//   if (Y_LN.cols() ==3 ){
-//     Y_LN.col(1) = exp(Y_LN.col(1).array());
-//   }
-//   return init_hill_nor(Y_LN,  X, prior); 
-  
-// }
-
-
-// Eigen::MatrixXd init_exp_nor(Eigen::MatrixXd Y_N, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-  
-//   std::vector<double> vec(X.data(), X.data() + X.rows() * X.cols());
-//   std::sort(vec.begin(), vec.end());
-//   vec.erase(std::unique(vec.begin(), vec.end()),	vec.end());
-//   //udoses = vec; // this should be the unique dose group
-  
-//   Eigen::MatrixXd betas = quadraticRegression(Y_N,  X);
-//   prior(0,1) = betas(0,0); 
-//   double max_d = vec[vec.size()-1]; 
-//   double max_r = (betas(0,0)+betas(1,0)*max_d + betas(2,0)*max_d*max_d);
-//   prior(2,1)   = log(0.001);  
-//   double temp = max_r/prior(0,1);
-  
-//   temp =  -(temp-exp(prior(2,1)))/(exp(prior(2,1))-1.0);
-  
-//   prior(1,1) = 0.05; 
-//   prior(3,1)   = 2.5; 
-  
-//   if (prior(0,1) < prior(0,3)) prior(0,1) = prior(0,3); 
-//   if (prior(0,1) > prior(0,4)) prior(0,1) = prior(0,4);
-  
-//   if (prior(1,1) < prior(1,3)) prior(1,1) = prior(1,3); 
-//   if (prior(1,1) > prior(1,4)) prior(1,1) = prior(1,4);
-  
-  
-//   return prior; 
-// }
-
-// Eigen::MatrixXd init_exp_lognor(Eigen::MatrixXd Y_LN, Eigen::MatrixXd X, Eigen::MatrixXd prior){
-//  //right here
-//   Y_LN.col(0) = exp(Y_LN.col(0).array());
-//   if (Y_LN.cols() ==3 ){
-//       Y_LN.col(1) = exp(Y_LN.col(1).array());
-//   }
-//   return init_exp_nor(Y_LN, X, prior); 
-// }
-
-// Eigen::MatrixXd init_poly(Eigen::MatrixXd Y, Eigen::MatrixXd tX, 
-//                           Eigen::MatrixXd prior, int deg = 2){
-
-//   Eigen::MatrixXd X = Eigen::MatrixXd::Ones(tX.rows(),deg+1);
-//   Eigen::MatrixXd W = Eigen::MatrixXd::Identity(tX.rows(),tX.rows());
- 
-//   for (int i = 0; i < X.rows(); i++){
-//     if (Y.cols()>1){
-//       W(i,i) = Y(i,2)/Y(i,1)*Y(i,1); // Weights: \sigma^2/N
-//     }
-//     for (int j = 1; j < X.cols(); j++){
-//       X(i,j) = pow(tX(i,0),j);  
-//     }
-//   }
-//   Eigen::MatrixXd B = Eigen::MatrixXd::Ones(deg+1,1);
-//   B = X.transpose()*W*X;
-//   B = B.inverse()*X.transpose()*W*Y.col(0); 
-//   for(int i = 0; i < B.rows(); i++){
-//     if ( B(i,0) < prior(i,3) ){
-//       prior(i,1) = prior(i,3); 
-//     } else if (B(i,0) > prior(i,4)){
-//       prior(i,1) = prior(i,4); 
-//     }else{
-//       prior(i,1) = B(i,0);
-//     }
-//   } 
-  
-//   return prior; 
-// }
-
 /*initialize_mle
  * This function is for MLE optimization it takes the data/model type and then tries 
  * to start the initializer on reasonable initial values. These values will then be fed
@@ -447,6 +100,28 @@ Eigen::MatrixXd initialize_model(Eigen::MatrixXd Y_N, Eigen::MatrixXd Y_LN, Eige
   return retVal.col(1);  
 }
 
+struct ModelInfo {
+    std::function<Eigen::MatrixXd(Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, bool)> X_gradient;
+    std::function<Eigen::MatrixXd(Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, bool)> X_cov;
+    int blockSize;
+};
+
+double computeDOF(Eigen::MatrixXd Xd, Eigen::MatrixXd cv_t, Eigen::MatrixXd pr, int blockSize) {
+    double DOF = 0;
+
+    Xd = Xd.block(0, 0, Xd.rows(), blockSize);
+    pr = pr.block(0, 0, blockSize, blockSize);
+
+    if (fabs(pr.diagonal().array().sum()) == 0) {
+        DOF = static_cast<double>(blockSize);
+    } else {
+        pr = Xd.transpose() * cv_t * Xd + pr;
+        Xd = Xd * pr.inverse() * Xd.transpose() * cv_t;
+        DOF = Xd.diagonal().array().sum();
+    }
+
+    return DOF;
+}
 
 double compute_lognormal_dof(Eigen::MatrixXd Y,Eigen::MatrixXd X, Eigen::MatrixXd estimate, 
                              bool is_increasing, bool suff_stat, Eigen::MatrixXd prior, 
@@ -459,299 +134,334 @@ double compute_lognormal_dof(Eigen::MatrixXd Y,Eigen::MatrixXd X, Eigen::MatrixX
   Eigen::MatrixXd subBlock(3,3); 
   Eigen::MatrixXd temp_estimate(estimate.rows() + 1,1); 
   
-  switch(CM){
-  case cont_model::hill:
-    Xd = X_gradient_cont<lognormalHILL_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),4); 
-    cv_t = X_cov_cont<lognormalHILL_BMD_NC>(estimate,Y,X,suff_stat); 
-    pr   =  X_logPrior<IDPrior>(estimate,prior); 
-    pr = pr.block(0,0,4,4); 
-    
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0; 
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr; 
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t; 
-      DOF =  Xd.diagonal().array().sum(); 
-    }
-    
-    break; 
-  case cont_model::exp_aerts:
-    Xd = X_gradient_cont<lognormalEXP_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),4);
-    cv_t = X_cov_cont<lognormalEXP_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,4,4);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::LMS:
-    Xd = X_gradient_cont<lognormalLMS_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),4);
-    cv_t = X_cov_cont<lognormalLMS_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,4,4);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::gamma_efsa:
-    Xd = X_gradient_cont<lognormalGAMMA_efsa_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),4);
-    cv_t = X_cov_cont<lognormalGAMMA_efsa_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,4,4);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::invexp_aerts:
-    Xd = X_gradient_cont<lognormalIEXP_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),4);
-    cv_t = X_cov_cont<lognormalIEXP_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,4,4);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::gamma_aerts:
-    Xd = X_gradient_cont<lognormalGAMMA_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),5);
-    cv_t = X_cov_cont<lognormalGAMMA_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,5,5);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 5.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::invgamma_aerts:
-    Xd = X_gradient_cont<lognormalIGAMMA_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),5);
-    cv_t = X_cov_cont<lognormalIGAMMA_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,5,5);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 5.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::hill_aerts:
-    Xd = X_gradient_cont<lognormalHILL_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),4);
-    cv_t = X_cov_cont<lognormalHILL_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,4,4);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::lomax_aerts:
-    Xd = X_gradient_cont<lognormalLOMAX_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),5);
-    cv_t = X_cov_cont<lognormalLOMAX_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,5,5);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 5.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::invlomax_aerts:
-    Xd = X_gradient_cont<lognormalILOMAX_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),5);
-    cv_t = X_cov_cont<lognormalILOMAX_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,5,5);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 5.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::lognormal_aerts:
-    Xd = X_gradient_cont<lognormalLOGNORMAL_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),4);
-    cv_t = X_cov_cont<lognormalLOGNORMAL_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,4,4);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::logskew_aerts:
-    Xd = X_gradient_cont<lognormalLOGSKEW_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),5);
-    cv_t = X_cov_cont<lognormalLOGSKEW_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,5,5);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 5.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::invlogskew_aerts:
-    Xd = X_gradient_cont<lognormalILOGSKEW_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),5);
-    cv_t = X_cov_cont<lognormalILOGSKEW_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,5,5);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 5.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::logistic_aerts:
-    Xd = X_gradient_cont<lognormalLOGISTIC_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),4);
-    cv_t = X_cov_cont<lognormalLOGISTIC_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,4,4);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::probit_aerts:
-    Xd = X_gradient_cont<lognormalPROBIT_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    Xd = Xd.block(0,0,Xd.rows(),4);
-    cv_t = X_cov_cont<lognormalPROBIT_aerts_BMD_NC>(estimate,Y,X,suff_stat);
-    pr   =  X_logPrior<IDPrior>(estimate,prior);
-    pr = pr.block(0,0,4,4);
-
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0;
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr;
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
-      DOF =  Xd.diagonal().array().sum();
-    }
-
-    break;
-  case cont_model::exp_3:
-    
-    temp_estimate << estimate(0,0) , estimate(1,0) , 1.0 , estimate.block(2,0,estimate.rows()-2,1); 
-    if (is_increasing){
-      Xd = X_gradient_cont_norm<normalEXPONENTIAL_BMD_NC>(temp_estimate,Y,X,suff_stat,NORMAL_EXP3_UP);
-      cv_t = X_cov_cont_norm<normalEXPONENTIAL_BMD_NC>(temp_estimate,Y,X,suff_stat, NORMAL_EXP3_UP);
-    }else{
-      Xd = X_gradient_cont_norm<normalEXPONENTIAL_BMD_NC>(temp_estimate,Y,X,suff_stat,NORMAL_EXP3_DOWN);
-      cv_t = X_cov_cont_norm<normalEXPONENTIAL_BMD_NC>(temp_estimate,Y,X,suff_stat, NORMAL_EXP3_DOWN);
-    }
-    
-    temp << Xd.col(0) , Xd.col(1), Xd.col(3);  
-    Xd = temp; 
-    pr   =  X_logPrior<IDPrior>(estimate,prior); 
-    subBlock << pr(0,0), pr(0,1), pr(0,3),
-                pr(1,0), pr(1,1), pr(1,3),
-                pr(3,0), pr(3,1), pr(3,3);
-    
-    if( fabs(subBlock.diagonal().array().sum()) ==0){
-      DOF = 3; 
-    } else{
-      pr   = Xd.transpose()*cv_t*Xd + subBlock; 
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t; 
-      DOF =  Xd.diagonal().array().sum(); 
-    }
-    break;
-  case cont_model::exp_5: 
-  default:
-    if (is_increasing){
-      Xd = X_gradient_cont<lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat,NORMAL_EXP5_UP);
-      cv_t = X_cov_cont< lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat, NORMAL_EXP5_UP);
-    }else{
-      Xd = X_gradient_cont<lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat,NORMAL_EXP5_DOWN);
-      cv_t = X_cov_cont< lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat, NORMAL_EXP5_DOWN);
-    }
+  std::vector<ModelInfo> models = {
+    {X_gradient_cont<lognormalHILL_BMD_NC>, X_cov_cont<lognormalHILL_BMD_NC>, 4},   // hill
+    {X_gradient_cont<lognormalEXP_aerts_BMD_NC>, X_cov_cont<lognormalEXP_aerts_BMD_NC>, 4},  // exp_aerts
+    {X_gradient_cont<lognormalLMS_BMD_NC>, X_cov_cont<lognormalLMS_BMD_NC>, 4}, // LMS
+    {X_gradient_cont<lognormalGAMMA_efsa_BMD_NC>, X_cov_cont<lognormalGAMMA_efsa_BMD_NC>, 4}, // gamma_efsa
+    {X_gradient_cont<lognormalIEXP_aerts_BMD_NC>, X_cov_cont<lognormalIEXP_aerts_BMD_NC>, 4}, // iexp_aerts
+    {X_gradient_cont<lognormalGAMMA_aerts_BMD_NC>, X_cov_cont<lognormalGAMMA_aerts_BMD_NC>, 5}, // gamma_aerts
+    {X_gradient_cont<lognormalIGAMMA_aerts_BMD_NC>, X_cov_cont<lognormalIGAMMA_aerts_BMD_NC>, 5}, // igamma_aerts
+    {X_gradient_cont<lognormalHILL_aerts_BMD_NC>, X_cov_cont<lognormalHILL_aerts_BMD_NC>, 4}, // hill_aerts
+    {X_gradient_cont<lognormalLOMAX_aerts_BMD_NC>, X_cov_cont<lognormalLOMAX_aerts_BMD_NC>, 5}, // lomax_aerts
+    {X_gradient_cont<lognormalILOMAX_aerts_BMD_NC>, X_cov_cont<lognormalILOMAX_aerts_BMD_NC>, 5}, // ilomax_aerts
+    {X_gradient_cont<lognormalLOGNORMAL_aerts_BMD_NC>, X_cov_cont<lognormalLOGNORMAL_aerts_BMD_NC>, 4}, // lognormal_aerts
+    {X_gradient_cont<lognormalLOGSKEW_aerts_BMD_NC>, X_cov_cont<lognormalLOGSKEW_aerts_BMD_NC>, 5}, // logskew_aerts
+    {X_gradient_cont<lognormalILOGSKEW_aerts_BMD_NC>, X_cov_cont<lognormalILOGSKEW_aerts_BMD_NC>, 5}, // ilogskew_aerts
+    {X_gradient_cont<lognormalLOGISTIC_aerts_BMD_NC>, X_cov_cont<lognormalLOGISTIC_aerts_BMD_NC>, 4}, // logistic_aerts
+    {X_gradient_cont<lognormalPROBIT_aerts_BMD_NC>, X_cov_cont<lognormalPROBIT_aerts_BMD_NC>, 4}, // probit_aerts 
+    {X_gradient_cont_norm<normalEXPONENTIAL_BMD_NC>, X_cov_cont_norm<normalEXPONENTIAL_BMD_NC>, 3}, // exp3
+    {X_gradient_cont<lognormalEXPONENTIAL_BMD_NC>, X_cov_cont<lognormalEXPONENTIAL_BMD_NC>, 4}, // default
+  };
   
-    Eigen::MatrixXd temp_Xd = Xd.block(0,0,Xd.rows(),4); 
-    Xd = temp_Xd; 
-    pr   =  X_logPrior<IDPrior>(estimate,prior); 
-    temp_Xd  = pr.block(0,0,4,4); 
-    pr = temp_Xd; 
-    if( fabs(pr.diagonal().array().sum()) == 0){
-      DOF = 4.0; 
-    }else{
-      pr   = Xd.transpose()*cv_t*Xd + pr; 
-      Xd = Xd*pr.inverse()*Xd.transpose()*cv_t; 
-      DOF =  Xd.diagonal().array().sum(); 
+  for (size_t i = 0; i < models.size(); i++) {
+    if (static_cast<int>(CM) == i) {
+        int increasing = 1;
+        if (CM == cont_model::exp_3) {
+          increasing = is_increasing ? NORMAL_EXP3_UP: NORMAL_EXP3_DOWN;
+        } 
+        else if (i == models.size() - 1) {
+          increasing = is_increasing ? NORMAL_EXP5_UP: NORMAL_EXP5_DOWN;
+        }
+        Xd = models[i].X_gradient(estimate, Y, X, suff_stat, increasing);
+        cv_t = models[i].X_cov(estimate, Y, X, suff_stat, increasing);
+        pr = X_logPrior<IDPrior>(estimate, prior);
+        return computeDOF(Xd, cv_t, pr, models[i].blockSize);
     }
-    break; 
   }
+  // switch(CM){
+  // case cont_model::hill:
+  //   Xd = X_gradient_cont<lognormalHILL_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),4); 
+  //   cv_t = X_cov_cont<lognormalHILL_BMD_NC>(estimate,Y,X,suff_stat); 
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior); 
+  //   pr = pr.block(0,0,4,4); 
+    
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0; 
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr; 
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t; 
+  //     DOF =  Xd.diagonal().array().sum(); 
+  //   }
+    
+  //   break; 
+  // case cont_model::exp_aerts:
+  //   Xd = X_gradient_cont<lognormalEXP_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),4);
+  //   cv_t = X_cov_cont<lognormalEXP_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,4,4);
 
-  return DOF; 
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::LMS:
+  //   Xd = X_gradient_cont<lognormalLMS_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),4);
+  //   cv_t = X_cov_cont<lognormalLMS_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,4,4);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::gamma_efsa:
+  //   Xd = X_gradient_cont<lognormalGAMMA_efsa_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),4);
+  //   cv_t = X_cov_cont<lognormalGAMMA_efsa_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,4,4);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::invexp_aerts:
+  //   Xd = X_gradient_cont<lognormalIEXP_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),4);
+  //   cv_t = X_cov_cont<lognormalIEXP_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,4,4);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::gamma_aerts:
+  //   Xd = X_gradient_cont<lognormalGAMMA_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),5);
+  //   cv_t = X_cov_cont<lognormalGAMMA_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,5,5);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 5.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::invgamma_aerts:
+  //   Xd = X_gradient_cont<lognormalIGAMMA_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),5);
+  //   cv_t = X_cov_cont<lognormalIGAMMA_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,5,5);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 5.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::hill_aerts:
+  //   Xd = X_gradient_cont<lognormalHILL_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),4);
+  //   cv_t = X_cov_cont<lognormalHILL_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,4,4);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::lomax_aerts:
+  //   Xd = X_gradient_cont<lognormalLOMAX_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),5);
+  //   cv_t = X_cov_cont<lognormalLOMAX_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,5,5);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 5.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::invlomax_aerts:
+  //   Xd = X_gradient_cont<lognormalILOMAX_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),5);
+  //   cv_t = X_cov_cont<lognormalILOMAX_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,5,5);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 5.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::lognormal_aerts:
+  //   Xd = X_gradient_cont<lognormalLOGNORMAL_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),4);
+  //   cv_t = X_cov_cont<lognormalLOGNORMAL_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,4,4);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::logskew_aerts:
+  //   Xd = X_gradient_cont<lognormalLOGSKEW_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),5);
+  //   cv_t = X_cov_cont<lognormalLOGSKEW_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,5,5);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 5.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::invlogskew_aerts:
+  //   Xd = X_gradient_cont<lognormalILOGSKEW_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),5);
+  //   cv_t = X_cov_cont<lognormalILOGSKEW_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,5,5);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 5.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::logistic_aerts:
+  //   Xd = X_gradient_cont<lognormalLOGISTIC_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),4);
+  //   cv_t = X_cov_cont<lognormalLOGISTIC_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,4,4);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::probit_aerts:
+  //   Xd = X_gradient_cont<lognormalPROBIT_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   Xd = Xd.block(0,0,Xd.rows(),4);
+  //   cv_t = X_cov_cont<lognormalPROBIT_aerts_BMD_NC>(estimate,Y,X,suff_stat);
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior);
+  //   pr = pr.block(0,0,4,4);
+
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0;
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr;
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t;
+  //     DOF =  Xd.diagonal().array().sum();
+  //   }
+
+  //   break;
+  // case cont_model::exp_3:
+    
+  //   temp_estimate << estimate(0,0) , estimate(1,0) , 1.0 , estimate.block(2,0,estimate.rows()-2,1); 
+  //   if (is_increasing){
+  //     Xd = X_gradient_cont_norm<normalEXPONENTIAL_BMD_NC>(temp_estimate,Y,X,suff_stat,NORMAL_EXP3_UP);
+  //     cv_t = X_cov_cont_norm<normalEXPONENTIAL_BMD_NC>(temp_estimate,Y,X,suff_stat, NORMAL_EXP3_UP);
+  //   }else{
+  //     Xd = X_gradient_cont_norm<normalEXPONENTIAL_BMD_NC>(temp_estimate,Y,X,suff_stat,NORMAL_EXP3_DOWN);
+  //     cv_t = X_cov_cont_norm<normalEXPONENTIAL_BMD_NC>(temp_estimate,Y,X,suff_stat, NORMAL_EXP3_DOWN);
+  //   }
+    
+  //   temp << Xd.col(0) , Xd.col(1), Xd.col(3);  
+  //   Xd = temp; 
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior); 
+  //   subBlock << pr(0,0), pr(0,1), pr(0,3),
+  //               pr(1,0), pr(1,1), pr(1,3),
+  //               pr(3,0), pr(3,1), pr(3,3);
+    
+  //   if( fabs(subBlock.diagonal().array().sum()) ==0){
+  //     DOF = 3; 
+  //   } else{
+  //     pr   = Xd.transpose()*cv_t*Xd + subBlock; 
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t; 
+  //     DOF =  Xd.diagonal().array().sum(); 
+  //   }
+  //   break;
+  // case cont_model::exp_5: 
+  // default:
+  //   if (is_increasing){
+  //     Xd = X_gradient_cont<lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat,NORMAL_EXP5_UP);
+  //     cv_t = X_cov_cont< lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat, NORMAL_EXP5_UP);
+  //   }else{
+  //     Xd = X_gradient_cont<lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat,NORMAL_EXP5_DOWN);
+  //     cv_t = X_cov_cont< lognormalEXPONENTIAL_BMD_NC>(estimate,Y,X,suff_stat, NORMAL_EXP5_DOWN);
+  //   }
+  
+  //   Eigen::MatrixXd temp_Xd = Xd.block(0,0,Xd.rows(),4); 
+  //   Xd = temp_Xd; 
+  //   pr   =  X_logPrior<IDPrior>(estimate,prior); 
+  //   temp_Xd  = pr.block(0,0,4,4); 
+  //   pr = temp_Xd; 
+  //   if( fabs(pr.diagonal().array().sum()) == 0){
+  //     DOF = 4.0; 
+  //   }else{
+  //     pr   = Xd.transpose()*cv_t*Xd + pr; 
+  //     Xd = Xd*pr.inverse()*Xd.transpose()*cv_t; 
+  //     DOF =  Xd.diagonal().array().sum(); 
+  //   }
+  //   break; 
+  // }
+
+  // return DOF; 
 }
 
 double compute_normal_dof(Eigen::MatrixXd Y,Eigen::MatrixXd X, Eigen::MatrixXd estimate, 
@@ -1153,75 +863,6 @@ double compute_normal_dof(Eigen::MatrixXd Y,Eigen::MatrixXd X, Eigen::MatrixXd e
   return DOF + offset; 
   
 }
-  
-
-
-// bool convertSStat(Eigen::MatrixXd Y, Eigen::MatrixXd X,
-//                   Eigen::MatrixXd *SSTAT, Eigen::MatrixXd *SSTAT_LN,
-//                   Eigen::MatrixXd *UX){
-//   bool convert = true; 
-  
-//   if (Y.cols() == 1 ){
-//     // check to see if it can be converted into sufficient statistics4
-//     int temp = 0; 
-//     // go through each row to see if there are duplicates
-//     for (int i = 0; i < X.rows(); i++){
-//       for (int j = 0 ; j < X.rows(); j++){
-//         if (X(i,0) == X(j,0)){
-//           temp++; 
-//         }
-//       }
-//       if( temp == 1){
-//         convert = false; 
-//       }
-//       temp = 0; 
-//     }
-    
-//     if (convert){
-//       // we can convert the data
-//        *SSTAT    = createSuffStat( Y, X, false);
-//        *SSTAT_LN = createSuffStat(Y,X,true); 
-//         std::vector<double> uniqueX = unique_list(X );
-//         Eigen::MatrixXd temp_X(uniqueX.size(),1);
-//         for (int i = 0; i < uniqueX.size(); i++){
-//           temp_X(i,0) = uniqueX[i]; 
-//         }
-//         *UX = temp_X; 
-//         return true; 
- 
-//      }
-  
-//   }else{
-//     *SSTAT    = createSuffStat( Y, X, false);
-//     *SSTAT_LN = createSuffStat(Y,X,true); 
-//   }
-  
-  
-    
-//   return false; 
-// }
-// void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
-// {
-//   unsigned int numRows = matrix.rows()-1;
-//   unsigned int numCols = matrix.cols();
-  
-//   if( rowToRemove < numRows )
-//     matrix.block(rowToRemove,0,numRows-rowToRemove,numCols) = matrix.block(rowToRemove+1,0,numRows-rowToRemove,numCols);
-  
-//   matrix.conservativeResize(numRows,numCols);
-// }
-
-
-// void removeCol(Eigen::MatrixXd& matrix, unsigned int colToRemove)
-// {
-//   unsigned int numRows = matrix.rows();
-//   unsigned int numCols = matrix.cols()-1;
-  
-//   if( colToRemove < numCols )
-//     matrix.block(0,colToRemove,numRows,numCols-colToRemove) = matrix.block(0,colToRemove+1,numRows,numCols-colToRemove);
-  
-//   matrix.conservativeResize(numRows,numCols);
-// }
 
 
 bmd_analysis laplace_logNormal(Eigen::MatrixXd Y,Eigen::MatrixXd X,
@@ -2124,60 +1765,7 @@ bmd_analysis laplace_Normal(Eigen::MatrixXd Y,Eigen::MatrixXd X,
   return a; 
 }
 
-// void transfer_continuous_model(bmd_analysis a, continuous_model_result *model){
-// 	if (model){
-// 	  model->nparms = a.COV.rows(); 
-// 		model->max = a.MAP; 
-// 		model->bmd = a.MAP_BMD; 
-// 		for (int i = 0; i< model->dist_numE; i ++){
-// 				double temp = double(i)/double(model->dist_numE); 
-// 				model->bmd_dist[i] = a.BMD_CDF.inv(temp);     // BMD @ probability
-// 				model->bmd_dist[model->dist_numE + i] = temp; // probability 
-// 		}
-// 		for (int i = 0; i < model->nparms; i++){
-// 				model->parms[i] = a.MAP_ESTIMATE(i,0); 
-// 				for (int j = 0; j < model->nparms; j++){
-// 					model->cov[i + j*model->nparms] = a.COV(i,j); 
-// 				}
-// 		}
-// 	}
-// }
 
-// void inverse_transform_dose(continuous_model_result *model){
-//   if (model){
-//     model->bmd = sinh(model->bmd); 
-//     for (int i = 0; i< model->dist_numE; i ++){
-//       double temp = double(i)/double(model->dist_numE); 
-//       model->bmd_dist[i] = sinh(model->bmd_dist[i]);     // BMD @ probability
-//     }
-//   }
-// }
-
-
-// void bmd_range_find(continuousMA_result *res, 
-// 					double *range){
-//  // assume the minimum BMD for the MA is always 0
-//  range[0] = 0.0; 
-//  double current_max = 0.0; 
-//  for (int j = 10; j > 1; j--){
-// 	 for (int i = 0; i < res->nmodels;i++){
-// 		int temp_idx = res->models[i]->dist_numE -j; 
-		
-// 		// make sure we are not dealing with an infinite value
-// 		// or not a number
-// 		if (isfinite(res->models[i]->bmd_dist[temp_idx]) && 
-// 			  !isnan(res->models[i]->bmd_dist[temp_idx])){
-// 			if ( res->models[i]->bmd_dist[temp_idx] > current_max){
-// 				current_max = res->models[i]->bmd_dist[temp_idx]; 
-// 			}
-// 		}
-		 
-// 	 }
-//  }
-//  // if we don't find a max then the upper limit is NAN
-//  range[1] = current_max == 0.0 ? std::numeric_limits<double>::quiet_NaN():current_max; 
-  
-// }
 
 void estimate_ma_laplace(continuousMA_analysis *MA,
                          continuous_analysis *CA ,
@@ -3276,16 +2864,6 @@ mcmcSamples mcmc_Normal(Eigen::MatrixXd Y,Eigen::MatrixXd X,
 }
 
 
-
-// void inverse_transform_dose(bmd_analysis_MCMC *b){
-  
-//   if (b){
-//     for(unsigned int i= 0; i < b->samples;  i++){
-//       b->BMDS[i] = sinh(b->BMDS[i]); 
-//     }
-//   }
-  
-// }
 
 void estimate_ma_MCMC(continuousMA_analysis *MA,
                       continuous_analysis   *CA,
