@@ -467,7 +467,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   Eigen::MatrixXd test = startV;
   // test = M->startValue();
   // Set up the random number portion for the code
-  const gsl_rng_type * T;
+  // const gsl_rng_type * T;
   gsl_rng * r;
   
   gsl_rng_env_setup();
@@ -480,7 +480,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   
   //
   // create the initial population of size (NI) random starting points for the genetic algorithm
-  double initial_temp; 
+  // double initial_temp; 
   for (int i = 0; i < NI; i ++){
     // generate new value to be within the specified bounds
     for (int j = 0; j < M->nParms(); j++) {
