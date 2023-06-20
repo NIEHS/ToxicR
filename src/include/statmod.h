@@ -69,7 +69,7 @@ public:
 			throw std::runtime_error(std::string("Statistical Model: Fixed parameter constraints are same size"));
 		}
 
-		if (isFixed.size() != log_likelihood.nParms()) {
+		if (isFixed.size() != (unsigned)log_likelihood.nParms()) {
 			throw std::runtime_error(std::string("Statistical Model: Fixed number of parameter constraints not equal to number of parameters in likelihood model."));
 		}
 	};
@@ -714,7 +714,7 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
      
     }
   }else{
-    for (int i = 0; i < x.size(); i++){
+    for (unsigned int i = 0; i < x.size(); i++){
       x[i] = startV(i,0);
     }
   }
