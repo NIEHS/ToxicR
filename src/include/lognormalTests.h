@@ -37,7 +37,7 @@ public:
 
 		for (int i = 0; i < meanX.rows(); i++)
 		{
-			for (int j = 0; j < udoses.size(); j++)
+			for (unsigned int j = 0; j < udoses.size(); j++)
 			{
 				meanX(i, j) = udoses[j] == X(i, 0) ? 1.0 : 0.0;
 			}
@@ -101,7 +101,7 @@ public:
 
 		for (int i = 0; i < meanX.rows(); i++)
 		{
-			for (int j = 0; j < udoses.size(); j++)
+			for (unsigned int j = 0; j < udoses.size(); j++)
 			{
 				meanX(i, j) = udoses[j] == X(i, 0) ? 1.0 : 0.0;
 			}

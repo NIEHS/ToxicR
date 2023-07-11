@@ -69,7 +69,7 @@ public:
 			throw std::runtime_error(std::string("Statistical Model: Fixed parameter constraints are same size"));
 		}
 
-		if (isFixed.size() != log_likelihood.nParms()) {
+		if (isFixed.size() != (unsigned)log_likelihood.nParms()) {
 			throw std::runtime_error(std::string("Statistical Model: Fixed number of parameter constraints not equal to number of parameters in likelihood model."));
 		}
 	};
@@ -467,7 +467,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   Eigen::MatrixXd test = startV;
   // test = M->startValue();
   // Set up the random number portion for the code
-  const gsl_rng_type * T;
+  // const gsl_rng_type * T;
   gsl_rng * r;
   
   gsl_rng_env_setup();
@@ -480,7 +480,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   
   //
   // create the initial population of size (NI) random starting points for the genetic algorithm
-  double initial_temp; 
+  // double initial_temp; 
   for (int i = 0; i < NI; i ++){
     // generate new value to be within the specified bounds
     for (int j = 0; j < M->nParms(); j++) {
@@ -714,7 +714,7 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
      
     }
   }else{
-    for (int i = 0; i < x.size(); i++){
+    for (unsigned int i = 0; i < x.size(); i++){
       x[i] = startV(i,0);
     }
   }

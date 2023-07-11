@@ -78,7 +78,7 @@ void log_normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   }
   for (int i = 0; i < meanX.rows(); i++)
   {
-    for (int j = 0; j < udoses.size(); j++)
+    for (unsigned int j = 0; j < udoses.size(); j++)
     {
       meanX(i, j) = udoses[j] == X(i, 0) ? 1.0 : 0.0;
     }
@@ -91,18 +91,18 @@ void log_normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
 
   int nParms = a1Test.nParms();
   std::vector<double> fix1(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     fix1[i] = 0.0;
   }
   std::vector<bool> isfix1(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     isfix1[i] = false;
   }
   Eigen::MatrixXd a1Priors(nParms, NUM_PRIOR_COLS);
   a1Priors.setZero(); 
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     a1Priors.row(i) << 0, 0, 1, 0, 1e7;
   }
@@ -130,22 +130,22 @@ void log_normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   lognormalLLTESTA2 a2Test(Y, X, bSuffStat);
   nParms = a2Test.nParms();
   std::vector<double> fix2(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     fix2[i] = 0.0;
   }
   std::vector<bool> isfix2(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     isfix2[i] = false;
   }
   Eigen::MatrixXd a2Priors(nParms, NUM_PRIOR_COLS);
   a2Priors.setZero(); 
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     a2Priors.row(i) << 0, 0, 1, -1e8, 1e8;
   }
-  for (unsigned int i = 0; i < nParms / 2; i++)
+  for (int i = 0; i < nParms / 2; i++)
   {
     a2Priors.row(i) << 0, a1Result.max_parms(i), 1, 0, 1e8;
   }
@@ -153,21 +153,21 @@ void log_normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   Eigen::MatrixXd startV2(nParms, 1);
   startV2.setZero(); 
 
-  for (unsigned int i = 0; i < nParms / 2; i++)
+  for (int i = 0; i < nParms / 2; i++)
   {
     startV2(i, 0) = InitA(i, 0);
   }
 
-  for (unsigned int i = 0; i < nParms / 2; i++)
+  for (int i = 0; i < nParms / 2; i++)
   {
     startV2(i + nParms / 2, 0) = log(InitA(i, 1) * InitA(i, 1));
   }
 
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     a2Priors.row(i) << 0, 0, 1, -1e8, 1e8;
   }
-  for (unsigned int i = 0; i < nParms / 2; i++)
+  for (int i = 0; i < nParms / 2; i++)
   {
     a2Priors.row(i) << 0, a1Result.max_parms(i), 1, -1e8, 1e8;
   }
@@ -184,18 +184,18 @@ void log_normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   lognormalLLTESTR rTest(Y, X, bSuffStat);
   nParms = rTest.nParms();
   std::vector<double> fix4(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     fix4[i] = 0.0;
   }
   std::vector<bool> isfix4(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     isfix4[i] = false;
   }
   Eigen::MatrixXd rPriors(nParms, NUM_PRIOR_COLS);
   rPriors.setZero(); 
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     rPriors.row(i) << 0, 1, 1, 0, 1e8;
   }
@@ -228,18 +228,18 @@ void normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   normalLLTESTA1 a1Test(Y, X, true);
   int nParms = a1Test.nParms();
   std::vector<double> fix1(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     fix1[i] = 0.0;
   }
   std::vector<bool> isfix1(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     isfix1[i] = false;
   }
   Eigen::MatrixXd a1Priors(nParms, NUM_PRIOR_COLS);
   a1Priors.setZero(); 
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     a1Priors.row(i) << 0, 0, 1, -1e8, 1e8;
   }
@@ -262,7 +262,7 @@ void normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
 
   for (int i = 0; i < meanX.rows(); i++)
   {
-    for (int j = 0; j < udoses.size(); j++)
+    for (unsigned int j = 0; j < udoses.size(); j++)
     {
       meanX(i, j) = udoses[j] == X(i, 0) ? 1.0 : 0.0;
     }
@@ -278,7 +278,7 @@ void normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
 
   double tempV = 0.0;
 
-  for (unsigned int i = 0; i < a1Test.nParms() - 1; i++)
+  for (int i = 0; i < a1Test.nParms() - 1; i++)
   {
     startV1(i, 0) = InitA(i, 0);
   }
@@ -295,22 +295,22 @@ void normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   normalLLTESTA2 a2Test(Y, X, bSuffStat);
   nParms = a2Test.nParms();
   std::vector<double> fix2(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     fix2[i] = 0.0;
   }
   std::vector<bool> isfix2(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     isfix2[i] = false;
   }
   Eigen::MatrixXd a2Priors(nParms, NUM_PRIOR_COLS);
   a2Priors.setZero(); 
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     a2Priors.row(i) << 0, 0, 1, -1e8, 1e8;
   }
-  for (unsigned int i = 0; i < nParms / 2; i++)
+  for (int i = 0; i < nParms / 2; i++)
   {
     a2Priors.row(i) << 0, a1Result.max_parms(i), 1, -1e8, 1e8;
   }
@@ -318,12 +318,12 @@ void normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   IDcontinuousPrior a2Init(a2Priors);
   Eigen::MatrixXd startV2(nParms, 1);
   startV2.setZero(); 
-  for (unsigned int i = 0; i < nParms / 2; i++)
+  for (int i = 0; i < nParms / 2; i++)
   {
     startV2(i, 0) = InitA(i, 0);
   }
 
-  for (unsigned int i = 0; i < nParms / 2; i++)
+  for (int i = 0; i < nParms / 2; i++)
   {
     startV2(i + nParms / 2, 0) = log(InitA(i, 1) * InitA(i, 1));
   }
@@ -338,18 +338,18 @@ void normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   normalLLTESTA3 a3Test(Y, X, bSuffStat);
   nParms = a3Test.nParms();
   std::vector<double> fix3(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     fix3[i] = 0.0;
   }
   std::vector<bool> isfix3(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     isfix3[i] = false;
   }
   Eigen::MatrixXd a3Priors(nParms, NUM_PRIOR_COLS);
   a3Priors.setZero(); 
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     a3Priors.row(i) << 0, 0, 1, -1e8, 1e8;
   }
@@ -368,7 +368,7 @@ void normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     InitA(i, 1) = log(InitA(i, 1) * InitA(i, 1));
   }
 
-  for (unsigned int i = 0; i < nParms - 2; i++)
+  for (int i = 0; i < nParms - 2; i++)
   {
     startV3(i, 0) = a2Result.max_parms(i);
   }
@@ -388,19 +388,19 @@ void normal_AOD_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   normalLLTESTR RTest(Y, X, bSuffStat);
   nParms = RTest.nParms();
   std::vector<double> fixR(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     fixR[i] = 0.0;
   }
   std::vector<bool> isfixR(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     isfixR[i] = false;
   }
   Eigen::MatrixXd RPriors(nParms, NUM_PRIOR_COLS);
   RPriors.setZero(); 
 
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     RPriors.row(i) << 0, 0, 1, -1e8, 1e8;
   }
@@ -424,18 +424,18 @@ void variance_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X, bool bSuffStat,
   normalLLTESTA1 a1Test(Y, X, true);
   int nParms = a1Test.nParms();
   std::vector<double> fix1(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     fix1[i] = 0.0;
   }
   std::vector<bool> isfix1(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     isfix1[i] = false;
   }
   Eigen::MatrixXd a1Priors(nParms, NUM_PRIOR_COLS);
 
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     a1Priors.row(i) << 0, 0, 1, -1e8, 1e8;
   }
@@ -458,7 +458,7 @@ void variance_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X, bool bSuffStat,
 
   for (int i = 0; i < meanX.rows(); i++)
   {
-    for (int j = 0; j < udoses.size(); j++)
+    for (unsigned int j = 0; j < udoses.size(); j++)
     {
       meanX(i, j) = udoses[j] == X(i, 0) ? 1.0 : 0.0;
     }
@@ -472,7 +472,7 @@ void variance_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X, bool bSuffStat,
 
   double tempV = 0.0;
 
-  for (unsigned int i = 0; i < a1Test.nParms() - 1; i++)
+  for (int i = 0; i < a1Test.nParms() - 1; i++)
   {
     startV1(i, 0) = InitA(i, 0);
   }
@@ -489,22 +489,22 @@ void variance_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X, bool bSuffStat,
   normalLLTESTA3 a3Test(Y, X, bSuffStat);
   nParms = a3Test.nParms();
   std::vector<double> fix3(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     fix3[i] = 0.0;
   }
   std::vector<bool> isfix3(nParms);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     isfix3[i] = false;
   }
   Eigen::MatrixXd a3Priors(nParms, NUM_PRIOR_COLS);
-  for (unsigned int i = 0; i < nParms; i++)
+  for (int i = 0; i < nParms; i++)
   {
     a3Priors.row(i) << 0, 0, 1, -1e8, 1e8;
   }
 
-  for (unsigned int i = 0; i < nParms - 2; i++)
+  for (int i = 0; i < nParms - 2; i++)
   {
     a3Priors.row(i) << 0, 0, 1, 0, 1e8;
   }
@@ -517,7 +517,7 @@ void variance_fits(Eigen::MatrixXd Y, Eigen::MatrixXd X, bool bSuffStat,
     meanX3(i, 1) = InitA(i, 0) > 0 ? log(InitA(i, 0)) : -13.8;
     InitA(i, 1) = log(InitA(i, 1) * InitA(i, 1));
   }
-  for (unsigned int i = 0; i < nParms - 2; i++)
+  for (int i = 0; i < nParms - 2; i++)
   {
     startV3(i, 0) = InitA(i, 0);
   }
