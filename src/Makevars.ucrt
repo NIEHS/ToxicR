@@ -1,7 +1,7 @@
-PKG_CXXFLAGS =  -I./code_base -I./include $(SHLIB_OPENMP_CXXFLAGS) -I$(R_TOOLS_SOFT)/include/nlopt -I$(R_TOOLS_SOFT)/include/gsl -DR_COMPILATION -ftree-vectorize -Os -O3 -DEIGEN_DONT_INLINE -Wno-ignored-attributes
+PKG_CXXFLAGS =  -I./code_base -I./include $(SHLIB_OPENMP_CXXFLAGS) -I$(R_TOOLS_SOFT)/include/nlopt -I$(R_TOOLS_SOFT)/include/gsl -DR_COMPILATION -ftree-vectorize -Os -O3 -DEIGEN_DONT_INLINE -Wno-ignored-attributes -Wno-sign-compare -Wno-unused -Wa,-mbig-obj
 PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS) -lgsl -lgslcblas -lnlopt
-CXX14FLAGS = -Wno-ignored-attributes
-CXX11FLAGS = -Wno-ignored-attributes
+CXX14FLAGS += -Wno-ignored-attributes -Wno-sign-compare -Wno-unused
+CXX11FLAGS += -Wno-ignored-attributes -Wno-sign-compare -Wno-unused
 
 POLYK        = $(wildcard polyK/*.cpp)
 MAIN         = $(wildcard *.cpp)
