@@ -51,7 +51,10 @@ jobs:
             roxygen2
       - name: Build package
         shell: cmd
-        run: R CMD build .
+        run: R CMD build . && mv ToxicR_23.4.1.1.0.tar.gz ToxicR_23.4.1.1.0-${{ matrix.config.os }}.${{ matrix.config.r }}.tar.gz
+      - name: Test Install
+        shell: cmd
+        run: R CMD INSTALL ToxicR_23.4.1.1.0-${{ matrix.config.os }}.${{ matrix.config.r }}.tar.gz
       # - name: Create manuals
       #   shell: cmd
       #   run: R CMD Rd2pdf --encoding=UTF-8 --no-preview --no-clean ToxicR_23.4.1.1.0.tar.gz
