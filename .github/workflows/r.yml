@@ -58,9 +58,10 @@ jobs:
       - name: Document
         run: roxygen2::roxygenise()
         shell: Rscript {0}
+      # - name: Check Win
+      #   run: devtools::check_win_release()
+      #   shell: Rscript {0}
       - uses: r-lib/actions/check-r-package@v2
-        with:
-          upload-snapshots: true
       - name: Upload package
         uses: actions/upload-artifact@v3
         with:
