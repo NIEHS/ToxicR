@@ -49,6 +49,11 @@ jobs:
           needs: |
             check
             roxygen2
+      - name: Install dependencies
+        if: runner.os == 'Linux'
+        run: |
+          apt-get install r-base-dev
+
       - name: Build package
         shell: cmd
         run: R CMD build .
