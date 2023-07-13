@@ -52,7 +52,7 @@ jobs:
       - name: Install dependencies
         if: runner.os == 'Linux'
         run: |
-          apt-get install r-base-dev
+          sudo apt-get install -y r-base-dev
 
       - name: Build package
         shell: cmd
