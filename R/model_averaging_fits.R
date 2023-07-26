@@ -64,6 +64,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
         "gamma-aerts", "invgamma-aerts", "hill-aerts", "lomax-aerts", "invlomax-aerts", "lognormal-aerts",
         "logskew-aerts", "invlogskew-aerts", "logistic-aerts", "probit-aerts", "LMS", "gamma-efsa")
   current_dists <- c("normal", "normal-ncv", "lognormal")
+  fit_type = tolower(fit_type)
   type_of_fit <- which(fit_type == c("laplace", "mcmc"))
 
   if(!is.na(BMD_TYPE)){
@@ -78,7 +79,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   }
   if (identical(rt, integer(0))) {
     stop("Please specify one of the following BMRF types:
-    		  'abs','sd','rel','hybrid','FUNL'")
+    		  'abs','sd','rel','hybrid'")
   }
 
   if (rt == 4) {
@@ -265,7 +266,8 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       jj <- jj + 1
     }
     # for (ii in idx_mcmc)
-    names(temp) <- sprintf("Individual_Model_%s", 1:length(idx))
+    # names(temp) <- sprintf("Individual_Model_%s", 1:length(idx)) 
+    names(temp) <- sprintf("Indiv_%s_%s", model_list, distribution_list)
     # print(tempn)
     temp$ma_bmd <- tempn$ma_bmd
 
@@ -290,6 +292,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 
     names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
     temp$posterior_probs <- tempn$posterior_probs
+    names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
     class(temp) <- c("BMDcontinuous_MA", "BMDcontinuous_MA_mcmc")
     return(temp)
   } else {
@@ -321,7 +324,8 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
         }
       }
       names(temp[[jj]]$bmd) <- c("BMD", "BMDL", "BMDU")
-      names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
+      # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
+      names(temp)[ii] <- sprintf("Indiv_%s_%s",model_list[ii], distribution_list[ii])
       class(temp[[ii]]) <- "BMDcont_fit_maximized"
       jj <- jj + 1
     }
@@ -346,6 +350,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     }
     names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
     temp$posterior_probs <- temp$posterior_probs
+    names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
     class(temp) <- c("BMDcontinuous_MA", "BMDcontinuous_MA_laplace")
     return(temp)
   }
@@ -417,7 +422,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
   D <- as.matrix(D)
   Y <- as.matrix(Y)
   N <- as.matrix(N)
-
+  fit_type = tolower(fit_type)
   DATA <- cbind(D, Y, N)
   test <- .check_for_na(DATA)
   Y <- Y[test == TRUE, , drop = F]
@@ -501,7 +506,9 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
       te <- splinefun(temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 2], temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 1], method = "hyman",ties=mean)
       temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
       names(temp[[ii]]$bmd) <- c("BMD", "BMDL", "BMDU")
-      names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
+      # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
+      names(temp)[ii] <- sprintf("Indiv_%s_%s", model_list[ii], distribution_list[ii])
+
       tmp_id <- which(names(temp) == "BMD_CDF")
       #  temp = temp[-tmp_id]
     }
@@ -541,11 +548,14 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
       jj <- jj + 1
     }
     # for (ii in idx_mcmc)
-    names(temp) <- sprintf("Individual_Model_%s", 1:length(priors))
+    # names(temp) <- sprintf("Individual_Model_%s", 1:length(priors))
+    names(temp) <- sprintf("Indiv_%s_%s", model_list, distribution_list)
+
     temp$ma_bmd <- tempn$BMD_CDF
     te <- splinefun(temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 2], temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 1], method = "hyman",ties=mean)
     temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
     temp$posterior_probs <- tempn$posterior_probs
+    names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
     temp$post_prob
     class(temp) <- c("BMDdichotomous_MA", "BMDdichotomous_MA_mcmc")
   }

@@ -102,7 +102,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
                use the quantal linear model.")
     }
   }
-
+  fit_type = tolower(fit_type)
   fitter <- which(fit_type == c("mle", "laplace", "mcmc"))
   if (identical(fitter, integer(0))) {
     stop('The fit_type variable must be either "laplace","mle", or "mcmc"\n')

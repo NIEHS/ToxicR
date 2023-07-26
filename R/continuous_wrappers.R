@@ -184,6 +184,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
     }
     dmodel = which(model_type==.continuous_models)
 
+    fit_type = tolower(fit_type)
     type_of_fit = which(fit_type == c('laplace','mle','mcmc'))
     if (identical(type_of_fit,integer(0))){
       stop("Please choose one of the following fit types: 'laplace','mle','mcmc.' ")

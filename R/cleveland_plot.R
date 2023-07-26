@@ -39,7 +39,7 @@ cleveland_plot <- function(A) {
   X1 <- X2 <- X3 <- X4 <- X5 <- NULL
   # This part should be consistent
 
-  fit_idx <- grep("Individual_Model", class_list)
+  fit_idx <- grep("Indiv_", class_list)
 
 
   # Create an empty matrix to contain BMD information from each model
@@ -133,7 +133,7 @@ cleveland_plot <- function(A) {
   # Remove "No Visible Bindings Note"
   X1 <- X2 <- X3 <- X4 <- X5 <- NULL
   # Grap function extract # of indices from the text with same pattern
-  fit_idx <- grep("Individual_Model", class_list)
+  fit_idx <- grep("Indiv_", class_list)
 
   # Create an empty matrix to contain BMD information from each model
   bmd_ind <- matrix(0, length(fit_idx) + 1, 5)
