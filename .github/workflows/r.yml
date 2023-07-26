@@ -26,8 +26,8 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          #- {os: windows-latest, r: '4.1'}
-          #- {os: ubuntu-latest, r: 'release'}
+          # - {os: windows-latest, r: '4.1'}
+          # - {os: ubuntu-latest, r: 'release'}
           - {os: macos-latest, r: 'release'}
     env: 
         R_KEEP_PKG_SOURCE: yes
@@ -49,6 +49,11 @@ jobs:
           needs: |
             check
             roxygen2
+      - name: Install gsl
+        if: runner.os == 'macOS'
+        run: |
+          brew install gsl
+
       - name: Build package
         run: R CMD build .
       - name: Test Install
