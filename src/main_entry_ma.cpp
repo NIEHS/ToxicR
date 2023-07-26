@@ -334,7 +334,7 @@ List run_continuous_ma_laplace(List model_priors, NumericVector model_type,
 {
 
   bool is_increasing = (bool)options[4];
-  double alpha = (double)options[3];
+  // double alpha = (double)options[3];
   double tail_p = (double)options[2];
   double bmrf = (double)options[1];
   int riskType = (int)options[0];
@@ -405,7 +405,7 @@ List run_continuous_ma_laplace(List model_priors, NumericVector model_type,
   List rV = convert_continuous_maresults_to_list(ma_result);
 
   // free up memory
-  for (unsigned int i = 0; i < ma_result->nmodels; i++)
+  for (int i = 0; i < ma_result->nmodels; i++)
   {
     del_continuous_model_result(ma_result->models[i]);
   }
@@ -461,7 +461,7 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
 {
   unsigned int burnin = (unsigned int)options[6];
   bool is_increasing = (bool)options[4];
-  double alpha = (double)options[3];
+  // double alpha = (double)options[3];
   double tail_p = (double)options[2];
   double bmrf = (double)options[1];
   int riskType = (int)options[0];
@@ -544,7 +544,7 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
   //////////////////////////////////////////////////////////
   // free up memory
   //////////////////////////////////////////////////////////
-  for (unsigned int i = 0; i < ma_result->nmodels; i++)
+  for (int i = 0; i < ma_result->nmodels; i++)
   {
     del_continuous_model_result(ma_result->models[i]);
     del_mcmc_analysis(model_mcmc_info.analyses[i]);

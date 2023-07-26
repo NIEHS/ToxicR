@@ -86,8 +86,7 @@ public:
 	virtual double bmd_stdev_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing) { return 0.0; };
 	virtual double bmd_reldev_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing) { return 0.0; };
 	virtual double bmd_point_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing) { return 0.0; };
-	;
-	virtual double bmd_extra_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing) { return 0.0; }
+	virtual double bmd_extra_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing) { return 0.0; };
 	virtual double bmd_hybrid_extra_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing,
 										  double TAIL_PROB) { return 0.0; };
 

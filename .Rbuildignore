@@ -10,3 +10,4 @@
 \.so$
 \.git/
 ^\.dll$
+^\.github$
