@@ -55,6 +55,11 @@ jobs:
           brew install gsl
 
       - name: Build package
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: R CMD build .
+      - name: Build package
+        if: runner.os == 'Linux' || runner.os == 'macOs' 
         run: R CMD build .
       - name: Test Install
         run: R CMD INSTALL ToxicR_23.4.1.1.0.tar.gz
