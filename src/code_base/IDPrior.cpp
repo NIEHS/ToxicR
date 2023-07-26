@@ -38,7 +38,7 @@ double IDPrior::neg_log_prior(Eigen::MatrixXd theta)
 		if (theta(i, 0) < prior_spec(i, 3) ||
 			theta(i, 0) > prior_spec(i, 4))
 		{
-			//  returnV = std::numeric_limits<double>::infinity();
+			returnV = std::numeric_limits<double>::infinity();
 			break;
 		}
 		switch (t)
