@@ -26,9 +26,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: '4.1'}
+          - {os: windows-latest, r: '4.2'}
+          - {os: windows-latest, r: 'release'}
           - {os: ubuntu-latest, r: 'release'}
+          - {os: ubuntu-latest, r: '4.2'}
           - {os: macos-latest, r: 'release'}
+          - {os: macos-latest, r: '4.2'}
     env: 
         R_KEEP_PKG_SOURCE: yes
     steps:
@@ -64,12 +67,12 @@ jobs:
       - name: Test Install
         if: runner.os == 'Windows'
         shell: cmd
-        run: R CMD INSTALL ToxicR_23.4.1.1.0.tar.gz
+        run: R CMD INSTALL --build ToxicR_23.4.1.1.0.tar.gz
       - name: Test Install
         if: runner.os == 'Linux' || runner.os == 'macOs'
-        run: R CMD INSTALL ToxicR_23.4.1.1.0.tar.gz
+        run: R CMD INSTALL --build ToxicR_23.4.1.1.0.tar.gz
       - name: Upload package
         uses: actions/upload-artifact@v3
         with:
           path: ToxicR_23.4.1.1.0.tar.gz
-          name: ToxicR_23.4.1.1.0-${{ matrix.config.os }}.${{ matrix.config.r }}.tar.gz
+          name: ToxicR_23.4.1.1.0-${{ matrix.config.os }}.r-${{ matrix.config.r }}.tar.gz
