@@ -28,9 +28,9 @@ jobs:
         config:
           # - {os: windows-latest, r: '4.2'}
           # - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest, r: 'release'}
+          # - {os: ubuntu-latest, r: 'release'}
           # - {os: ubuntu-latest, r: '4.2'}
-          # - {os: macos-latest, r: 'release'}
+          - {os: macos-latest, r: 'release'}
           # - {os: macos-latest, r: '4.2'}
     env: 
         R_KEEP_PKG_SOURCE: yes
@@ -75,10 +75,10 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ToxicR_23.4.1.1.0.zip
-          name: ToxicR_23.4.1.1.0-${{ matrix.config.os }}.r-${{ matrix.config.r }}.zip
+          name: ToxicR_23.4.1.1.0-${{ runner.os }}.R-${{ matrix.config.r }}.zip
       - name: Upload package
         if: runner.os == 'Linux' || runner.os == 'macOs'
         uses: actions/upload-artifact@v3
         with:
-          path: ToxicR_23.4.1.1.0.zip
-          name: ToxicR_23.4.1.1.0-${{ matrix.config.os }}.r-${{ matrix.config.r }}.zip
+          path: ToxicR_23.4.1.1.0_R_x86_64-pc-linux-gnu.tar.gz
+          name: ToxicR_23.4.1.1.0-${{ runner.os }}.R-${{ matrix.config.r }}.zip
