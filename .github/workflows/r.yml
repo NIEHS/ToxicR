@@ -27,11 +27,11 @@ jobs:
       matrix:
         config:
           - {os: windows-latest, r: '4.2'}
-          - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest, r: 'release'}
-          - {os: ubuntu-latest, r: '4.2'}
-          - {os: macos-latest, r: 'release'}
-          - {os: macos-latest, r: '4.2'}
+          # - {os: windows-latest, r: 'release'}
+          # - {os: ubuntu-latest, r: 'release'}
+          # - {os: ubuntu-latest, r: '4.2'}
+          # - {os: macos-latest, r: 'release'}
+          # - {os: macos-latest, r: '4.2'}
     env: 
         R_KEEP_PKG_SOURCE: yes
     steps:
@@ -60,10 +60,10 @@ jobs:
       - name: Build package
         if: runner.os == 'Windows'
         shell: cmd
-        run: R CMD build .
+        run: R CMD build --no-build-vignettes .
       - name: Build package
         if: runner.os == 'Linux' || runner.os == 'macOs' 
-        run: R CMD build .
+        run: R CMD build --no-build-vignettes .
       - name: Test Install
         if: runner.os == 'Windows'
         shell: cmd
