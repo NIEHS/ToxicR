@@ -153,7 +153,7 @@
 
   returnV$fit_method <- "Bayesian:MAX"
   returnV$fit_table <- data.frame(post_p = round(model$posterior_probs, 3))
-  tmp_idx <- grep("Individual", names(model))
+  tmp_idx <- grep("Indiv_", names(model))
 
   temp_mfit <- rep(" ", length(tmp_idx)) # model name
   temp_BMD <- rep(" ", length(tmp_idx)) # bmd
@@ -223,7 +223,7 @@
 
   returnV$fit_method <- "Bayesian:MCMC"
   returnV$fit_table <- data.frame(post_p = round(model$posterior_probs, 3))
-  tmp_idx <- grep("Individual", names(model))
+  tmp_idx <- grep("Indiv_", names(model))
 
   temp_mfit <- rep(" ", length(tmp_idx)) # model name
   temp_BMD <- rep(" ", length(tmp_idx)) # bmd
