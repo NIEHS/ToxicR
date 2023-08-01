@@ -75,10 +75,16 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ToxicR_23.4.1.1.0.zip
-          name: ToxicR_23.4.1.1.0-${{ runner.os }}.R-${{ matrix.config.r }}.zip
-      - name: Upload package
-        if: runner.os == 'Linux' || runner.os == 'macOs'
+          name: ToxicR_23.4.1.1.0-${{ runner.os }}-R.${{ matrix.config.r }}.zip
+      - name: Upload package (Linux)
+        if: runner.os == 'Linux'
         uses: actions/upload-artifact@v3
         with:
           path: ToxicR_23.4.1.1.0_R_x86_64-pc-linux-gnu.tar.gz
-          name: ToxicR_23.4.1.1.0-${{ runner.os }}.R-${{ matrix.config.r }}.zip
+          name: ToxicR_23.4.1.1.0-x86_64-linux-R.${{ matrix.config.r }}.zip
+      - name: Upload package (macOs)
+        if: runner.os == 'macOs'
+        uses: actions/upload-artifact@v3
+        with:
+          path: ToxicR_23.4.1.1.0.tgz
+          name: ToxicR_23.4.1.1.0-x86_64-macOs-R.${{ matrix.config.r }}.tgz
