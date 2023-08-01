@@ -26,12 +26,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # - {os: windows-latest, r: '4.2'}
-          # - {os: windows-latest, r: 'release'}
-          # - {os: ubuntu-latest, r: 'release'}
-          # - {os: ubuntu-latest, r: '4.2'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest, r: 'release'}
           - {os: macos-latest, r: 'release'}
-          # - {os: macos-latest, r: '4.2'}
+          - {os: windows-latest, r: '4.2'}
+          - {os: ubuntu-latest, r: '4.2'}
+          - {os: macos-latest, r: '4.2'}
     env: 
         R_KEEP_PKG_SOURCE: yes
     steps:
