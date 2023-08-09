@@ -14,7 +14,16 @@ on:
     - '*'
 
 jobs:
-  build:
+  create_release:
+    name: Create release
+    runs-on: ubuntu-latest
+    outputs:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+        - name: Create release
+          id: create_release
+          uses: ncipollo/release-action@v1
+  build_upload_artefacts:
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     strategy: 
@@ -24,9 +33,9 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: ubuntu-latest, r: 'release'}
           - {os: macos-latest, r: 'release'}
-          - {os: windows-latest, r: '4.2'}
-          - {os: ubuntu-latest, r: '4.2'}
-          - {os: macos-latest, r: '4.2'}
+        #   - {os: windows-latest, r: '4.2'}
+        #   - {os: ubuntu-latest, r: '4.2'}
+        #   - {os: macos-latest, r: '4.2'}
     env: 
         R_KEEP_PKG_SOURCE: yes
     steps:
@@ -83,6 +92,22 @@ jobs:
         with:
           path: ToxicR_23.4.1.1.0.tgz
           name: ToxicR_23.4.1.1.0-x86_64-macOs-R.${{ matrix.config.r }}.tgz
-      - uses: ncipollo/release-action@v1
+      - uses: svenstaro/upload-release-action@v2
+        if: runner.os == 'macOs'
         with:
-            artifacts: "*.tgz,*.zip"
+            tag: ${{ github.ref }}
+            file: ToxicR_23.4.1.1.0-x86_64-macOs-R.${{ matrix.config.r }}.tgz
+            asset_name: ToxicR_23.4.1.1.0-x86_64-macOs-R.${{ matrix.config.r }}.tgz
+      - uses: svenstaro/upload-release-action@v2
+        if: runner.os == 'Linux'
+        with:
+            tag: ${{ github.ref }}
+            file: ToxicR_23.4.1.1.0-x86_64-linux-R.${{ matrix.config.r }}.zip
+            asset_name: ToxicR_23.4.1.1.0-x86_64-linux-R.${{ matrix.config.r }}.zip
+      - uses: svenstaro/upload-release-action@v2
+        if: runner.os == 'Windows'
+        with:
+            tag: ${{ github.ref }}
+            file: ToxicR_23.4.1.1.0-${{ runner.os }}-R.${{ matrix.config.r }}.zip
+            asset_name: ToxicR_23.4.1.1.0-windows-R.${{ matrix.config.r }}.zip
+        
