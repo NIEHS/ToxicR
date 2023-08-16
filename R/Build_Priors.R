@@ -200,7 +200,9 @@ create_continuous_prior <- function(prior_list, model, distribution, deg = 2) {
                     "logskew-aerts", "invlogskew-aerts")){
       p <- .check_5param(prior_list, distribution)
     }
-    
+    if(model %in% c("gamma-aerts","invgamma-aerts")){
+      p<- .check_5param_gamma(prior_list,distribution)
+    }
     p$mean <- model
   }else{
     if("LMS" == model){
@@ -208,7 +210,7 @@ create_continuous_prior <- function(prior_list, model, distribution, deg = 2) {
       p$mean <- model
     }
     if("gamma-efsa" == model){
-      p <- .check_4param(prior_list, distribution)
+      p <- .check_4param_gamma(prior_list, distribution)
       p$mean <- model
     }
     if ("hill" == model) {
@@ -276,6 +278,48 @@ create_continuous_prior <- function(prior_list, model, distribution, deg = 2) {
   prior$mean <- .continuous_models[1]
   return(prior)
 }
+
+.check_4param_gamma <- function(prior, distribution) {
+  # check if the normal distribution is correctly specified
+  temp <- prior[[1]]
+  if (sum(temp[, 4] > temp[, 5]) > 0) {
+    stop("One of the parameter's lower bounds is greater than the upper bound.")
+  }
+  if (temp[2,4] <= 0){
+    stop("The lower bound on b must be positive (for numerical stability).")
+  }
+  if(temp[4,4] < 0.2){
+    stop("The lower bound on d must be greater than or equal to 0.2 for numerical reasons. ")
+  }
+  
+  if (distribution == "normal") {
+    if (nrow(temp) != 5) {
+      stop("Normal Aerts model prior requires 5 parameters.")
+    }
+    prior$model <- "Aerts Model [normal]"
+    prior$parameters <- c("a", "b", "c", "d", "log(sigma^2)")
+  }
+  
+  if (distribution == "normal-ncv") {
+    if (nrow(temp) != 6) {
+      stop("Normal-NCV Aerts model prior requires 6 parameters.")
+    }
+    if (temp[5, 4] < 0) {
+      stop("The prior on \rho (parameter 5) can not have a lower bound less than zero.")
+    }
+    prior$model <- "Aerts Model [normal-ncv]"
+    prior$parameters <- c("a", "b", "c", "d", "rho", "log(sigma^2)")
+  }
+  
+  if (distribution == "lognormal") {
+    if (nrow(temp) != 5) {
+      stop("Lognormal Aerts model prior requires 5 parameters.")
+    }
+    prior$model <- "Aerts Model [lognormal]"
+    prior$parameters <- c("a", "b", "c", "d", "log(sigma^2)")  }
+  return(prior)
+}
+
 
 .check_4param <- function(prior, distribution) {
   # check if the normal distribution is correctly specified
@@ -364,6 +408,57 @@ create_continuous_prior <- function(prior_list, model, distribution, deg = 2) {
   }
   if(temp[4,4] < 0){
     stop("The lower bound on d must be non-negative.")
+  }
+  if(temp[2,4] < 0.1){
+    warning("Lower bound on b < 0.1 may cause numerical instability")
+  }
+  # check if the normal distribution is correctly specified
+  if (distribution == "normal") {
+    if (nrow(temp) != 6) {
+      stop("Normal Aerts model prior requires 6 parameters.")
+    }
+    prior$model <- "Aerts Model [normal]"
+    prior$parameters <- c("a", "b", "c", "d", "xi", "log(sigma^2)")
+  }
+  
+  if (distribution == "normal-ncv") {
+    temp <- prior[[1]]
+    if (nrow(temp) != 7) {
+      stop("Normal-NCV Aerts model prior requires 7 parameters.")
+    }
+    if (temp[6, 4] < 0) {
+      stop("The prior on \rho (parameter 6) can not have a lower bound less than zero.")
+    }
+    prior$model <- "Aerts Model [normal-ncv]"
+    prior$parameters <- c("a", "b", "c", "d", "xi", "rho", "log(sigma^2)")
+  }
+  
+  if (distribution == "lognormal") {
+    temp <- prior[[1]]
+    if (nrow(temp) != 6) {
+      stop("Lognormal Aerts model prior requires 6 parameters.")
+    }
+    prior$model <- "Aerts Model [lognormal]"
+    prior$parameters <- c("a", "b", "c", "d", "xi", "log(sigma^2)")
+  }
+  prior$mean <- .continuous_models[1]
+  return(prior)
+}
+
+
+.check_5param_gamma <- function(prior, distribution) {
+  temp <- prior[[1]]
+  if (sum(temp[, 4] > temp[, 5]) > 0) {
+    stop("One of the parameter's lower bounds is greater than the upper bound.")
+  }
+  if (temp[2,4] <= 0  | temp[5,4] <= 0){
+    stop("The lower bounds on b and xi must be positive (for numerical stability).")
+  }
+  if(temp[4,4] < 0){
+    stop("The lower bound on d must be non-negative.")
+  }
+   if(temp[5,4] < 0.2){
+    stop("The lower bound on xi must be greater than or equal to 0.2.")
   }
   if(temp[2,4] < 0.1){
     warning("Lower bound on b < 0.1 may cause numerical instability")
