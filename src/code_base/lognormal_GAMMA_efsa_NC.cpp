@@ -613,8 +613,12 @@ double lognormalGAMMA_efsa_BMD_NC::bmd_absolute(Eigen::MatrixXd theta, double BM
 	//make sure it is a valid quantile before doing inverse cdf
 	q = std::max(1e-6, std::min(q, 1.0 - 1e-6));
 
+	gsl_set_error_handler_off(); // add this
+
 	double temp = gsl_cdf_gamma_Pinv(q, xi, 1.0);
 	temp = pow(temp / b, 1.0 / d);
+
+	gsl_set_error_handler(NULL);
 
 	return temp;
 
