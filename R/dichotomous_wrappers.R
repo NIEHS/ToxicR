@@ -127,6 +127,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     temp$bounds <- bounds
     temp$model <- model_type
     temp$data <- DATA
+    temp$options <- c(BMR, alpha, samples, burnin)
     class(temp) <- "BMDdich_fit_maximized"
   }
 
@@ -139,6 +140,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     temp$prior <- prior
     temp$model <- model_type
     temp$data <- DATA
+    temp$options <- c(BMR, alpha, samples, burnin)
     class(temp) <- "BMDdich_fit_maximized"
   }
   if (fitter == 3) {

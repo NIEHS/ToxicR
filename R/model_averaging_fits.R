@@ -267,6 +267,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       }
 
       names(temp[[jj]]$bmd) <- c("BMD", "BMDL", "BMDU")
+      temp[[jj]]$options <- options
       class(temp[[jj]]) <- "BMDcont_fit_MCMC"
       jj <- jj + 1
     }
@@ -328,6 +329,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
         }
       }
       names(temp[[jj]]$bmd) <- c("BMD", "BMDL", "BMDU")
+      temp[[jj]]$options <- options
       # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
       names(temp)[ii] <- sprintf("Indiv_%s_%s",model_list2[ii], distribution_list[ii])
       class(temp[[ii]]) <- "BMDcont_fit_maximized"

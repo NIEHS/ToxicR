@@ -20,7 +20,8 @@
 .summary_dichotomous_max <- function(object, ...) {
   model <- object
   returnV <- list()
-  alpha <- .evaluate_alpha(...)
+  #alpha <- .evaluate_alpha()
+  alpha <- model$options[2]
   if (is.null(model$prior)) {
     returnV$fit_method <- "MLE"
     returnV$prior <- NA

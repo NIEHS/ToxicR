@@ -39,7 +39,8 @@
 .summary_continuous_max <- function(object, ...) {
   model <- object
   returnV <- list()
-  alpha <- .evaluate_alpha(...)
+  #alpha <- .evaluate_alpha(...)
+  alpha <- model$options[4]
 
   if (is.null(model$prior)) {
     returnV$fit_method <- "MLE"
@@ -105,7 +106,8 @@
   model <- object
   returnV <- list()
 
-  alpha <- .evaluate_alpha(...)
+  #alpha <- .evaluate_alpha(...)
+  alpha <- model$options[4]
 
   returnV$fit_method <- "Bayesian:MCMC"
   returnV$prior <- model$prior
@@ -147,13 +149,14 @@
 
 .summary_ma_max <- function(object, ...) {
   model <- object
-  alpha <- .evaluate_alpha(...)
+  #alpha <- .evaluate_alpha(...)
+  tmp_idx <- grep("Indiv_", names(model))
+  alpha <- model[[tmp_idx[1]]]$options[4]
 
   returnV <- list()
 
   returnV$fit_method <- "Bayesian:MAX"
   returnV$fit_table <- data.frame(post_p = round(model$posterior_probs, 3))
-  tmp_idx <- grep("Indiv_", names(model))
 
   temp_mfit <- rep(" ", length(tmp_idx)) # model name
   temp_BMD <- rep(" ", length(tmp_idx)) # bmd
@@ -217,13 +220,14 @@
 
 .summary_ma_mcmc <- function(object, ...) {
   model <- object
-  alpha <- .evaluate_alpha(...)
+  #alpha <- .evaluate_alpha(...)
+  tmp_idx <- grep("Indiv_", names(model))
+  alpha <- model[[tmp_idx[1]]]$options[4]
 
   returnV <- list()
 
   returnV$fit_method <- "Bayesian:MCMC"
   returnV$fit_table <- data.frame(post_p = round(model$posterior_probs, 3))
-  tmp_idx <- grep("Indiv_", names(model))
 
   temp_mfit <- rep(" ", length(tmp_idx)) # model name
   temp_BMD <- rep(" ", length(tmp_idx)) # bmd
