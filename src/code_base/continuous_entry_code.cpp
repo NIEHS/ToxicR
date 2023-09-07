@@ -2617,7 +2617,7 @@ void estimate_ma_laplace(continuousMA_analysis *MA,
   for (int j = 0; j < MA->nmodels; j++){
     post_probs[j] = post_probs[j]/ norm_sum; 
     
-    for (double  i = 0.0; i <= 0.50; i += 0.01 ){
+    for (double  i = 1e-8; i <= 0.5; i += 0.01 ){
       if (!isfinite(b[j].BMD_CDF.inv(i))){
         post_probs[j] = 0;    // if the cdf is infinite before the median
                               // it is removed 
@@ -2719,8 +2719,7 @@ void estimate_ma_laplace(continuousMA_analysis *MA,
        
   } while( (log(fabs(prob-1e-4)) > log(1e-8)) && (stop < 50)); 
   double lower_end = mid; 
-  
-  
+    
   int i = 0; 
   for (; i < res->dist_numE/2; i ++){
        cbmd =  double(i+1)/double(res->dist_numE/2)*(lower_range-lower_end) + lower_end; 
@@ -2731,7 +2730,6 @@ void estimate_ma_laplace(continuousMA_analysis *MA,
                  prob += b[j].BMD_CDF.P(cbmd)*post_probs[j]; 
             }
        }
-       
        res->bmd_dist[i] = cbmd; 
        res->bmd_dist[i+res->dist_numE]  = prob;
   }
@@ -3738,7 +3736,7 @@ mcmcSamples *a = new mcmcSamples[MA->nmodels];
   for (int j = 0; j < MA->nmodels; j++){
     post_probs[j] = post_probs[j]/ norm_sum; 
 
-    for (double  i = 0.0; i <= 0.5; i += 0.01 ){
+    for (double  i = 1e-8; i <= 0.5; i += 0.01 ){
       if ( !isfinite(b[j].BMD_CDF.inv(i)) || isnan(b[j].BMD_CDF.inv(i))){
         
          post_probs[j] = 0;    // if the cdf has nan/inf before the median
