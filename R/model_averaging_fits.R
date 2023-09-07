@@ -282,6 +282,10 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     #    data_temp = data_temp[!is.na(data_temp[,1]),]
     temp$bmd <- c(NA, NA, NA)
 
+    if(min(data_temp[,2]) > alpha){
+        data_temp <- rbind(c(0,0), data_temp)
+        warning("BMDL may be inaccurate")
+    }
     if (length(data_temp) > 0) {
       ii <- nrow(data_temp)
 
@@ -344,7 +348,10 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
       temp$posterior_probs[is.nan(temp$posterior_probs)] <- 0
 
-
+      if(min(temp_me[,2]) > alpha){
+        temp_me <- rbind(c(0,0), temp_me)
+        warning("BMDL may be inaccurate")
+      }
       if ((nrow(temp_me) > 10) && abs(sum(temp$posterior_probs) - 1) <= 1e-8) {
         te <- splinefun(sort(temp_me[, 2, drop = F]), sort(temp_me[, 1, drop = F]), method = "monoH.FC",ties=mean)
         temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
@@ -356,6 +363,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
         temp$bmd <- c(Inf, 0, Inf)
       }
     }
+    temp$ma_bmd <- temp_me
     names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
     #temp$posterior_probs <- temp$posterior_probs
     names(temp$posterior_probs) <- paste(model_list2, distribution_list, sep="_")
