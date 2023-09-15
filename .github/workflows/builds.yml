@@ -11,7 +11,10 @@ name: builds
 on:
   pull_request:
     branches: [ "main" ]
+  push:
+    branches: [ "github-actions-build" ]
   workflow_dispatch: 
+    
   
 permissions:
   contents: read
