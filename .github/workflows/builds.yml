@@ -33,6 +33,7 @@ jobs:
       _R_CHECK_MATRIX_DATA_: true
       ## Specific to package
       _R_CHECK_USE_VALGRIND_: true
+      VALGRIND_OPTS: '--leak-check=full --track-origins=yes'
     steps:
       - uses: actions/checkout@v2
 
