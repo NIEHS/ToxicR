@@ -333,7 +333,8 @@ public:
 
 		double g = GAMMA_G(theta(0, 0));
 		double a = GAMMA_A(theta(1, 0));
-
+		// clamp BMR to 0-1 (avoiding memory leaks)
+		BMR = std::max(1e-6, std::min(BMR, 1.0 - 1e-6));
 		double Z = GAMMA_EXTRA_Z(g, a, BMR);
 
 		double BETA = Z / BMD;
