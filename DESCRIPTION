@@ -48,6 +48,10 @@ Authors@R:
            family = "Eddelbuettel",
            role = "ctb",
            comment ="Contributed script to download GSL, as in RcppGSL."),
+    person(given = "Shail",
+           family = "Choksi",
+	   role = "ctb",
+	   comment = "Setup github actions for automated tests and builds."),
     person("U.S. Deptartment of Health and Human Services (US HHS), National Institute of Environmental Health Sciences (NIEHS)",
            role="cph",
            comment ="Owns Copyright for all ToxicR code outside NLOPT and nloptr scripts.")
