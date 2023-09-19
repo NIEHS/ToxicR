@@ -46,6 +46,26 @@
 #include "log_likelihoods.h"
 #include "binomModels.h"
 
+
+class ErrorHandler {
+	public: 
+
+	static void gsl_err_gamma_extra_z_handler(const char * reason,
+	const char * file, 
+	int line, 
+	int gsl_errno
+	) {
+		std::cerr << "GSL error in file " << file << ", line " << line << ", reason " << reason << std::endl;
+		if (gsl_errno == GSL_EDOM)  {
+			std::cerr << "Domain Error!" << std::endl;
+		} else if (gsl_errno == GSL_EINVAL) {
+			std::cerr << "Invalid argument!" << std::endl;
+		} else if (gsl_errno == GSL_EROUND) {
+			std::cerr << "Round off error!" << std::endl;
+		}
+	}
+};
+
 // void gradient(Eigen::MatrixXd v, double *g, void *data, std::function<double(Eigen::MatrixXd, void*)> math_func)
 struct log_gamma_inequality
 {
@@ -397,22 +417,3 @@ public:
 
 // Make sure the # defines are only for this file!
 #endif
-
-class ErrorHandler {
-	public: 
-
-	static void gsl_err_gamma_extra_z_handler(const char * reason,
-	const char * file, 
-	int line, 
-	int gsl_errno
-	) {
-		std::cerr << "GSL error in file " << file << ", line " << line << ", reason " << reason << std::endl;
-		if (gsl_errno == GSL_EDOM)  {
-			std::cerr << "Domain Error!" << std::endl;
-		} else if (gsl_errno == GSL_EINVAL) {
-			std::cerr << "Invalid argument!" << std::endl;
-		} else if (gsl_errno == GSL_EROUND) {
-			std::cerr << "Round off error!" << std::endl;
-		}
-	}
-};
