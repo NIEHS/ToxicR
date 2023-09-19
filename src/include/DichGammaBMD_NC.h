@@ -415,4 +415,4 @@ class ErrorHandler {
 			std::cerr << "Round off error!" << std::endl;
 		}
 	}
-}
+};
