@@ -17,6 +17,7 @@ jobs:
     env:
       CC: clang
       CXX: clang++
+      CXXFLAGS: "-fsanitize=undefined"
       LINK: clang++
       ASAN: true
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -77,12 +78,8 @@ jobs:
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
-      - name: Check with UBSAN
+      - name: Check with UBSAN and ASAN
         run: rcmdcheck::rcmdcheck(build_args = "--no-build-vignettes", args = c("-fsanitize=undefined", "--no-codoc", "--no-examples", "--no-manual", "--ignore-vignettes"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
-
-      - name: Check with ASAN
-        run: rcmdcheck::rcmdcheck(build_args = "--no-build-vignettes", args = c("--enable-asan", "--no-codoc", "--no-examples", "--no-manual", "--ignore-vignettes"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
         
       - name: Upload check results
