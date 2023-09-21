@@ -32,7 +32,7 @@ MAdensity_plot <- function(A) {
   qprob <- 0.05
 
   # Dose levels
-  data <- A$Individual_Model_1$data
+  data <- A[[fit_idx[1]]]$data
   doses <- data[, 1]
 
 
@@ -185,18 +185,18 @@ MAdensity_plot <- function(A) {
   class_list <- names(A)
 
   if (class(A)[2] == "BMDdichotomous_MA_maximized") {
-    fit_idx <- grep("Fitted_Model", class_list)
+    fit_idx <- grep("Indiv_", class_list)
     qprob <- 0.05
 
     # Dose levels
-    data <- A$Fitted_Model_1$data
+    data <- A[[fit_idx[1]]]$data
     doses <- data[, 1]
   } else {
     fit_idx <- grep("Indiv_", class_list)
     qprob <- 0.05
 
     # Dose levels
-    data <- A$Individual_Model_1$data
+    data <- A[[fit_idx[1]]]$data
     doses <- data[, 1]
   }
 
