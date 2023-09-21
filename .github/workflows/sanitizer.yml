@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ "main" ]
   push:
-    branches: [ "github-actions-build" ]
+    branches: [ "github-actions-build", "brian-bk22-plotting-patch" ]
   workflow_dispatch: 
     
   
