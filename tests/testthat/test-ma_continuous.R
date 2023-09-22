@@ -16,10 +16,11 @@ test_that("Laplace", {
         )
         expect_equal(13, length(AA))
         expect_equal(setNames(c(6.432882, 5.456776, 7.819051), c("BMD", "BMDL", "BMDU")), AA$bmd, tolerance = 10e-2)
-        expect_equal(c(
+        expect_equal(setNames(c(
            1.371068e-12, 2.343204e-04, 9.652573e-29, 5.895678e-32, 1.480816e-24, 5.629987e-16, 1.937811e-09,
-           9.997657e-01, 2.563253e-33, 1.819908e-29
-        ), AA$posterior_probs, tolerance = 10e-3)
+           9.997657e-01, 2.563253e-33, 1.819908e-29),
+           c('hill_normal', 'hill_normal-ncv', 'exp-3_normal', 'exp-3_normal-ncv', 'exp-3_lognormal', 'exp-5_normal', 'exp-5_normal-ncv', 'exp-5_lognormal', 'power_normal', 'power_normal-ncv')),
+           AA$posterior_probs, tolerance = 10e-3)
         # generate_validation_code(AA)
         validate_model( AA$Indiv_hill_normal ,  "Model: Hill Distribution: Normal" ,  c(10.5336679441343, 10.1406923686382, 25.9628913569909, 2.92082302495687, -1.58762629617883) ,  c(BMD = 9.09194176320145, BMDL = 7.94835310278431, BMDU = 10.453730877853) )
         validate_model( AA$`Indiv_hill_normal-ncv` ,  "Model: Hill Distribution: Normal-NCV" ,  c(10.5358381990029, 10.1336040160307, 25.9571953249711, 2.93024372184542, 0.096233868317774, -1.97358149131162) ,  c(BMD = 8.8674227836588, BMDL = 7.79233267848719, BMDU = 10.1379381094965) )
@@ -45,10 +46,11 @@ test_that("Vector Input", {
         )
         expect_equal(13, length(AA))
         expect_equal(setNames(c(47.25482, 37.39118, 53.58764), c("BMD", "BMDL", "BMDU")), AA$bmd, tolerance = 10e-2)
-        expect_equal(c(
+        expect_equal(setNames(c(
                 6.231843e-05, 2.980679e-02, 1.869943e-06, 2.638495e-06, 6.649184e-04,
                 1.160152e-04, 9.306290e-02, 8.762819e-01, 3.503513e-07, 2.615127e-07
-        ), AA$posterior_probs, tolerance = 10e-2)
+        ),c('hill_normal', 'hill_normal-ncv', 'exp-3_normal', 'exp-3_normal-ncv', 'exp-3_lognormal', 'exp-5_normal', 'exp-5_normal-ncv', 'exp-5_lognormal', 'power_normal', 'power_normal-ncv')),
+        AA$posterior_probs, tolerance = 10e-2)
         validate_model(AA$Indiv_hill_normal, "Model: Hill Distribution: Normal", c(483.799766, -254.390813, 70.933924, 3.278107, 7.587217), c(BMD = 44.16288, BMDL = 35.50511, BMDU = 52.29493))
         validate_model(AA$`Indiv_hill_normal-ncv`, "Model: Hill Distribution: Normal-NCV", c(476.193010, -234.611421, 40.333183, 1.488576, 1.733539, -3.101292), c(BMD = 44.16288, BMDL = 35.50511, BMDU = 52.29493))
         validate_model(AA$`Indiv_exp-3_normal`, "Model: Exponential-3 Distribution: Normal", c(4.843622e+02, 3.505894e-03, 6.737080e-01, 7.341241e+00), c(BMD = 31.52798, BMDL = 22.36762, BMDU = 42.34427))

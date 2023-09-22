@@ -9,7 +9,9 @@ test_that("Defaults", {
         expect_equal(c("BMDdichotomous_MA", "BMDdichotomous_MA_laplace"), class(AA))
         expect_equal(13, length(AA))
         expect_equal(setNames(c(4.17, 1.33, 12.318), c("BMD", "BMDL", "BMDU")), AA$bmd, tolerance = 10e-2)
-        expect_equal(c(0.427802462, 0.021635893, 0.022796957, 0.109884198, 0.006866267, 0.001184459, 0.025631532, 0.291857962, 0.092340269), AA$posterior_probs, tolerance = 10e-2)
+        expect_equal(setNames(c(0.427802462, 0.021635893, 0.022796957, 0.109884198, 0.006866267, 0.001184459, 0.025631532, 0.291857962, 0.092340269), 
+                              c("hill_","gamma_","logistic_","log-logistic_","log-probit_","multistage_","probit_","qlinear_","weibull_")), 
+                              AA$posterior_probs, tolerance = 10e-2)
         # generate_validation_code(AA)
         validate_model(AA$Indiv_hill_, "Model:  Hill", c(-3.1514129532799, -0.542504910549596, -2.21526647189887, 1.38193548558345), c(2.43689558842919, 1.19423317401394, 5.66302904194827))
         validate_model(AA$Indiv_gamma_, "Model:  Gamma", c(-2.58597525196282, 0.859030175600515, 0.0103251850555099), c(6.46707681632849, 2.71101742377789, 13.1872288945701))
@@ -36,7 +38,9 @@ test_that("Vector Inputs", {
         expect_equal(c("BMDdichotomous_MA", "BMDdichotomous_MA_laplace"), class(AA))
         expect_equal(13, length(AA))
         expect_equal(setNames(c(4.17, 1.33, 12.318), c("BMD", "BMDL", "BMDU")), AA$bmd, tolerance = 10e-2)
-        expect_equal(c(0.427802462, 0.021635893, 0.022796957, 0.109884198, 0.006866267, 0.001184459, 0.025631532, 0.291857962, 0.092340269), AA$posterior_probs, tolerance = 10e-2)
+        expect_equal(setNames(c(0.427802462, 0.021635893, 0.022796957, 0.109884198, 0.006866267, 0.001184459, 0.025631532, 0.291857962, 0.092340269),
+                              c("hill_","gamma_","logistic_","log-logistic_","log-probit_","multistage_","probit_","qlinear_","weibull_")), 
+                     AA$posterior_probs, tolerance = 10e-2)
         # generate_validation_code(AA)
         validate_model(AA$Indiv_hill_, "Model:  Hill", c(-3.1514129532799, -0.542504910549596, -2.21526647189887, 1.38193548558345), c(2.43689558842919, 1.19423317401394, 5.66302904194827))
         validate_model(AA$Indiv_gamma_, "Model:  Gamma", c(-2.58597525196282, 0.859030175600515, 0.0103251850555099), c(6.46707681632849, 2.71101742377789, 13.1872288945701))
