@@ -1,2 +1,5 @@
 *.o
 *.so
+.Rproj.user
+.Rhistory
+.vscode/*

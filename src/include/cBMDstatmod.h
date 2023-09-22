@@ -474,7 +474,7 @@ double neg_pen_likelihood_contbound(unsigned n,
 	// file << " ***HELLO" __FUNCTION__ << " at line: " << __LINE__ << endl;
 	// file.close();
 	// copy over the extra
-	for (int i = 0; i < n + 1; i++)
+	for (unsigned int i = 0; i < n + 1; i++)
 	{
 		if (i != p_remove)
 		{
@@ -492,7 +492,7 @@ double neg_pen_likelihood_contbound(unsigned n,
 
 	Eigen::MatrixXd theta(x.size(), 1);
 
-	for (int i = 0; i < n + 1; i++)
+	for (unsigned int i = 0; i < n + 1; i++)
 	{
 		theta(i, 0) = x[i];
 	}
@@ -501,7 +501,7 @@ double neg_pen_likelihood_contbound(unsigned n,
 	{ // if there is a gradient
 		Eigen::MatrixXd mgrad = model->sm->gradient(theta);
 
-		for (int i = 0; i < n + 1; i++)
+		for (unsigned int i = 0; i < n + 1; i++)
 		{
 			if (i != p_remove)
 			{
