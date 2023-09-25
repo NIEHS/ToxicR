@@ -239,7 +239,7 @@
   ma_mean = temp_fit
   # Geom_polygon ? etc..
   plot_gg <- ggplot() +xlim(-max(test_doses)*5,max(test_doses)*5)+
-    geom_line(aes(x=test_doses,y=me),color="blue",size=2)+
+    geom_line(aes(x=test_doses,y=me),color="blue",linewidth=2)+
     labs(x="Dose", y="Response",title=paste(fit$full_model, "MCMC",sep=",  Fit Type: " ))+
     theme_minimal()
 
@@ -416,7 +416,7 @@
   temp_fit <- splinefun(test_doses,me)
   ma_mean  <- temp_fit
   plot_gg<-ggplot()+
-          geom_line(aes(x=test_doses,y=me),color="blue",size=2)+xlim(-max(test_doses)*5,max(test_doses)*5)+
+          geom_line(aes(x=test_doses,y=me),color="blue",linewidth=2)+xlim(-max(test_doses)*5,max(test_doses)*5)+
           labs(x="Dose", y="Response",title=paste(fit$full_model, "Maximized",sep=",  Fit Type: " ))+
           theme_minimal()
         
@@ -593,7 +593,7 @@
                    geom_ribbon(aes(x=test_doses,ymin=lq,ymax=uq),fill="blue",alpha=0.1)
           
           plot_gg<-plot_gg+
-                   geom_line(aes(x=test_doses,y=me),col="blue",size=2)
+                   geom_line(aes(x=test_doses,y=me),col="blue",linewidth=2)
          
           bmd <- quantile(temp_bmd,c(qprob,0.5,1-qprob),na.rm = TRUE)
   
@@ -822,7 +822,7 @@
        
         
        plot_gg<-plot_gg+
-         geom_line(aes(x=test_doses,y=me),col="blue",size=2)
+         geom_line(aes(x=test_doses,y=me),col="blue",linewidth=2)
  
        ## 
        # Add lines to the BMD
