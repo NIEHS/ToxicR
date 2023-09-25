@@ -187,7 +187,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
   if (dmodel == 2) { # GAMMA
     prior <- matrix(c(
       0, 0, 2, -18, 18,
-      0, 1.5, 0.424264068711929, 0.2, 20,
+      0, 1.5, 0.424264068711929, 1, 18,
       0, 1, 1, 0, 1000
     ), nrow = 3, ncol = 5, byrow = T)
   }
