@@ -1,5 +1,6 @@
 #' Update the package 'ToxicR'
 #'
+#' @title update_ToxicR - downloads and tries to install the latest version of the package from github
 #' Updates the current package 'ToxicR' by installing the
 #' most recent version of the package from GitHub
 #' This function requires installing Package 'remotes' v2.4.2
@@ -111,7 +112,7 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
             remotes::install_github(
             "SciomeLLC/ToxicR", force = force, upgrade = upgrade_other_pkg)
             # attach the package
-            ToxicR::prep("ToxicR", silent_if_successful = TRUE)
+            prep("ToxicR", silent_if_successful = TRUE)
             }
         }
     }
@@ -122,6 +123,7 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
 #' Installs, loads, and attaches package(s). If package(s) are not
 #' installed, installs them prior to loading and attaching.
 #'
+#' @title prep
 #' @param ... names of packages to load and attach, separated by commas,
 #' e.g., \code{"ggplot2", data.table}. The input can be any number
 #' of packages, whose names may or may not be wrapped in quotes.
@@ -149,7 +151,6 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
 #' prep("data.table", silent_load_pkgs = "data.table")
 #' }
 #'
-#' @export
 prep <- function(..., pkg_names_as_object = FALSE, silent_if_successful = FALSE, silent_load_pkgs = FALSE) {
     arg_list <- as.list(match.call(expand.dots = FALSE))[["..."]]
     if ("..." %in% names(arg_list)) {
