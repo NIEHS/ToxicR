@@ -247,7 +247,7 @@
    
     plot_gg <- plot_gg +
       geom_segment(aes(x=fit$bmd[2], y=ma_mean(fit$bmd[1]), xend=fit$bmd[3],
-                       yend=ma_mean(fit$bmd[1])),color="darkslategrey",size=1.2, alpha=0.9) +
+                       yend=ma_mean(fit$bmd[1])),color="darkslategrey",linewidth=1.2, alpha=0.9) +
       annotate( geom = "text", x = fit$bmd[2], y = ma_mean(fit$bmd[1]),
                 label = "[", size = 10,color="darkslategrey", alpha=0.9)+
       annotate(geom = "text", x = fit$bmd[3], y = ma_mean(fit$bmd[1]),
@@ -427,7 +427,7 @@
         
       plot_gg <- plot_gg +
         geom_segment(aes(x=fit$bmd[2], y=ma_mean(fit$bmd[1]), xend=fit$bmd[3],
-                         yend=ma_mean(fit$bmd[1])),color="darkslategrey",size=1.2, alpha=0.9) +
+                         yend=ma_mean(fit$bmd[1])),color="darkslategrey",linewidth=1.2, alpha=0.9) +
         annotate( geom = "text", x = fit$bmd[2], y = ma_mean(fit$bmd[1]),
                   label = "[", size = 10,color="darkslategrey", alpha=0.9)+
         annotate(geom = "text", x = fit$bmd[3], y = ma_mean(fit$bmd[1]),
@@ -689,7 +689,7 @@
                
                plot_gg <- plot_gg +
                          geom_segment(aes(x=A$bmd[2], y=ma_mean(A$bmd[1]), xend=min(max(doses),A$bmd[3]),
-                                          yend=ma_mean(A$bmd[1])),color="darkslategrey",size=1.2, alpha=0.9) +
+                                          yend=ma_mean(A$bmd[1])),color="darkslategrey",linewidth=1.2, alpha=0.9) +
                          annotate( geom = "text", x = A$bmd[2], y = ma_mean(A$bmd[1]),
                                    label = "[", size = 10,color="darkslategrey", alpha=0.9)+
                          annotate(geom = "text", x = A$bmd[3], y = ma_mean(A$bmd[1]),
@@ -887,7 +887,7 @@
        }
        plot_gg <- plot_gg +
                    geom_segment(aes(x=A$bmd[2], y=ma_mean(A$bmd[1]), xend=min(max(doses),abs(A$bmd[3])),
-                                    yend=ma_mean(A$bmd[1])),color="darkslategrey",size=1.2, alpha=0.9) +
+                                    yend=ma_mean(A$bmd[1])),color="darkslategrey",linewidth=1.2, alpha=0.9) +
                    annotate( geom = "text", x = A$bmd[2], y = ma_mean(A$bmd[1]),
                              label = "[", size = 10,color="darkslategrey", alpha=0.9)+
                    annotate(geom = "text", x = A$bmd[3], y = ma_mean(A$bmd[1]),
