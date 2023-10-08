@@ -357,9 +357,7 @@ public:
 		// clamp BMR to 0-1 (avoiding memory leaks)
 		BMR = std::max(1e-6, std::min(BMR, 1.0 - 1e-6));
 		
-		std::cout << "theta: " << theta << " g: " << g << " a: " << a << std::endl;
-		std::cout << "theta: " << theta << " g: " << g << " a: " << a << std::endl;
-		gsl_set_error_handler(ErrorHandler::gsl_err_gamma_extra_z_handler);
+		// gsl_set_error_handler(ErrorHandler::gsl_err_gamma_extra_z_handler);
 
 		double Z = GAMMA_EXTRA_Z(g, a, BMR);
 		
