@@ -2584,7 +2584,9 @@ void estimate_ma_laplace(continuousMA_analysis *MA,
   double max_prob = -1.0*std::numeric_limits<double>::infinity(); 
   for (int i = 0; i < MA->nmodels; i++){
     temp  = 	b[i].MAP_ESTIMATE.rows()/2 * log(2 * M_PI) - b[i].MAP + 0.5*log(max(0.0,b[i].COV.determinant()));
-
+    if (b[i].COV.determinant() < 0 || !std::isfinite(b[i].MAP_BMD)){
+      temp = -1*std::numeric_limits<double>::infinity();
+    }
     if (std::isfinite(temp)){
       max_prob = temp > max_prob? temp:max_prob; 
       post_probs[i] = temp; 
@@ -3716,6 +3718,10 @@ mcmcSamples *a = new mcmcSamples[MA->nmodels];
   double max_prob = -1.0*std::numeric_limits<double>::infinity(); 
   for (int i = 0; i < MA->nmodels; i++){
     temp  = 	b[i].MAP_ESTIMATE.rows()/2 * log(2 * M_PI) - b[i].MAP + 0.5*log(max(0.0,b[i].COV.determinant()));
+    //if bad determinant or infinite BMD, force 0 post_prob
+    if (b[i].COV.determinant() < 0 || !std::isfinite(b[i].MAP_BMD)){
+      temp = -1*std::numeric_limits<double>::infinity();
+    }
     if (std::isfinite(temp)){
       max_prob = temp > max_prob? temp:max_prob; 
       post_probs[i] = temp; 
