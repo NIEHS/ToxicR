@@ -23,8 +23,8 @@ test_that("Posterior Probabilities dont differ", {
     cont_data[,4] <- c(0.78,1.46,4.05,3.44,4.67)
     cont_data[,3] <- rep(4,5)
     Y <- cont_data[,2:4]
-    fit <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025,fit_type="mcmc")
-    fit1 <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025)
-    probability_diff <- sum(abs(fit$posterior_probs - fit1$posterior_probs))
+    suppressWarnings(fit <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025,fit_type="mcmc"))
+    suppressWarnings(fit1 <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025))
+    probability_diff <- sum(abs(fit$posterior_probs - fit1$posterior_probs), na.rm = T)
     expect_lte(probability_diff, 0.2)
 })

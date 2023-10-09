@@ -183,7 +183,7 @@
       geom_segment(aes(
         x = fit$bmd[2], y = temp_fit(fit$bmd[1]), xend = fit$bmd[3],
         yend = temp_fit(fit$bmd[1])
-      ), color = "darkslategrey", size = 1.2, alpha = 0.9) +
+      ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9) +
       annotate(
         geom = "text", x = fit$bmd[2], y = temp_fit(fit$bmd[1]),
         label = "[", size = 10, color = "darkslategrey", alpha = 0.9
@@ -312,7 +312,7 @@
       geom_segment(aes(
         x = fit$bmd[2], y = temp_fit(fit$bmd[1]), xend = fit$bmd[3],
         yend = temp_fit(fit$bmd[1])
-      ), color = "darkslategrey", size = 1.2, alpha = 0.9) +
+      ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9) +
       annotate(
         geom = "text", x = fit$bmd[2], y = temp_fit(fit$bmd[1]),
         label = "[", size = 10, color = "darkslategrey", alpha = 0.9
@@ -440,7 +440,7 @@
         geom_segment(aes(
           x = A$bmd[2], y = temp_fit(A$bmd[1]), xend = A$bmd[3],
           yend = temp_fit(A$bmd[1])
-        ), color = "darkslategrey", size = 1.2, alpha = 0.9)
+        ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9)
       plot_gg <- plot_gg +
         annotate(
           geom = "text", x = A$bmd[2], y = temp_fit(A$bmd[1]),
@@ -620,7 +620,7 @@
         geom_segment(aes(
           x = A$bmd[2], y = temp_fit(A$bmd[1]), xend = A$bmd[3],
           yend = temp_fit(A$bmd[1])
-        ), color = "darkslategrey", size = 1.2, alpha = 0.9)
+        ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9)
       plot_gg <- plot_gg +
         annotate(
           geom = "text", x = A$bmd[2], y = temp_fit(A$bmd[1]),
