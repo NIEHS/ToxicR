@@ -33,19 +33,20 @@ single_continuous_fit(
 for lognormal data.  For more information, see Aerts, Wheeler, and Abrahantes (2021)
 
  \itemize{
-     \item \code{"exp-aerts"}:         \eqn{f(x) = a(1 + (c-1)(1-exp(-bx^{d}))) }
-     \item \code{"invexp-aerts"}:      \eqn{f(x) = a(1 + (c-1)(exp(-bx^{-d})))}
+     \item \code{"exp-aerts"}:         \eqn{f(x) = a(1 + (c-1)(1-\exp(-bx^{d}))) }
+     \item \code{"invexp-aerts"}:      \eqn{f(x) = a(1 + (c-1)(\exp(-bx^{-d})))}
      \item \code{"hill-aerts"}:        \eqn{f(x) = a(1 + (c-1)(1-\frac{b^d}{b^d + x^d}))}
      \item \code{"gamma-aerts"}:       \eqn{f(x) = a(1 + (c-1)(\Gamma(bx^d;\xi)))}
      \item \code{"invgamma-aerts"}:    \eqn{f(x) = a(1 + (c-1)(1-\Gamma(bx^{-d};\xi)))}
-     \item \code{"lomax-aerts"}:       \eqn{f(x) = a\left\{1 + (c-1)(1-\left(\frac{b}{b+x^d} \right))^\xi \right\}}
+     \item \code{"lomax-aerts"}:       \eqn{f(x) = a\left\{1 + (c-1)(1-\left(\frac{b}{b+x^d} \right)^\xi) \right\}}
      \item \code{"invlomax-aerts"}:    \eqn{f(x) = a\left\{1 + (c-1)(\left(\frac{b}{b+x^{-d}} \right))^\xi \right\}}
      \item \code{"lognormal-aerts"}:   \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( \ln(b) + d\times \ln(x))\right) \right\}}
      \item \code{"logskew-aerts"}:     \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi_{SN}( \ln(b) + d\times \ln(x); \xi )\right) \right\}}
      \item \code{"invlogskew-aerts"}:  \eqn{f(x) = a\left\{1 + (c-1)\left(1 - \Phi_{SN}( \ln(b) - d\times \ln(x); \xi )\right) \right\}}
-     \item \code{"logistic-aerts"}:    \eqn{f(x) = a\left\{1 + (c-1)\left(\frac{1}{1+\exp(-bx)}\right) \right\}}
-     \item \code{"probit-aerts"}:      \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( b + d\times x)\right) \right\}}
-     \item \code{"gamma-efsa"}:        \eqn{f(x) = a(1 + (c-1)(\Gamma(bx; d)))}
+     \item \code{"logistic-aerts"}:    \eqn{f(x) = \frac{c}{1 + \exp(-a - b\times x^d)} }
+     \item \code{"probit-aerts"}:      \eqn{f(x) = c\left(\Phi(a + b\times x^d)\right) }
+     \item \code{"gamma-efsa"}:        \eqn{f(x) = a(1 + (c-1)(\Gamma(bx; d))) }
+     \item \code{"LMS"}:               \eqn{f(x) = a(1 + (c-1)(1 - \exp(-bx - dx^2))) }
    }
   Here: \eqn{\Phi(\cdot)} is the standard normal distribution and
         \eqn{\Phi_{SN}(\cdot;\cdot)} is the skew-normal distribution

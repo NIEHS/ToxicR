@@ -83,7 +83,7 @@ public:
 
 
 
-	double negPenLike(Eigen::MatrixXd x) {
+	double negPenLike(Eigen::MatrixXd x, bool bound_check = false) {
 		///////////////////////////////////////////
 		for (int i = 0; i < isFixed.size(); i++) {
 			if (isFixed[i]) {
@@ -92,7 +92,7 @@ public:
 		}
 		///////////////////////////////////////////
 		double a = log_likelihood.negLogLikelihood(x);
-          double b = prior_model.neg_log_prior(x);
+          double b = prior_model.neg_log_prior(x, bound_check);
 		return a + b; // log_likelihood.negLogLikelihood(x) + prior_model.neg_log_prior(x);
 	};
 
@@ -262,18 +262,18 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
         // eg the 2nd partial derivative
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) + 2 * hi;
-        temp += -1.0 * negPenLike(tempVect);
+        temp += -1.0 * negPenLike(tempVect, true);
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) + hi;
-        temp += 16.0 * negPenLike(tempVect);
-        temp += -30.0 * negPenLike(theta);
+        temp += 16.0 * negPenLike(tempVect, true);
+        temp += -30.0 * negPenLike(theta, true);
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) - hi;
-        temp += 16.0 * negPenLike(tempVect);
+        temp += 16.0 * negPenLike(tempVect, true);
 
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) - 2 * hi;
-        temp += -1.0 * negPenLike(tempVect);
+        temp += -1.0 * negPenLike(tempVect, true);
         temp = temp / (12 * hi * hi);
         m(i, i) = temp;
         //if nan, shift up off boundary
@@ -282,20 +282,20 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
         	tempVect = theta;
         	tempVect(i,0) += 2.0 * hi;
             tempVect(i, 0) = tempVect(i, 0) + 2 * hi;
-            temp += -1.0 * negPenLike(tempVect);
+            temp += -1.0 * negPenLike(tempVect, true);
             tempVect = theta;
         	tempVect(i,0) += 2.0 * hi;
             tempVect(i, 0) = tempVect(i, 0) + hi;
-            temp += 16.0 * negPenLike(tempVect);
-            temp += -30.0 * negPenLike(theta);
+            temp += 16.0 * negPenLike(tempVect, true);
+            temp += -30.0 * negPenLike(theta, true);
             tempVect = theta;
         	tempVect(i,0) += 2.0 * hi;
             tempVect(i, 0) = tempVect(i, 0) - hi;
-            temp += 16.0 * negPenLike(tempVect);
+            temp += 16.0 * negPenLike(tempVect, true);
             tempVect = theta;
         	tempVect(i,0) += 2.0 * hi;
             tempVect(i, 0) = tempVect(i, 0) - 2 * hi;
-            temp += -1.0 * negPenLike(tempVect);
+            temp += -1.0 * negPenLike(tempVect, true);
             temp = temp / (12 * hi * hi);
             m(i, i) = temp;
         }
@@ -310,22 +310,22 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) + hi;
         tempVect(j, 0) = tempVect(j, 0) + hj;
-        temp += negPenLike(tempVect);
+        temp += negPenLike(tempVect, true);
 
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) + hi;
         tempVect(j, 0) = tempVect(j, 0) - hj;
-        temp += -1.0 * negPenLike(tempVect);
+        temp += -1.0 * negPenLike(tempVect, true);
 
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) - hi;
         tempVect(j, 0) = tempVect(j, 0) + hj;
-        temp += -1.0 * negPenLike(tempVect);
+        temp += -1.0 * negPenLike(tempVect, true);
 
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) - hi;
         tempVect(j, 0) = tempVect(j, 0) - hj;
-        temp += negPenLike(tempVect);
+        temp += negPenLike(tempVect, true);
         temp = temp / (4 * hi * hj);
         m(i, j) = temp;
         //if nan, shift up off boundary
@@ -336,28 +336,28 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
         	tempVect(j,0) += hj;
             tempVect(i, 0) = tempVect(i, 0) + hi;
             tempVect(j, 0) = tempVect(j, 0) + hj;
-            temp += negPenLike(tempVect);
+            temp += negPenLike(tempVect, true);
 
             tempVect = theta;
         	tempVect(i,0) += hi;
         	tempVect(j,0) += hj;
             tempVect(i, 0) = tempVect(i, 0) + hi;
             tempVect(j, 0) = tempVect(j, 0) - hj;
-            temp += -1.0 * negPenLike(tempVect);
+            temp += -1.0 * negPenLike(tempVect, true);
 
             tempVect = theta;
         	tempVect(i,0) += hi;
         	tempVect(j,0) += hj;
             tempVect(i, 0) = tempVect(i, 0) - hi;
             tempVect(j, 0) = tempVect(j, 0) + hj;
-            temp += -1.0 * negPenLike(tempVect);
+            temp += -1.0 * negPenLike(tempVect, true);
 
             tempVect = theta;
         	tempVect(i,0) += hi;
         	tempVect(j,0) += hj;
             tempVect(i, 0) = tempVect(i, 0) - hi;
             tempVect(j, 0) = tempVect(j, 0) - hj;
-            temp += negPenLike(tempVect);
+            temp += negPenLike(tempVect, true);
             temp = temp / (4 * hi * hj);
             m(i, j) = temp;
         }

@@ -39,7 +39,8 @@
 .summary_continuous_max <- function(object, ...) {
   model <- object
   returnV <- list()
-  alpha <- .evaluate_alpha(...)
+  #alpha <- .evaluate_alpha(...)
+  alpha <- model$options[4]
 
   if (is.null(model$prior)) {
     returnV$fit_method <- "MLE"
@@ -105,7 +106,8 @@
   model <- object
   returnV <- list()
 
-  alpha <- .evaluate_alpha(...)
+  #alpha <- .evaluate_alpha(...)
+  alpha <- model$options[4]
 
   returnV$fit_method <- "Bayesian:MCMC"
   returnV$prior <- model$prior
@@ -147,13 +149,14 @@
 
 .summary_ma_max <- function(object, ...) {
   model <- object
-  alpha <- .evaluate_alpha(...)
+  #alpha <- .evaluate_alpha(...)
+  tmp_idx <- grep("Indiv_", names(model))
+  alpha <- model[[tmp_idx[1]]]$options[4]
 
   returnV <- list()
 
   returnV$fit_method <- "Bayesian:MAX"
   returnV$fit_table <- data.frame(post_p = round(model$posterior_probs, 3))
-  tmp_idx <- grep("Indiv_", names(model))
 
   temp_mfit <- rep(" ", length(tmp_idx)) # model name
   temp_BMD <- rep(" ", length(tmp_idx)) # bmd
@@ -217,13 +220,14 @@
 
 .summary_ma_mcmc <- function(object, ...) {
   model <- object
-  alpha <- .evaluate_alpha(...)
+  #alpha <- .evaluate_alpha(...)
+  tmp_idx <- grep("Indiv_", names(model))
+  alpha <- model[[tmp_idx[1]]]$options[4]
 
   returnV <- list()
 
   returnV$fit_method <- "Bayesian:MCMC"
   returnV$fit_table <- data.frame(post_p = round(model$posterior_probs, 3))
-  tmp_idx <- grep("Indiv_", names(model))
 
   temp_mfit <- rep(" ", length(tmp_idx)) # model name
   temp_BMD <- rep(" ", length(tmp_idx)) # bmd
@@ -291,17 +295,31 @@
   cat("Individual Model BMDS\n")
   cat(paste("Model", strrep(" ", 59), sep = ""), "\t\t BMD (BMDL, BMDU)\tPr(M|Data)\n")
   cat("___________________________________________________________________________________________\n")
+  badd <- c()
   for (ii in 1:nrow(s_fit$fit_table)) {
     tmp_length <- nchar(s_fit$fit_table[ii, 1])
     # pad <- paste(substr(s_fit$fit_table[ii, 1], 1, 38), strrep(" ", 39 - tmp_length), sep = "")
     pad <- paste(substr(s_fit$fit_table[ii, 1], 1, 61), strrep(" ", 62 - tmp_length), sep = "")
+    if(all(is.na(s_fit$fit_table[ii,2:5]))){
+      badd <- c(badd, ii)
+    }else{
+      cat(sprintf(
+        "%s\t\t\t%1.2f (%1.2f ,%1.2f) \t %1.3f\n", pad, as.numeric(s_fit$fit_table[ii, 2]),
+        as.numeric(s_fit$fit_table[ii, 3]), as.numeric(s_fit$fit_table[ii, 4]), as.numeric(s_fit$fit_table[ii, 5])
+      ))
+    }
+  }
+  #print at end the values with NA BMD BMDL BMDU
+  for(jj in badd){
+    tmp_length <- nchar(s_fit$fit_table[jj, 1])
+    pad <- paste(substr(s_fit$fit_table[jj, 1], 1, 61), strrep(" ", 62 - tmp_length), sep = "")
     cat(sprintf(
-      "%s\t\t\t%1.2f (%1.2f ,%1.2f) \t %1.3f\n", pad, as.numeric(s_fit$fit_table[ii, 2]),
-      as.numeric(s_fit$fit_table[ii, 3]), as.numeric(s_fit$fit_table[ii, 4]), as.numeric(s_fit$fit_table[ii, 5])
+      "%s\t\t\t%1.2f (%1.2f ,%1.2f) \t \t %1.3f\n", pad, as.numeric(s_fit$fit_table[jj, 2]),
+      as.numeric(s_fit$fit_table[jj, 3]), as.numeric(s_fit$fit_table[jj, 4]), as.numeric(s_fit$fit_table[jj, 5])
     ))
   }
   cat("___________________________________________________________________________________________\n")
-
+  
   cat("Model Average BMD: ")
   cat(sprintf(
     "%1.2f (%1.2f, %1.2f) %1.1f%% CI\n", s_fit$BMD[2], s_fit$BMD[1], s_fit$BMD[3],

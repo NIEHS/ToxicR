@@ -261,12 +261,16 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 
         temp[[jj]]$bmd_dist <- data_temp
         if (length(data_temp) > 10) {
-          te <- splinefun(data_temp[, 2, drop = F], data_temp[, 1, drop = F], method = "hyman",ties=mean)
+          te <- splinefun(data_temp[, 2, drop = F], data_temp[, 1, drop = F], method = "monoH.FC",ties=mean)
           temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
         }
       }
-
+      #add NAs if bad hessian or NaN BMD
+      if(det(temp[[jj]]$covariance) < 0 || is.na(temp[[jj]]$bmd[1])){
+        tempn$posterior_probs[jj] <- NA
+      }
       names(temp[[jj]]$bmd) <- c("BMD", "BMDL", "BMDU")
+      temp[[jj]]$options <- options
       class(temp[[jj]]) <- "BMDcont_fit_MCMC"
       jj <- jj + 1
     }
@@ -281,13 +285,17 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     #    data_temp = data_temp[!is.na(data_temp[,1]),]
     temp$bmd <- c(NA, NA, NA)
 
+    if(min(data_temp[,2]) > alpha){
+        data_temp <- rbind(c(0,0), data_temp)
+        warning("BMDL may be inaccurate")
+    }
     if (length(data_temp) > 0) {
       ii <- nrow(data_temp)
 
       temp$ma_bmd <- data_temp
-      tempn$posterior_probs[is.nan(tempn$posterior_probs)] <- 0
+      #tempn$posterior_probs[is.nan(tempn$posterior_probs)] <- 0
       if (length(data_temp) > 10 && (abs(sum(tempn$posterior_probs,na.rm=TRUE) - 1) <= 1e-8)) {
-        te <- splinefun(data_temp[, 2, drop = F], data_temp[, 1, drop = F], method = "hyman",ties=mean)
+        te <- splinefun(data_temp[, 2, drop = F], data_temp[, 1, drop = F], method = "monoH.FC",ties=mean)
         temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
       } else {
         # error with the posterior probabilities
@@ -318,7 +326,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       if (length(data_temp) > 0) {
         data_temp <- data_temp[!is.na(data_temp[, 1]), ]
         if (nrow(data_temp) > 6) {
-          te <- splinefun(sort(data_temp[, 2, drop = F]), sort(data_temp[, 1, drop = F]), method = "hyman",ties=mean)
+          te <- splinefun(sort(data_temp[, 2, drop = F]), sort(data_temp[, 1, drop = F]), method = "monoH.FC",ties=mean)
           temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
           if (max(data_temp[, 2]) < 1 - alpha) {
             temp[[ii]]$bmd[3] <- 1e300
@@ -327,7 +335,14 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
           temp[[ii]]$bmd <- c(NA, NA, NA)
         }
       }
-      names(temp[[jj]]$bmd) <- c("BMD", "BMDL", "BMDU")
+
+      #add NAs if bad hessian or NaN BMD
+      if(det(temp[[ii]]$covariance) < 0 || is.na(temp[[ii]]$bmd[1])){
+        temp$posterior_probs[ii] <- NA
+      }
+
+      names(temp[[ii]]$bmd) <- c("BMD", "BMDL", "BMDU")
+      temp[[ii]]$options <- options
       # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
       names(temp)[ii] <- sprintf("Indiv_%s_%s",model_list2[ii], distribution_list[ii])
       class(temp[[ii]]) <- "BMDcont_fit_maximized"
@@ -340,9 +355,14 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       temp_me <- temp_me[!is.infinite(temp_me[, 1]), ]
       temp_me <- temp_me[!is.na(temp_me[, 1]), ]
       temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
-      temp$posterior_probs[is.nan(temp$posterior_probs)] <- 0
-      if ((nrow(temp_me) > 10) && abs(sum(temp$posterior_probs) - 1) <= 1e-8) {
-        te <- splinefun(sort(temp_me[, 2, drop = F]), sort(temp_me[, 1, drop = F]), method = "hyman",ties=mean)
+      #temp$posterior_probs[is.nan(temp$posterior_probs)] <- 0
+
+      if(min(temp_me[,2]) > alpha){
+        temp_me <- rbind(c(0,0), temp_me)
+        warning("BMDL may be inaccurate")
+      }
+      if ((nrow(temp_me) > 10) && abs(sum(temp$posterior_probs, na.rm=TRUE) - 1) <= 1e-8) {
+        te <- splinefun(sort(temp_me[, 2, drop = F]), sort(temp_me[, 1, drop = F]), method = "monoH.FC",ties=mean)
         temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
 
         if (max(temp_me[, 2]) < 1 - alpha) {
@@ -352,6 +372,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
         temp$bmd <- c(Inf, 0, Inf)
       }
     }
+    temp$ma_bmd <- temp_me
     names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
     #temp$posterior_probs <- temp$posterior_probs
     names(temp$posterior_probs) <- paste(model_list2, distribution_list, sep="_")
@@ -494,7 +515,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     # TO DO : DELETE temp$BMD_CDF
     te <- splinefun(temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 2],
       temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 1],
-      method = "hyman", ties=mean
+      method = "monoH.FC", ties=mean
     )
     temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
     t_names <- names(temp)
@@ -508,7 +529,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
         temp[[ii]]$model <- "qlinear"
       }
 
-      te <- splinefun(temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 2], temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 1], method = "hyman",ties=mean)
+      te <- splinefun(temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 2], temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
       temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
       names(temp[[ii]]$bmd) <- c("BMD", "BMDL", "BMDU")
       # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
@@ -549,7 +570,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
       if (temp[[jj]]$model == "quantal-linear") {
         temp[[jj]]$model <- "qlinear"
       }
-      te <- splinefun(temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 2], temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 1], method = "hyman",ties=mean)
+      te <- splinefun(temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 2], temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
       temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
       class(temp[[jj]]) <- "BMDdich_fit_MCMC"
       jj <- jj + 1
@@ -559,7 +580,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     names(temp) <- sprintf("Indiv_%s_%s", model_list, distribution_list)
 
     temp$ma_bmd <- tempn$BMD_CDF
-    te <- splinefun(temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 2], temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 1], method = "hyman",ties=mean)
+    te <- splinefun(temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 2], temp$ma_bmd[!is.infinite(temp$ma_bmd[, 1]), 1], method = "monoH.FC",ties=mean)
     temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
     temp$posterior_probs <- tempn$posterior_probs
     names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")

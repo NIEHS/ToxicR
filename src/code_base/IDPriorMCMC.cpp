@@ -24,7 +24,7 @@
 //         For the improper prior, this is not used but it still defines an \
 	//         option for the initialization.  The third column specifies the
 //		   dispersion parameter.
-double IDPriorMCMC::neg_log_prior(Eigen::MatrixXd theta)
+double IDPriorMCMC::neg_log_prior(Eigen::MatrixXd theta, bool bound_check = false)
 {
 	double returnV = double(theta.rows()) * log(0.5 * M_2_SQRTPI * M_SQRT1_2);
 	double mean = 0;
