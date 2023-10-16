@@ -69,7 +69,7 @@ public:
 			throw std::runtime_error(std::string("Statistical Model: Fixed parameter constraints are same size"));
 		}
 
-		if (isFixed.size() != log_likelihood.nParms()) {
+		if (isFixed.size() != (unsigned)log_likelihood.nParms()) {
 			throw std::runtime_error(std::string("Statistical Model: Fixed number of parameter constraints not equal to number of parameters in likelihood model."));
 		}
 	};
@@ -83,7 +83,7 @@ public:
 
 
 
-	double negPenLike(Eigen::MatrixXd x) {
+	double negPenLike(Eigen::MatrixXd x, bool bound_check = false) {
 		///////////////////////////////////////////
 		for (int i = 0; i < isFixed.size(); i++) {
 			if (isFixed[i]) {
@@ -92,7 +92,7 @@ public:
 		}
 		///////////////////////////////////////////
 		double a = log_likelihood.negLogLikelihood(x);
-          double b = prior_model.neg_log_prior(x);
+          double b = prior_model.neg_log_prior(x, bound_check);
 		return a + b; // log_likelihood.negLogLikelihood(x) + prior_model.neg_log_prior(x);
 	};
 
@@ -262,18 +262,18 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
         // eg the 2nd partial derivative
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) + 2 * hi;
-        temp += -1.0 * negPenLike(tempVect);
+        temp += -1.0 * negPenLike(tempVect, true);
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) + hi;
-        temp += 16.0 * negPenLike(tempVect);
-        temp += -30.0 * negPenLike(theta);
+        temp += 16.0 * negPenLike(tempVect, true);
+        temp += -30.0 * negPenLike(theta, true);
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) - hi;
-        temp += 16.0 * negPenLike(tempVect);
+        temp += 16.0 * negPenLike(tempVect, true);
 
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) - 2 * hi;
-        temp += -1.0 * negPenLike(tempVect);
+        temp += -1.0 * negPenLike(tempVect, true);
         temp = temp / (12 * hi * hi);
         m(i, i) = temp;
         //if nan, shift up off boundary
@@ -282,20 +282,20 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
         	tempVect = theta;
         	tempVect(i,0) += 2.0 * hi;
             tempVect(i, 0) = tempVect(i, 0) + 2 * hi;
-            temp += -1.0 * negPenLike(tempVect);
+            temp += -1.0 * negPenLike(tempVect, true);
             tempVect = theta;
         	tempVect(i,0) += 2.0 * hi;
             tempVect(i, 0) = tempVect(i, 0) + hi;
-            temp += 16.0 * negPenLike(tempVect);
-            temp += -30.0 * negPenLike(theta);
+            temp += 16.0 * negPenLike(tempVect, true);
+            temp += -30.0 * negPenLike(theta, true);
             tempVect = theta;
         	tempVect(i,0) += 2.0 * hi;
             tempVect(i, 0) = tempVect(i, 0) - hi;
-            temp += 16.0 * negPenLike(tempVect);
+            temp += 16.0 * negPenLike(tempVect, true);
             tempVect = theta;
         	tempVect(i,0) += 2.0 * hi;
             tempVect(i, 0) = tempVect(i, 0) - 2 * hi;
-            temp += -1.0 * negPenLike(tempVect);
+            temp += -1.0 * negPenLike(tempVect, true);
             temp = temp / (12 * hi * hi);
             m(i, i) = temp;
         }
@@ -310,22 +310,22 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) + hi;
         tempVect(j, 0) = tempVect(j, 0) + hj;
-        temp += negPenLike(tempVect);
+        temp += negPenLike(tempVect, true);
 
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) + hi;
         tempVect(j, 0) = tempVect(j, 0) - hj;
-        temp += -1.0 * negPenLike(tempVect);
+        temp += -1.0 * negPenLike(tempVect, true);
 
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) - hi;
         tempVect(j, 0) = tempVect(j, 0) + hj;
-        temp += -1.0 * negPenLike(tempVect);
+        temp += -1.0 * negPenLike(tempVect, true);
 
         tempVect = theta;
         tempVect(i, 0) = tempVect(i, 0) - hi;
         tempVect(j, 0) = tempVect(j, 0) - hj;
-        temp += negPenLike(tempVect);
+        temp += negPenLike(tempVect, true);
         temp = temp / (4 * hi * hj);
         m(i, j) = temp;
         //if nan, shift up off boundary
@@ -336,28 +336,28 @@ Eigen::MatrixXd statModel<LL,PR>::varMatrix(Eigen::MatrixXd theta) {
         	tempVect(j,0) += hj;
             tempVect(i, 0) = tempVect(i, 0) + hi;
             tempVect(j, 0) = tempVect(j, 0) + hj;
-            temp += negPenLike(tempVect);
+            temp += negPenLike(tempVect, true);
 
             tempVect = theta;
         	tempVect(i,0) += hi;
         	tempVect(j,0) += hj;
             tempVect(i, 0) = tempVect(i, 0) + hi;
             tempVect(j, 0) = tempVect(j, 0) - hj;
-            temp += -1.0 * negPenLike(tempVect);
+            temp += -1.0 * negPenLike(tempVect, true);
 
             tempVect = theta;
         	tempVect(i,0) += hi;
         	tempVect(j,0) += hj;
             tempVect(i, 0) = tempVect(i, 0) - hi;
             tempVect(j, 0) = tempVect(j, 0) + hj;
-            temp += -1.0 * negPenLike(tempVect);
+            temp += -1.0 * negPenLike(tempVect, true);
 
             tempVect = theta;
         	tempVect(i,0) += hi;
         	tempVect(j,0) += hj;
             tempVect(i, 0) = tempVect(i, 0) - hi;
             tempVect(j, 0) = tempVect(j, 0) - hj;
-            temp += negPenLike(tempVect);
+            temp += negPenLike(tempVect, true);
             temp = temp / (4 * hi * hj);
             m(i, j) = temp;
         }
@@ -467,7 +467,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   Eigen::MatrixXd test = startV;
   // test = M->startValue();
   // Set up the random number portion for the code
-  const gsl_rng_type * T;
+  // const gsl_rng_type * T;
   gsl_rng * r;
   
   gsl_rng_env_setup();
@@ -480,7 +480,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   
   //
   // create the initial population of size (NI) random starting points for the genetic algorithm
-  double initial_temp; 
+  // double initial_temp; 
   for (int i = 0; i < NI; i ++){
     // generate new value to be within the specified bounds
     for (int j = 0; j < M->nParms(); j++) {
@@ -714,7 +714,7 @@ optimizationResult findMAP(statModel<LL, PR>  *M,
      
     }
   }else{
-    for (int i = 0; i < x.size(); i++){
+    for (unsigned int i = 0; i < x.size(); i++){
       x[i] = startV(i,0);
     }
   }

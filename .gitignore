@@ -1,2 +1,7 @@
 *.o
 *.so
+.Rproj.user
+.Rhistory
+.vscode/*
+.RData
+*.tar.gz
