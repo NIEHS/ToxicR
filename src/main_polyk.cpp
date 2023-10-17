@@ -24,7 +24,7 @@ using namespace Rcpp;
 
 // [[Rcpp::export(.polykCPP)]]
 NumericVector polyk(NumericVector dose, NumericVector tumor,
-                    NumericVector daysOnStudy)
+                    NumericVector daysOnStudy, int threads)
 {
   std::vector<double> t_dose(dose.size(), 0.0);
   std::vector<int> t_tumor(tumor.size(), 0);

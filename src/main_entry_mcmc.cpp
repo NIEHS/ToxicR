@@ -148,7 +148,7 @@ Eigen::MatrixXd fix_sample(Eigen::MatrixXd A, dich_model mtype, double max)
 // [[Rcpp::export(".run_dichotomous_single_mcmc")]]
 List run_dichotomous_single_mcmc(NumericVector model,
                                  Eigen::MatrixXd Y, Eigen::MatrixXd D,
-                                 Eigen::MatrixXd pr, NumericVector options)
+                                 Eigen::MatrixXd pr, NumericVector options, int threads)
 {
 
   dichotomous_analysis mcmcAnal;
@@ -234,7 +234,7 @@ List run_dichotomous_single_mcmc(NumericVector model,
 List run_continuous_single_mcmc(NumericVector model,
                                 Eigen::MatrixXd Y, Eigen::MatrixXd D,
                                 Eigen::MatrixXd priors, NumericVector options,
-                                bool is_logNormal, bool suff_stat)
+                                bool is_logNormal, bool suff_stat, int threads)
 {
 
   unsigned int samples = (unsigned int)options[7];

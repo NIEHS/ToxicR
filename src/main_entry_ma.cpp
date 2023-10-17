@@ -330,7 +330,7 @@ List convert_continuous_maresults_to_list(continuousMA_result *result)
 List run_continuous_ma_laplace(List model_priors, NumericVector model_type,
                                NumericVector dist_type,
                                Eigen::MatrixXd Y, Eigen::MatrixXd X,
-                               NumericVector options)
+                               NumericVector options, int threads)
 {
 
   bool is_increasing = (bool)options[4];
@@ -457,7 +457,7 @@ List convert_mcmc_results(const ma_MCMCfits *a)
 List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
                             NumericVector dist_type,
                             Eigen::MatrixXd Y, Eigen::MatrixXd X,
-                            NumericVector options)
+                            NumericVector options, int threads)
 {
   unsigned int burnin = (unsigned int)options[6];
   bool is_increasing = (bool)options[4];
@@ -567,7 +567,7 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
 // [[Rcpp::export(.run_ma_dichotomous)]]
 List run_ma_dichotomous(Eigen::MatrixXd data, List priors, NumericVector models,
                         NumericVector model_p, bool is_MCMC,
-                        NumericVector options1, IntegerVector options2)
+                        NumericVector options1, IntegerVector options2, int threads)
 {
 
   dichotomous_analysis Anal;

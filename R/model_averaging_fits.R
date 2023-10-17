@@ -47,7 +47,7 @@
 ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
                               BMR_TYPE = "sd", BMR = 0.1, point_p = 0.01,
                               alpha = 0.05, EFSA = TRUE, samples = 21000,
-                              burnin = 1000, BMD_TYPE = NA) {
+                              burnin = 1000, BMD_TYPE = NA, threads=2) {
   myD <- Y
   Y <- as.matrix(Y)
   D <- as.matrix(D)
@@ -222,7 +222,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   if (fit_type == "mcmc") {
     temp_r <- .run_continuous_ma_mcmc(
       priors, models, dlists, Y, D,
-      options
+      options, threads
     )
     tempn <- temp_r$ma_results
 
@@ -311,7 +311,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   } else {
     temp <- .run_continuous_ma_laplace(
       priors, models, dlists, Y, D,
-      options
+      options, threads
     )
     t_names <- names(temp)
 
@@ -443,7 +443,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "laplace",
                                BMR_TYPE = "extra",
                                BMR = 0.1, point_p = 0.01, alpha = 0.05, samples = 21000,
-                               burnin = 1000, BMD_TYPE = NA) {
+                               burnin = 1000, BMD_TYPE = NA, threads = 2) {
   D <- as.matrix(D)
   Y <- as.matrix(Y)
   N <- as.matrix(N)
@@ -508,7 +508,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     # Laplace Run
     temp <- .run_ma_dichotomous(
       data, priors, model_i,
-      model_p, FALSE, o1, o2
+      model_p, FALSE, o1, o2, threads
     )
     # clean up the run
     temp$ma_bmd <- temp$BMD_CDF
@@ -546,7 +546,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     # MCMC run
     temp_r <- .run_ma_dichotomous(
       data, priors, model_i,
-      model_p, TRUE, o1, o2
+      model_p, TRUE, o1, o2, threads
     )
     tempn <- temp_r$ma_results
     tempm <- temp_r$mcmc_runs

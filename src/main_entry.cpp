@@ -90,7 +90,7 @@ double owenst_fn(double x, double fx)
 // [[Rcpp::export(".run_single_dichotomous")]]
 List run_single_dichotomous(NumericVector model,
                             Eigen::MatrixXd data, Eigen::MatrixXd pr,
-                            NumericVector options1, IntegerVector options2) 
+                            NumericVector options1, IntegerVector options2, int threads) 
 {
 
   dichotomous_analysis Anal; 
@@ -191,7 +191,7 @@ List run_single_dichotomous(NumericVector model,
 List run_continuous_single(IntegerVector model, 
                            Eigen::MatrixXd Y, Eigen::MatrixXd X,
                            Eigen::MatrixXd prior, NumericVector options,
-                           IntegerVector dist_type){
+                           IntegerVector dist_type, int threads){
     
     bool   is_increasing = (bool)options[4]; 	double alpha = (double)options[3];
     double tail_p = (double)options[2]; 	double bmrf  = (double)options[1];
