@@ -92,7 +92,7 @@ List run_single_dichotomous(NumericVector model,
                             Eigen::MatrixXd data, Eigen::MatrixXd pr,
                             NumericVector options1, IntegerVector options2, int threads) 
 {
-
+  set_threads(threads);
   dichotomous_analysis Anal; 
   Anal.BMD_type =  (options1[0]==1)?eExtraRisk:eAddedRisk;
   Anal.BMR      =  options1[0]; 
@@ -193,6 +193,7 @@ List run_continuous_single(IntegerVector model,
                            Eigen::MatrixXd prior, NumericVector options,
                            IntegerVector dist_type, int threads){
     
+    set_threads(threads);
     bool   is_increasing = (bool)options[4]; 	double alpha = (double)options[3];
     double tail_p = (double)options[2]; 	double bmrf  = (double)options[1];
     int    riskType = (int)options[0];   

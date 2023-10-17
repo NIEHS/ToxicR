@@ -151,6 +151,7 @@ List run_dichotomous_single_mcmc(NumericVector model,
                                  Eigen::MatrixXd pr, NumericVector options, int threads)
 {
 
+  set_threads(threads);
   dichotomous_analysis mcmcAnal;
   mcmcAnal.BMD_type = eExtraRisk; // (options[0]==1)?eExtraRisk:eAddedRisk;
   mcmcAnal.BMR = options[0];
@@ -237,6 +238,7 @@ List run_continuous_single_mcmc(NumericVector model,
                                 bool is_logNormal, bool suff_stat, int threads)
 {
 
+  set_threads(threads);
   unsigned int samples = (unsigned int)options[7];
   unsigned int burnin = (unsigned int)options[6];
   double tail_p = (double)options[2];

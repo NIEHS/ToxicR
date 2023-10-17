@@ -26,6 +26,7 @@ using namespace Rcpp;
 NumericVector polyk(NumericVector dose, NumericVector tumor,
                     NumericVector daysOnStudy, int threads)
 {
+  set_threads(threads);
   std::vector<double> t_dose(dose.size(), 0.0);
   std::vector<int> t_tumor(tumor.size(), 0);
   std::vector<int> t_daysOnStudy(daysOnStudy.size(), 0.0);

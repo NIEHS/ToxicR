@@ -6,5 +6,7 @@
 // output: none
 // [[Rcpp::export(".set_threads")]]
 void set_threads(int num_threads) {
-    omp_set_num_threads(num_threads);
+    if (num_threads != omp_get_num_threads()) {
+        omp_set_num_threads(num_threads);
+    }
 }
