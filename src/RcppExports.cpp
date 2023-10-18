@@ -12,14 +12,14 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// set_threads
+//set_threads
 void set_threads(int num_threads);
 RcppExport SEXP _ToxicR_set_threads(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type x(xSEXP);
-    set_threads(x);
+    Rcpp::traits::input_parameter< int >::type num_threads(xSEXP);
+    set_threads(num_threads);
 END_RCPP  
 }
 
@@ -36,8 +36,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // run_single_dichotomous
-List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data, Eigen::MatrixXd pr, NumericVector options1, IntegerVector options2, int threads);
-RcppExport SEXP _ToxicR_run_single_dichotomous(SEXP modelSEXP, SEXP dataSEXP, SEXP prSEXP, SEXP options1SEXP, SEXP options2SEXP, SEXP threadsSEXP) {
+List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data, Eigen::MatrixXd pr, NumericVector options1, IntegerVector options2);
+RcppExport SEXP _ToxicR_run_single_dichotomous(SEXP modelSEXP, SEXP dataSEXP, SEXP prSEXP, SEXP options1SEXP, SEXP options2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -46,14 +46,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type pr(prSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type options1(options1SEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type options2(options2SEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_single_dichotomous(model, data, pr, options1, options2, threads));
+    rcpp_result_gen = Rcpp::wrap(run_single_dichotomous(model, data, pr, options1, options2));
     return rcpp_result_gen;
 END_RCPP
 }
 // run_continuous_single
-List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y, Eigen::MatrixXd X, Eigen::MatrixXd prior, NumericVector options, IntegerVector dist_type, int threads);
-RcppExport SEXP _ToxicR_run_continuous_single(SEXP modelSEXP, SEXP YSEXP, SEXP XSEXP, SEXP priorSEXP, SEXP optionsSEXP, SEXP dist_typeSEXP, SEXP threadsSEXP) {
+List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y, Eigen::MatrixXd X, Eigen::MatrixXd prior, NumericVector options, IntegerVector dist_type);
+RcppExport SEXP _ToxicR_run_continuous_single(SEXP modelSEXP, SEXP YSEXP, SEXP XSEXP, SEXP priorSEXP, SEXP optionsSEXP, SEXP dist_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -63,14 +62,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type prior(priorSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type options(optionsSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type dist_type(dist_typeSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_continuous_single(model, Y, X, prior, options, dist_type, threads));
+    rcpp_result_gen = Rcpp::wrap(run_continuous_single(model, Y, X, prior, options, dist_type));
     return rcpp_result_gen;
 END_RCPP
 }
 // run_continuous_ma_laplace
-List run_continuous_ma_laplace(List model_priors, NumericVector model_type, NumericVector dist_type, Eigen::MatrixXd Y, Eigen::MatrixXd X, NumericVector options, int threads);
-RcppExport SEXP _ToxicR_run_continuous_ma_laplace(SEXP model_priorsSEXP, SEXP model_typeSEXP, SEXP dist_typeSEXP, SEXP YSEXP, SEXP XSEXP, SEXP optionsSEXP, SEXP threadsSEXP) {
+List run_continuous_ma_laplace(List model_priors, NumericVector model_type, NumericVector dist_type, Eigen::MatrixXd Y, Eigen::MatrixXd X, NumericVector options);
+RcppExport SEXP _ToxicR_run_continuous_ma_laplace(SEXP model_priorsSEXP, SEXP model_typeSEXP, SEXP dist_typeSEXP, SEXP YSEXP, SEXP XSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -80,14 +78,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Y(YSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type X(XSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type options(optionsSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_continuous_ma_laplace(model_priors, model_type, dist_type, Y, X, options, threads));
+    rcpp_result_gen = Rcpp::wrap(run_continuous_ma_laplace(model_priors, model_type, dist_type, Y, X, options));
     return rcpp_result_gen;
 END_RCPP
 }
 // run_continuous_ma_mcmc
-List run_continuous_ma_mcmc(List model_priors, NumericVector model_type, NumericVector dist_type, Eigen::MatrixXd Y, Eigen::MatrixXd X, NumericVector options, int threads);
-RcppExport SEXP _ToxicR_run_continuous_ma_mcmc(SEXP model_priorsSEXP, SEXP model_typeSEXP, SEXP dist_typeSEXP, SEXP YSEXP, SEXP XSEXP, SEXP optionsSEXP, SEXP threadsSEXP) {
+List run_continuous_ma_mcmc(List model_priors, NumericVector model_type, NumericVector dist_type, Eigen::MatrixXd Y, Eigen::MatrixXd X, NumericVector options);
+RcppExport SEXP _ToxicR_run_continuous_ma_mcmc(SEXP model_priorsSEXP, SEXP model_typeSEXP, SEXP dist_typeSEXP, SEXP YSEXP, SEXP XSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -97,14 +94,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Y(YSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type X(XSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type options(optionsSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_continuous_ma_mcmc(model_priors, model_type, dist_type, Y, X, options, threads));
+    rcpp_result_gen = Rcpp::wrap(run_continuous_ma_mcmc(model_priors, model_type, dist_type, Y, X, options));
     return rcpp_result_gen;
 END_RCPP
 }
 // run_ma_dichotomous
-List run_ma_dichotomous(Eigen::MatrixXd data, List priors, NumericVector models, NumericVector model_p, bool is_MCMC, NumericVector options1, IntegerVector options2, int threads);
-RcppExport SEXP _ToxicR_run_ma_dichotomous(SEXP dataSEXP, SEXP priorsSEXP, SEXP modelsSEXP, SEXP model_pSEXP, SEXP is_MCMCSEXP, SEXP options1SEXP, SEXP options2SEXP, SEXP threadsSEXP) {
+List run_ma_dichotomous(Eigen::MatrixXd data, List priors, NumericVector models, NumericVector model_p, bool is_MCMC, NumericVector options1, IntegerVector options2);
+RcppExport SEXP _ToxicR_run_ma_dichotomous(SEXP dataSEXP, SEXP priorsSEXP, SEXP modelsSEXP, SEXP model_pSEXP, SEXP is_MCMCSEXP, SEXP options1SEXP, SEXP options2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -115,14 +111,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type is_MCMC(is_MCMCSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type options1(options1SEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type options2(options2SEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_ma_dichotomous(data, priors, models, model_p, is_MCMC, options1, options2, threads));
+    rcpp_result_gen = Rcpp::wrap(run_ma_dichotomous(data, priors, models, model_p, is_MCMC, options1, options2));
     return rcpp_result_gen;
 END_RCPP
 }
 // run_dichotomous_single_mcmc
-List run_dichotomous_single_mcmc(NumericVector model, Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::MatrixXd pr, NumericVector options, int threads);
-RcppExport SEXP _ToxicR_run_dichotomous_single_mcmc(SEXP modelSEXP, SEXP YSEXP, SEXP DSEXP, SEXP prSEXP, SEXP optionsSEXP, SEXP threadsSEXP) {
+List run_dichotomous_single_mcmc(NumericVector model, Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::MatrixXd pr, NumericVector options);
+RcppExport SEXP _ToxicR_run_dichotomous_single_mcmc(SEXP modelSEXP, SEXP YSEXP, SEXP DSEXP, SEXP prSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -131,14 +126,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type D(DSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type pr(prSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type options(optionsSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_dichotomous_single_mcmc(model, Y, D, pr, options, threads));
+    rcpp_result_gen = Rcpp::wrap(run_dichotomous_single_mcmc(model, Y, D, pr, options));
     return rcpp_result_gen;
 END_RCPP
 }
 // run_continuous_single_mcmc
-List run_continuous_single_mcmc(NumericVector model, Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::MatrixXd priors, NumericVector options, bool is_logNormal, bool suff_stat, int threads);
-RcppExport SEXP _ToxicR_run_continuous_single_mcmc(SEXP modelSEXP, SEXP YSEXP, SEXP DSEXP, SEXP priorsSEXP, SEXP optionsSEXP, SEXP is_logNormalSEXP, SEXP suff_statSEXP, SEXP threadsSEXP) {
+List run_continuous_single_mcmc(NumericVector model, Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::MatrixXd priors, NumericVector options, bool is_logNormal, bool suff_stat);
+RcppExport SEXP _ToxicR_run_continuous_single_mcmc(SEXP modelSEXP, SEXP YSEXP, SEXP DSEXP, SEXP priorsSEXP, SEXP optionsSEXP, SEXP is_logNormalSEXP, SEXP suff_statSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -149,22 +143,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type options(optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type is_logNormal(is_logNormalSEXP);
     Rcpp::traits::input_parameter< bool >::type suff_stat(suff_statSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_continuous_single_mcmc(model, Y, D, priors, options, is_logNormal, suff_stat, threads));
+    rcpp_result_gen = Rcpp::wrap(run_continuous_single_mcmc(model, Y, D, priors, options, is_logNormal, suff_stat));
     return rcpp_result_gen;
 END_RCPP
 }
 // polyk
-NumericVector polyk(NumericVector dose, NumericVector tumor, NumericVector daysOnStudy, int threads);
-RcppExport SEXP _ToxicR_polyk(SEXP doseSEXP, SEXP tumorSEXP, SEXP daysOnStudySEXP, SEXP threadsSEXP) {
+NumericVector polyk(NumericVector dose, NumericVector tumor, NumericVector daysOnStudy);
+RcppExport SEXP _ToxicR_polyk(SEXP doseSEXP, SEXP tumorSEXP, SEXP daysOnStudySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type dose(doseSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type tumor(tumorSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type daysOnStudy(daysOnStudySEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(polyk(dose, tumor, daysOnStudy, threads));
+    rcpp_result_gen = Rcpp::wrap(polyk(dose, tumor, daysOnStudy));
     return rcpp_result_gen;
 END_RCPP
 }

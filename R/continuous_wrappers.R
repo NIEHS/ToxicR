@@ -103,7 +103,7 @@
 #' M2[,3] <- c(20,20,19,20,20)
 #' M2[,4] <- c(1.2,1.1,0.81,0.74,0.66)
 #' model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMR_TYPE="sd", BMR=1, ewald = TRUE,
-#'                              distribution = "normal",fit_type="laplace",model_type = "hill")
+#'                              distribution = "normal",fit_type="laplace",model_type = "hill",threads = 2)
 #' 
 #' summary(model)
 single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
@@ -111,7 +111,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
                                    alpha = 0.05, samples = 25000, degree=2,
                                    burnin = 1000, BMD_priors = FALSE, ewald = FALSE,
-                                   transform = FALSE, BMD_TYPE = NA, threads=2){
+                                   transform = FALSE, BMD_TYPE = NA, threads = 2){
     Y <- as.matrix(Y) 
     D <- as.matrix(D) 
     
@@ -259,6 +259,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
 
     #For MLE 
     if (type_of_fit == 2){
+      .set_threads(threads)
       PR = .MLE_bounds_continuous(model_type,distribution,degree, is_increasing)
       PR = PR$priors
     }
@@ -347,8 +348,9 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
   # // return(PR)
     if (fit_type == "mcmc"){
       
+      .set_threads(threads)
       rvals <- .run_continuous_single_mcmc(fitmodel,model_data$SSTAT,model_data$X,
-                                          PR ,options, is_log_normal, sstat, threads) 
+                                          PR ,options, is_log_normal, sstat) 
    
       if (model_type == "exp-3"){
         rvals$PARMS = rvals$PARMS[,-3]
@@ -402,8 +404,9 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
     }else{
       
       options[7] <- (ewald == TRUE)*1
+      .set_threads(threads)
       rvals   <- .run_continuous_single(fitmodel,model_data$SSTAT,model_data$X,
-  						                          PR,options, dist_type, threads)
+  						                          PR,options, dist_type)
      
       rvals$bmd_dist = rvals$bmd_dist[!is.infinite(rvals$bmd_dist[,1]),,drop=F]
       rvals$bmd_dist = rvals$bmd_dist[!is.na(rvals$bmd_dist[,1]),,drop=F]

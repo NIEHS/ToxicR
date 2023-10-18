@@ -1,5 +1,11 @@
-#include <omp.h>
+#include "omp.h"
+#include <Rcpp.h>
+using namespace Rcpp;
 
+
+
+// [[Rcpp::depends(RcppGSL)]]
+// [[Rcpp::depends(RcppEigen)]]
 // function: set_threads
 // purpose: takes an integer value and set the number of
 // openmp threads to that value

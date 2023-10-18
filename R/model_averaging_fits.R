@@ -218,11 +218,12 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     }
   }
   options <- c(rt, BMR, point_p, alpha, is_increasing, samples, burnin)
-
+  
+  .set_threads(threads)
   if (fit_type == "mcmc") {
     temp_r <- .run_continuous_ma_mcmc(
       priors, models, dlists, Y, D,
-      options, threads
+      options
     )
     tempn <- temp_r$ma_results
 
@@ -311,7 +312,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   } else {
     temp <- .run_continuous_ma_laplace(
       priors, models, dlists, Y, D,
-      options, threads
+      options
     )
     t_names <- names(temp)
 
@@ -504,11 +505,12 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
   o2 <- c(BTYPE, 2, samples, burnin)
 
   data <- as.matrix(cbind(D, Y, N))
+  .set_threads(threads)
   if (fit_type == "laplace") {
     # Laplace Run
     temp <- .run_ma_dichotomous(
       data, priors, model_i,
-      model_p, FALSE, o1, o2, threads
+      model_p, FALSE, o1, o2
     )
     # clean up the run
     temp$ma_bmd <- temp$BMD_CDF
@@ -546,7 +548,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     # MCMC run
     temp_r <- .run_ma_dichotomous(
       data, priors, model_i,
-      model_p, TRUE, o1, o2, threads
+      model_p, TRUE, o1, o2
     )
     tempn <- temp_r$ma_results
     tempm <- temp_r$mcmc_runs
