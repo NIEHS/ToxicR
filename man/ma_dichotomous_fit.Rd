@@ -43,7 +43,9 @@ ma_dichotomous_fit(
 
 \item{burnin}{the number of burnin samples to take (MCMC only)}
 
-\item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
+\item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
+
+\item{threads}{specify the number of OpenMP threads to use for the calculations. Default = 2}
 }
 \value{
 a model object containing a list of single models
