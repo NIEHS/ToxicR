@@ -12,17 +12,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-//set_threads
-void set_threads(int num_threads);
-RcppExport SEXP _ToxicR_set_threads(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type num_threads(xSEXP);
-    set_threads(num_threads);
-END_RCPP  
-}
-
 // owenst_fn
 double owenst_fn(double x, double fx);
 RcppExport SEXP _ToxicR_owenst_fn(SEXP xSEXP, SEXP fxSEXP) {
@@ -160,18 +149,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// set_threads
+void set_threads(int num_threads);
+RcppExport SEXP _ToxicR_set_threads(SEXP num_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type num_threads(num_threadsSEXP);
+    set_threads(num_threads);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_ToxicR_set_threads", (DL_FUNC) &_ToxicR_set_threads, 1},
     {"_ToxicR_owenst_fn", (DL_FUNC) &_ToxicR_owenst_fn, 2},
-    {"_ToxicR_run_single_dichotomous", (DL_FUNC) &_ToxicR_run_single_dichotomous, 6},
-    {"_ToxicR_run_continuous_single", (DL_FUNC) &_ToxicR_run_continuous_single, 7},
-    {"_ToxicR_run_continuous_ma_laplace", (DL_FUNC) &_ToxicR_run_continuous_ma_laplace, 7},
-    {"_ToxicR_run_continuous_ma_mcmc", (DL_FUNC) &_ToxicR_run_continuous_ma_mcmc, 7},
-    {"_ToxicR_run_ma_dichotomous", (DL_FUNC) &_ToxicR_run_ma_dichotomous, 8},
-    {"_ToxicR_run_dichotomous_single_mcmc", (DL_FUNC) &_ToxicR_run_dichotomous_single_mcmc, 6},
-    {"_ToxicR_run_continuous_single_mcmc", (DL_FUNC) &_ToxicR_run_continuous_single_mcmc, 8},
-    {"_ToxicR_polyk", (DL_FUNC) &_ToxicR_polyk, 4},
+    {"_ToxicR_run_single_dichotomous", (DL_FUNC) &_ToxicR_run_single_dichotomous, 5},
+    {"_ToxicR_run_continuous_single", (DL_FUNC) &_ToxicR_run_continuous_single, 6},
+    {"_ToxicR_run_continuous_ma_laplace", (DL_FUNC) &_ToxicR_run_continuous_ma_laplace, 6},
+    {"_ToxicR_run_continuous_ma_mcmc", (DL_FUNC) &_ToxicR_run_continuous_ma_mcmc, 6},
+    {"_ToxicR_run_ma_dichotomous", (DL_FUNC) &_ToxicR_run_ma_dichotomous, 7},
+    {"_ToxicR_run_dichotomous_single_mcmc", (DL_FUNC) &_ToxicR_run_dichotomous_single_mcmc, 5},
+    {"_ToxicR_run_continuous_single_mcmc", (DL_FUNC) &_ToxicR_run_continuous_single_mcmc, 7},
+    {"_ToxicR_polyk", (DL_FUNC) &_ToxicR_polyk, 3},
+    {"_ToxicR_set_threads", (DL_FUNC) &_ToxicR_set_threads, 1},
     {NULL, NULL, 0}
 };
 

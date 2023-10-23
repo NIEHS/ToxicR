@@ -13,6 +13,7 @@
 #' @param degree the number of degrees of a polynomial model. Only used for polynomial models.
 #' @param samples the number of samples to take (MCMC only)
 #' @param burnin the number of burnin samples to take (MCMC only)
+#' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #'
 #' @return Returns a model object class with the following structure:
 #' \itemize{

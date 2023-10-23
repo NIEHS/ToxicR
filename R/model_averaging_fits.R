@@ -23,6 +23,7 @@
 #' @param samples the number of samples to take (MCMC only)
 #' @param burnin the number of burnin samples to take (MCMC only)
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
+#' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #' @return This function model object containing a list of individual fits and model averaging fits
 #' \itemize{
 #'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}

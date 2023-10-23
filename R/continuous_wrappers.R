@@ -72,6 +72,7 @@
 #' @param ewald perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)
 #' @param transform Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
+#' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #' @return Returns a model object class with the following structure:
 #' \itemize{
 #'    \item \code{full_model}:  The model along with the likelihood distribution. 

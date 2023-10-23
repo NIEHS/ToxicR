@@ -16,7 +16,8 @@ ma_dichotomous_fit(
   alpha = 0.05,
   samples = 21000,
   burnin = 1000,
-  BMD_TYPE = NA
+  BMD_TYPE = NA,
+  threads = 2
 )
 }
 \arguments{

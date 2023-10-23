@@ -21,7 +21,8 @@ single_continuous_fit(
   BMD_priors = FALSE,
   ewald = FALSE,
   transform = FALSE,
-  BMD_TYPE = NA
+  BMD_TYPE = NA,
+  threads = 2
 )
 }
 \arguments{
@@ -95,6 +96,8 @@ for lognormal data.  For more information, see Aerts, Wheeler, and Abrahantes (2
 \item{transform}{Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.}
 
 \item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
+
+\item{threads}{specify the number of OpenMP threads to use for the calculations. Default = 2}
 }
 \value{
 Returns a model object class with the following structure:
@@ -131,7 +134,7 @@ M2[,2] <- c(6,5.2,2.4,1.1,0.75)
 M2[,3] <- c(20,20,19,20,20)
 M2[,4] <- c(1.2,1.1,0.81,0.74,0.66)
 model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMR_TYPE="sd", BMR=1, ewald = TRUE,
-                             distribution = "normal",fit_type="laplace",model_type = "hill")
+                             distribution = "normal",fit_type="laplace",model_type = "hill",threads = 2)
 
 summary(model)
 }
