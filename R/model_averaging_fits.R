@@ -23,6 +23,7 @@
 #' @param samples the number of samples to take (MCMC only)
 #' @param burnin the number of burnin samples to take (MCMC only)
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
+#' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #' @return This function model object containing a list of individual fits and model averaging fits
 #' \itemize{
 #'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
@@ -47,7 +48,7 @@
 ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
                               BMR_TYPE = "sd", BMR = 0.1, point_p = 0.01,
                               alpha = 0.05, EFSA = TRUE, samples = 21000,
-                              burnin = 1000, BMD_TYPE = NA) {
+                              burnin = 1000, BMD_TYPE = NA, threads=2) {
   myD <- Y
   Y <- as.matrix(Y)
   D <- as.matrix(D)
@@ -218,7 +219,8 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     }
   }
   options <- c(rt, BMR, point_p, alpha, is_increasing, samples, burnin)
-
+  
+  .set_threads(threads)
   if (fit_type == "mcmc") {
     temp_r <- .run_continuous_ma_mcmc(
       priors, models, dlists, Y, D,
@@ -443,7 +445,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "laplace",
                                BMR_TYPE = "extra",
                                BMR = 0.1, point_p = 0.01, alpha = 0.05, samples = 21000,
-                               burnin = 1000, BMD_TYPE = NA) {
+                               burnin = 1000, BMD_TYPE = NA, threads = 2) {
   D <- as.matrix(D)
   Y <- as.matrix(Y)
   N <- as.matrix(N)
@@ -504,6 +506,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
   o2 <- c(BTYPE, 2, samples, burnin)
 
   data <- as.matrix(cbind(D, Y, N))
+  .set_threads(threads)
   if (fit_type == "laplace") {
     # Laplace Run
     temp <- .run_ma_dichotomous(

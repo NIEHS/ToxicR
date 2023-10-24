@@ -149,6 +149,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// set_threads
+void set_threads(int num_threads);
+RcppExport SEXP _ToxicR_set_threads(SEXP num_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type num_threads(num_threadsSEXP);
+    set_threads(num_threads);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_ToxicR_owenst_fn", (DL_FUNC) &_ToxicR_owenst_fn, 2},
@@ -160,6 +170,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ToxicR_run_dichotomous_single_mcmc", (DL_FUNC) &_ToxicR_run_dichotomous_single_mcmc, 5},
     {"_ToxicR_run_continuous_single_mcmc", (DL_FUNC) &_ToxicR_run_continuous_single_mcmc, 7},
     {"_ToxicR_polyk", (DL_FUNC) &_ToxicR_polyk, 3},
+    {"_ToxicR_set_threads", (DL_FUNC) &_ToxicR_set_threads, 1},
     {NULL, NULL, 0}
 };
 

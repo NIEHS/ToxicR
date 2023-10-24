@@ -37,3 +37,7 @@
     .Call(`_ToxicR_polyk`, dose, tumor, daysOnStudy)
 }
 
+.set_threads <- function(num_threads) {
+    invisible(.Call(`_ToxicR_set_threads`, num_threads))
+}
+

@@ -13,6 +13,7 @@
 #' @param degree the number of degrees of a polynomial model. Only used for polynomial models.
 #' @param samples the number of samples to take (MCMC only)
 #' @param burnin the number of burnin samples to take (MCMC only)
+#' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #'
 #' @return Returns a model object class with the following structure:
 #' \itemize{
@@ -54,7 +55,7 @@
 single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
                                    prior = NULL, BMR = 0.1,
                                    alpha = 0.05, degree = 2, samples = 21000,
-                                   burnin = 1000) {
+                                   burnin = 1000, threads=2) {
   Y <- as.matrix(Y)
   D <- as.matrix(D)
   N <- as.matrix(N)
@@ -111,6 +112,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
 
   if (fitter == 1) { # MLE fit
     bounds <- .bmd_default_frequentist_settings(model_type, degree)
+    .set_threads(threads)
     temp <- .run_single_dichotomous(dmodel, DATA, bounds, o1, o2)
     # class(temp$bmd_dist) <- "BMD_CDF"
     temp_me <- temp$bmd_dist
@@ -132,7 +134,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
   }
 
   if (fitter == 2) { # laplace fit
-
+    .set_threads(threads)
     temp <- .run_single_dichotomous(dmodel, DATA, prior$priors, o1, o2)
     # class(temp$bmd_dist) <- "BMD_CDF"
     te <- splinefun(temp$bmd_dist[!is.infinite(temp$bmd_dist[, 1]), 2], temp$bmd_dist[!is.infinite(temp$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
@@ -144,6 +146,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     class(temp) <- "BMDdich_fit_maximized"
   }
   if (fitter == 3) {
+    .set_threads(threads)
     temp <- .run_dichotomous_single_mcmc(
       dmodel, DATA[, 2:3, drop = F], DATA[, 1, drop = F], prior$priors,
       c(BMR, alpha, samples, burnin)

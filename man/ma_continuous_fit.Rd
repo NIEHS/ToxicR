@@ -16,7 +16,8 @@ ma_continuous_fit(
   EFSA = TRUE,
   samples = 21000,
   burnin = 1000,
-  BMD_TYPE = NA
+  BMD_TYPE = NA,
+  threads = 2
 )
 }
 \arguments{
@@ -53,6 +54,8 @@ See \code{\link{single_continuous_fit}} for details on the models.}
 \item{burnin}{the number of burnin samples to take (MCMC only)}
 
 \item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
+
+\item{threads}{specify the number of OpenMP threads to use for the calculations. Default = 2}
 }
 \value{
 This function model object containing a list of individual fits and model averaging fits

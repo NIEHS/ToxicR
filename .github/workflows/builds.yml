@@ -34,7 +34,6 @@ jobs:
       ## Specific to package
       _R_CHECK_USE_VALGRIND_: true
       VALGRIND_OPTS: '--leak-check=full --track-origins=yes'
-      OMP_NUM_THREADS: 2
     steps:
       - uses: actions/checkout@v2
 

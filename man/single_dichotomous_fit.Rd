@@ -15,7 +15,8 @@ single_dichotomous_fit(
   alpha = 0.05,
   degree = 2,
   samples = 21000,
-  burnin = 1000
+  burnin = 1000,
+  threads = 2
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ single_dichotomous_fit(
 \item{samples}{the number of samples to take (MCMC only)}
 
 \item{burnin}{the number of burnin samples to take (MCMC only)}
+
+\item{threads}{specify the number of OpenMP threads to use for the calculations. Default = 2}
 }
 \value{
 Returns a model object class with the following structure:
