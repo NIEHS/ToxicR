@@ -473,6 +473,7 @@
      class_list <- names(A)
      fit_idx    <- grep("Indiv_",class_list)
   
+     A$posterior_probs[!is.finite( A$posterior_probs)] = 0.0
      #plot the model average curve
      if ("BMDcontinuous_MA_mcmc" %in% class(A)){ # mcmc run
           n_samps <- nrow(A[[fit_idx[1]]]$mcmc_result$PARM_samples)
@@ -635,7 +636,9 @@
           # It replaces the last one;
           
           for (ii in 1:length(fit_idx)){
-            
+            if (!is.finite(A$posterior_probs[ii])){
+              A$posterior_probs[ii] = 0
+            }
             if (A$posterior_probs[ii]>0.05){
                fit <- A[[fit_idx[ii]]]
                isLogNormal = (grepl("Log-Normal",fit$full_model) == 1)
@@ -754,16 +757,25 @@
                       "probit-aerts" = .cont_probit_aerts_f(fit$parameters,test_doses),
                       "LMS" = .cont_LMS_f(fit$parameters,test_doses),
                       "gamma-efsa" = .cont_gamma_efsa_f(fit$parameters,test_doses))
+         if (!is.finite(A$posterior_probs[ii])){
+           A$posterior_probs[ii] = 0
+         }
          if(isLogNormal & !is.null(t)){
            t <- exp(t)
          }
          if(!is.null(t)){
+           if (!is.finite(A$posterior_probs[ii])){
+             A$posterior_probs[ii] = 0
+           }
            if(A$posterior_probs[ii] > 0){
              me = t*A$posterior_probs[ii] + me
            }
          }
          if (fit$model=="FUNL"){
            t <- .cont_FUNL_f(fit$parameters,test_doses)
+           if (!is.finite(A$posterior_probs[ii])){
+             A$posterior_probs[ii] = 0
+           }
            if(A$posterior_probs[ii] > 0){
              me = t*A$posterior_probs[ii] + me
            }
@@ -775,13 +787,16 @@
            
            # SL comment - why the name of object is BB? At the beginning it was declared as A-  05/28/21
            # I guess this part should be A as well 
+           if (!is.finite(A$posterior_probs[ii])){
+             A$posterior_probs[ii] = 0
+           }
            if(A$posterior_probs[ii] > 0){
              me = t*A$posterior_probs[ii] + me
            }
          }
          if (fit$model=="exp-3"){
            t <- .cont_exp_3_f(fit$parameters,test_doses,decrease)
-   
+          
            if(A$posterior_probs[ii] > 0){
              me = t*A$posterior_probs[ii] + me
            }
@@ -835,6 +850,9 @@
        
        for (ii in 1:length(fit_idx)){
        df<-NULL
+         if (!is.finite(A$posterior_probs[ii])){
+           A$posterior_probs[ii] = 0
+         }
          if (A$posterior_probs[ii]>0.05){
            fit <- A[[fit_idx[ii]]]
            isLogNormal = (grepl("Log-Normal",fit$full_model) == 1)

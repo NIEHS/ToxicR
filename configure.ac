@@ -16,7 +16,7 @@ AC_MSG_CHECKING([Is OPENMP avaialble? ])
 OS_FLAG="$(uname)"
 if test x"${OS_FLAG}" == x"Darwin";then
      AC_MSG_RESULT([no])
-     OPENMP=""
+     OPENMP="-DNO_OMP"
 else
      AC_MSG_RESULT([yes])
      OPENMP="\$(SHLIB_OPENMP_CXXFLAGS) "
