@@ -137,6 +137,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     .set_threads(threads)
     temp <- .run_single_dichotomous(dmodel, DATA, prior$priors, o1, o2)
     # class(temp$bmd_dist) <- "BMD_CDF"
+    temp_me <- temp$bmd_dist
     temp_me <- temp_me[!is.infinite(temp_me[, 1]), ]
     temp_me <- temp_me[!is.na(temp_me[, 1]), ]
     temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
