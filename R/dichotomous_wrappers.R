@@ -120,7 +120,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     temp_me <- temp_me[!is.infinite(temp_me[, 1]), ]
     temp_me <- temp_me[!is.na(temp_me[, 1]), ]
     temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
-    if (nrow(temp_me) > 5) {
+    if (is.null(nrow(temp_me))){temp$bmd <- c(temp$bmd, NA, NA)} else if(nrow(temp_me) > 5) {
       te <- splinefun(temp_me[, 2], temp_me[, 1], method = "monoH.FC",ties=mean)
       temp$bmd <- c(temp$bmd, te(alpha), te(1 - alpha))
     } else {
@@ -137,8 +137,15 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     .set_threads(threads)
     temp <- .run_single_dichotomous(dmodel, DATA, prior$priors, o1, o2)
     # class(temp$bmd_dist) <- "BMD_CDF"
-    te <- splinefun(temp$bmd_dist[!is.infinite(temp$bmd_dist[, 1]), 2], temp$bmd_dist[!is.infinite(temp$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
-    temp$bmd <- c(temp$bmd, te(alpha), te(1 - alpha))
+    temp_me <- temp_me[!is.infinite(temp_me[, 1]), ]
+    temp_me <- temp_me[!is.na(temp_me[, 1]), ]
+    temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
+    if (is.null(nrow(temp_me))){temp$bmd <- c(temp$bmd, NA, NA)} else if(nrow(temp_me) > 5) {
+      te <- splinefun(temp_me[, 2], temp_me[, 1], method = "monoH.FC",ties=mean)
+      temp$bmd <- c(temp$bmd, te(alpha), te(1 - alpha))
+    } else {
+      temp$bmd <- c(temp$bmd, NA, NA)
+    }
     temp$prior <- prior
     temp$model <- model_type
     temp$data <- DATA
