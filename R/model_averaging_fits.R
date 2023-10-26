@@ -546,9 +546,12 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
 
       tmp_id <- which(names(temp) == "BMD_CDF")
       #  temp = temp[-tmp_id]
-      names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
+      temp[[ii]]$options <- c(o1, o2)
+
+      #names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
 
     }
+    names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
 
     class(temp) <- c("BMDdichotomous_MA", "BMDdichotomous_MA_laplace")
   } else {
