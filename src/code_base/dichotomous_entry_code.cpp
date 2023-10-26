@@ -538,6 +538,9 @@ void estimate_ma_MCMC(dichotomousMA_analysis *MA,
     Eigen::Map<MatrixXd> transfer_mat(res->models[i]->cov, res->models[i]->nparms, res->models[i]->nparms);
     Eigen::MatrixXd cov = transfer_mat;
     temp = res->models[i]->nparms / 2 * log(2 * M_PI) - res->models[i]->max + 0.5 * log(max(0.0, cov.determinant()));
+    if(cov.determinant() < 0 || !std::isfinite(res->models[i]->bmd)){
+      temp = -1.0 * std::numeric_limits<double>::infinity();
+    }
     if (isfinite(temp))
     {
       max_prob = temp > max_prob ? temp : max_prob;
@@ -708,7 +711,9 @@ void estimate_ma_laplace(dichotomousMA_analysis *MA,
     Eigen::Map<MatrixXd> transfer_mat(res->models[i]->cov, res->models[i]->nparms, res->models[i]->nparms);
     Eigen::MatrixXd cov = transfer_mat;
     temp = res->models[i]->nparms / 2 * log(2 * M_PI) - res->models[i]->max + 0.5 * log(max(0.0, cov.determinant()));
-
+    if(cov.determinant() < 0 || !std::isfinite(res->models[i]->bmd)){
+      temp = -1.0 * std::numeric_limits<double>::infinity();
+    }
     if (isfinite(temp))
     {
       max_prob = temp > max_prob ? temp : max_prob;

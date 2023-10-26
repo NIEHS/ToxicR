@@ -534,6 +534,12 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
 
       te <- splinefun(temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 2], temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
       temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
+
+      #add NAs if bad hessian or NaN BMD
+      if(det(temp[[ii]]$covariance) < 0 || is.na(temp[[ii]]$bmd[1])){
+        temp$posterior_probs[ii] <- NA
+      }
+
       names(temp[[ii]]$bmd) <- c("BMD", "BMDL", "BMDU")
       # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
       names(temp)[ii] <- sprintf("Indiv_%s_%s", model_list[ii], distribution_list[ii])
@@ -575,6 +581,12 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
       }
       te <- splinefun(temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 2], temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
       temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
+
+      #add NAs if bad hessian or NaN BMD
+      if(det(temp[[ii]]$covariance) < 0 || is.na(temp[[ii]]$bmd[1])){
+        tempn$posterior_probs[ii] <- NA
+      }
+
       class(temp[[jj]]) <- "BMDdich_fit_MCMC"
       jj <- jj + 1
     }
