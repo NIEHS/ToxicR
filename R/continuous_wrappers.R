@@ -34,8 +34,8 @@
 #'      \item \code{"lognormal-aerts"}:   \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( \ln(b) + d\times \ln(x))\right) \right\}}
 #'      \item \code{"logskew-aerts"}:     \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi_{SN}( \ln(b) + d\times \ln(x); \xi )\right) \right\}}
 #'      \item \code{"invlogskew-aerts"}:  \eqn{f(x) = a\left\{1 + (c-1)\left(1 - \Phi_{SN}( \ln(b) - d\times \ln(x); \xi )\right) \right\}}
-#'      \item \code{"logistic-aerts"}:    \eqn{f(x) = a\left\{1 + (c-1)\left(\frac{1}{1+\exp(-bx)}\right) \right\}}
-#'      \item \code{"probit-aerts"}:      \eqn{f(x) = a\left\{1 + (c-1)\left(\Phi( b + d\times x)\right) \right\}}
+#'      \item \code{"logistic-aerts"}:    \eqn{f(x) = \frac{c}{1 + \exp(-a - b\times x^d)} }
+#'      \item \code{"probit-aerts"}:      \eqn{f(x) = c\left(\Phi(a + b\times x^d)\right) }
 #'      \item \code{"gamma-efsa"}:        \eqn{f(x) = a(1 + (c-1)(\Gamma(bx; d))) }
 #'      \item \code{"LMS"}:               \eqn{f(x) = a(1 + (c-1)(1 - \exp(-bx - dx^2))) }
 #'    }
@@ -72,6 +72,7 @@
 #' @param ewald perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)
 #' @param transform Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
+#' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #' @return Returns a model object class with the following structure:
 #' \itemize{
 #'    \item \code{full_model}:  The model along with the likelihood distribution. 
@@ -103,7 +104,7 @@
 #' M2[,3] <- c(20,20,19,20,20)
 #' M2[,4] <- c(1.2,1.1,0.81,0.74,0.66)
 #' model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMR_TYPE="sd", BMR=1, ewald = TRUE,
-#'                              distribution = "normal",fit_type="laplace",model_type = "hill")
+#'                              distribution = "normal",fit_type="laplace",model_type = "hill",threads = 2)
 #' 
 #' summary(model)
 single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
@@ -111,7 +112,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
                                    alpha = 0.05, samples = 25000, degree=2,
                                    burnin = 1000, BMD_priors = FALSE, ewald = FALSE,
-                                   transform = FALSE, BMD_TYPE = NA){
+                                   transform = FALSE, BMD_TYPE = NA, threads = 2){
     Y <- as.matrix(Y) 
     D <- as.matrix(D) 
     
@@ -259,6 +260,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
 
     #For MLE 
     if (type_of_fit == 2){
+      .set_threads(threads)
       PR = .MLE_bounds_continuous(model_type,distribution,degree, is_increasing)
       PR = PR$priors
     }
@@ -347,6 +349,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
   # // return(PR)
     if (fit_type == "mcmc"){
       
+      .set_threads(threads)
       rvals <- .run_continuous_single_mcmc(fitmodel,model_data$SSTAT,model_data$X,
                                           PR ,options, is_log_normal, sstat) 
    
@@ -402,6 +405,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
     }else{
       
       options[7] <- (ewald == TRUE)*1
+      .set_threads(threads)
       rvals   <- .run_continuous_single(fitmodel,model_data$SSTAT,model_data$X,
   						                          PR,options, dist_type)
      

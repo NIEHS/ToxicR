@@ -32,7 +32,7 @@ MAdensity_plot <- function(A) {
   qprob <- 0.05
 
   # Dose levels
-  data <- A$Individual_Model_1$data
+  data <- A[[fit_idx[1]]]$data
   doses <- data[, 1]
 
 
@@ -116,7 +116,7 @@ MAdensity_plot <- function(A) {
   #
   # idx <- sample(1:9, length(A$Individual_Model_1$mcmc_result$BMD_samples),replace=TRUE,prob=A$posterior_probs)
 
-  idx <- sample(1:length(fit_idx), length(A$Individual_Model_1$mcmc_result$BMD_samples), replace = TRUE, prob = A$posterior_probs)
+  idx <- sample(1:length(fit_idx), length(A[[fit_idx[1]]]$mcmc_result$BMD_samples), replace = TRUE, prob = A$posterior_probs)
 
   df <- NA
 
@@ -137,9 +137,9 @@ MAdensity_plot <- function(A) {
 
 
   # Select MA values
-  BMD_MA <- matrix(NA, length(A$Individual_Model_1$mcmc_result$BMD_samples), 1)
+  BMD_MA <- matrix(NA, length(A[[fit_idx[1]]]$mcmc_result$BMD_samples), 1)
 
-  for (i in 1:length(A$Individual_Model_1$mcmc_result$BMD_samples)) {
+  for (i in 1:length(A[[fit_idx[1]]]$mcmc_result$BMD_samples)) {
     # BMD_MA[i,1]<-combine_samples[sample(nrow(combine_samples), size=1, replace=TRUE),idx[i]]
     j <- sample(nrow(df_samples), size = 1, replace = TRUE)
     BMD_MA[i, 1] <- df_samples[j, idx[i]]
@@ -185,18 +185,18 @@ MAdensity_plot <- function(A) {
   class_list <- names(A)
 
   if (class(A)[2] == "BMDdichotomous_MA_maximized") {
-    fit_idx <- grep("Fitted_Model", class_list)
+    fit_idx <- grep("Indiv_", class_list)
     qprob <- 0.05
 
     # Dose levels
-    data <- A$Fitted_Model_1$data
+    data <- A[[fit_idx[1]]]$data
     doses <- data[, 1]
   } else {
     fit_idx <- grep("Indiv_", class_list)
     qprob <- 0.05
 
     # Dose levels
-    data <- A$Individual_Model_1$data
+    data <- A[[fit_idx[1]]]$data
     doses <- data[, 1]
   }
 
@@ -313,7 +313,7 @@ MAdensity_plot <- function(A) {
   qprob <- 0.05
 
   # Dose levels
-  data <- A$Individual_Model_1$data
+  data <- A[[fit_idx[1]]]$data
   doses <- data[, 1]
 
 
@@ -343,7 +343,7 @@ MAdensity_plot <- function(A) {
 
   t_combine <- t_combine[-1, ]
 
-  idx <- sample(1:length(fit_idx), length(A$Individual_Model_1$mcmc_result$BMD_samples), replace = TRUE, prob = A$posterior_probs)
+  idx <- sample(1:length(fit_idx), length(A[[fit_idx[1]]]$mcmc_result$BMD_samples), replace = TRUE, prob = A$posterior_probs)
 
   df <- NA
   ##

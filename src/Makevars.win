@@ -1,8 +1,8 @@
 PKG_CPPFLAGS= -I../windows/gsl-2.7/include -I../windows/nlopt-2.7.1/include  -I./ -I./code_base  -I./include -DR_COMPILATION -ftree-vectorize -Os -O3 -Wno-ignored-attributes -Wno-sign-compare -Wno-unused -Wa,-mbig-obj -Wno-builtin-macro-redefined -Wno-comment -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
 PKG_LIBS= -L../windows/nlopt-2.7.1/lib${R_ARCH}${CRT}  -L../windows/gsl-2.7/lib${R_ARCH}${CRT} -lgsl -lgslcblas -lnlopt
 
-CXX14FLAGS = -Wno-ignored-attributes -Wno-sign-compare -Wno-unused -Wno-builtin-macro-redefined
-CXX11FLAGS = -Wno-ignored-attributes -Wno-sign-compare -Wno-unused -Wno-builtin-macro-redefined
+CXX14FLAGS= -Wno-ignored-attributes -Wno-sign-compare -Wno-unused -Wno-builtin-macro-redefined
+CXX11FLAGS= -Wno-ignored-attributes -Wno-sign-compare -Wno-unused -Wno-builtin-macro-redefined
 
 POLYK        = $(wildcard polyK/*.cpp)
 MAIN         = $(wildcard *.cpp)

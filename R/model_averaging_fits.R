@@ -23,6 +23,7 @@
 #' @param samples the number of samples to take (MCMC only)
 #' @param burnin the number of burnin samples to take (MCMC only)
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
+#' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #' @return This function model object containing a list of individual fits and model averaging fits
 #' \itemize{
 #'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
@@ -47,7 +48,7 @@
 ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
                               BMR_TYPE = "sd", BMR = 0.1, point_p = 0.01,
                               alpha = 0.05, EFSA = TRUE, samples = 21000,
-                              burnin = 1000, BMD_TYPE = NA) {
+                              burnin = 1000, BMD_TYPE = NA, threads=2) {
   myD <- Y
   Y <- as.matrix(Y)
   D <- as.matrix(D)
@@ -218,7 +219,8 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     }
   }
   options <- c(rt, BMR, point_p, alpha, is_increasing, samples, burnin)
-
+  
+  .set_threads(threads)
   if (fit_type == "mcmc") {
     temp_r <- .run_continuous_ma_mcmc(
       priors, models, dlists, Y, D,
@@ -265,7 +267,10 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
           temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
         }
       }
-
+      #add NAs if bad hessian or NaN BMD
+      if(det(temp[[jj]]$covariance) < 0 || is.na(temp[[jj]]$bmd[1])){
+        tempn$posterior_probs[jj] <- NA
+      }
       names(temp[[jj]]$bmd) <- c("BMD", "BMDL", "BMDU")
       temp[[jj]]$options <- options
       class(temp[[jj]]) <- "BMDcont_fit_MCMC"
@@ -290,7 +295,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       ii <- nrow(data_temp)
 
       temp$ma_bmd <- data_temp
-      tempn$posterior_probs[is.nan(tempn$posterior_probs)] <- 0
+      #tempn$posterior_probs[is.nan(tempn$posterior_probs)] <- 0
       if (length(data_temp) > 10 && (abs(sum(tempn$posterior_probs,na.rm=TRUE) - 1) <= 1e-8)) {
         te <- splinefun(data_temp[, 2, drop = F], data_temp[, 1, drop = F], method = "monoH.FC",ties=mean)
         temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
@@ -332,8 +337,14 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
           temp[[ii]]$bmd <- c(NA, NA, NA)
         }
       }
-      names(temp[[jj]]$bmd) <- c("BMD", "BMDL", "BMDU")
-      temp[[jj]]$options <- options
+
+      #add NAs if bad hessian or NaN BMD
+      if(det(temp[[ii]]$covariance) < 0 || is.na(temp[[ii]]$bmd[1])){
+        temp$posterior_probs[ii] <- NA
+      }
+
+      names(temp[[ii]]$bmd) <- c("BMD", "BMDL", "BMDU")
+      temp[[ii]]$options <- options
       # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
       names(temp)[ii] <- sprintf("Indiv_%s_%s",model_list2[ii], distribution_list[ii])
       class(temp[[ii]]) <- "BMDcont_fit_maximized"
@@ -346,13 +357,13 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       temp_me <- temp_me[!is.infinite(temp_me[, 1]), ]
       temp_me <- temp_me[!is.na(temp_me[, 1]), ]
       temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
-      temp$posterior_probs[is.nan(temp$posterior_probs)] <- 0
+      #temp$posterior_probs[is.nan(temp$posterior_probs)] <- 0
 
       if(min(temp_me[,2]) > alpha){
         temp_me <- rbind(c(0,0), temp_me)
         warning("BMDL may be inaccurate")
       }
-      if ((nrow(temp_me) > 10) && abs(sum(temp$posterior_probs) - 1) <= 1e-8) {
+      if ((nrow(temp_me) > 10) && abs(sum(temp$posterior_probs, na.rm=TRUE) - 1) <= 1e-8) {
         te <- splinefun(sort(temp_me[, 2, drop = F]), sort(temp_me[, 1, drop = F]), method = "monoH.FC",ties=mean)
         temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
 
@@ -434,7 +445,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "laplace",
                                BMR_TYPE = "extra",
                                BMR = 0.1, point_p = 0.01, alpha = 0.05, samples = 21000,
-                               burnin = 1000, BMD_TYPE = NA) {
+                               burnin = 1000, BMD_TYPE = NA, threads = 2) {
   D <- as.matrix(D)
   Y <- as.matrix(Y)
   N <- as.matrix(N)
@@ -495,6 +506,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
   o2 <- c(BTYPE, 2, samples, burnin)
 
   data <- as.matrix(cbind(D, Y, N))
+  .set_threads(threads)
   if (fit_type == "laplace") {
     # Laplace Run
     temp <- .run_ma_dichotomous(

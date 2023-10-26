@@ -6,13 +6,13 @@
 # See https://github.com/r-lib/actions/tree/master/examples#readme for
 # additional example workflows available for the R community.
 
-name: builds
+name: Valgrind Check
 
 on:
   pull_request:
     branches: [ "main" ]
-  push:
-    branches: [ "github-actions-build" ]
+  # push:
+  #   branches: [ "github-actions-build" ]
   workflow_dispatch: 
     
   
@@ -83,12 +83,12 @@ jobs:
         run: rcmdcheck::rcmdcheck(build_args = "--no-build-vignettes", args = c("--use-valgrind", "--no-codoc", "--no-examples", "--no-manual", "--ignore-vignettes"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
         
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ runner.os }}-rrelease-results
-          path: check
+      # - name: Upload check results
+      #   if: failure()
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ runner.os }}-rrelease-results
+      #     path: check
   # builder:
   #   runs-on: ${{ matrix.config.os }}
   #   name: ${{ matrix.config.os }} (${{ matrix.config.r }})

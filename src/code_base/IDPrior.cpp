@@ -24,7 +24,7 @@
 //         For the improper prior, this is not used but it still defines an \
 	//         option for the initialization.  The third column specifies the
 //		   dispersion parameter.
-double IDPrior::neg_log_prior(Eigen::MatrixXd theta)
+double IDPrior::neg_log_prior(Eigen::MatrixXd theta, bool bound_check = false)
 {
 	double returnV = double(theta.rows()) * log(0.5 * M_2_SQRTPI * M_SQRT1_2);
 	double mean = 0;
@@ -38,7 +38,10 @@ double IDPrior::neg_log_prior(Eigen::MatrixXd theta)
 		if (theta(i, 0) < prior_spec(i, 3) ||
 			theta(i, 0) > prior_spec(i, 4))
 		{
-			returnV = std::numeric_limits<double>::infinity();
+			if (bound_check == true){
+				returnV = std::numeric_limits<double>::infinity();
+			}
+			// returnV = std::numeric_limits<double>::infinity();
 			break;
 		}
 		switch (t)

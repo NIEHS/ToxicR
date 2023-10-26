@@ -66,7 +66,6 @@ using Rcpp::as;
 #include "continuous_clean_aux.h"
 #include "continuous_entry_code.h"
 #include "dichotomous_entry_code.h"
-
 /*
  *
  */

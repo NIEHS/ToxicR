@@ -25,7 +25,7 @@
     | |/ _ \\ \\/ / |/ __|  _  /
     | | (_) >  <| | (__| | \\ \\
     |_|\\___/_/\\_\\_|\\___|_|  \\_\\
-                           23.4.1.1.0
+                           23.10.1.1.1
     ___
     | |
     / \\                   ____()()
@@ -99,8 +99,11 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       "; Most recent version available on GitHub: v", github_pkg_version,
       "\n\nYou have an option to update the package ",
       "with the function `update_ToxicR()`. ",
-      "If you do so, make sure to restart R.\n")
+      "If you do so, make sure to restart R.\n\n")
   }
   packageStartupMessage(msg)
   packageStartupMessage(startup_message)
+  .set_threads(2);
+  open_mp_message <- "OpenMP threads set to 2.\n"
+  packageStartupMessage(open_mp_message)
 }

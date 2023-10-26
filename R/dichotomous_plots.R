@@ -176,14 +176,14 @@
 
     plot_gg <- plot_gg + geom_ribbon(aes(x = test_doses, ymin = lq, ymax = uq), fill = "blue", alpha = 0.1)
     plot_gg <- plot_gg +
-      geom_line(aes(x = test_doses, y = me), col = "blue", size = 2) + geom_point(aes(x = doses, y = probs))
+      geom_line(aes(x = test_doses, y = me), col = "blue", linewidth = 2) + geom_point(aes(x = doses, y = probs))
 
 
     plot_gg <- plot_gg +
       geom_segment(aes(
         x = fit$bmd[2], y = temp_fit(fit$bmd[1]), xend = fit$bmd[3],
         yend = temp_fit(fit$bmd[1])
-      ), color = "darkslategrey", size = 1.2, alpha = 0.9) +
+      ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9) +
       annotate(
         geom = "text", x = fit$bmd[2], y = temp_fit(fit$bmd[1]),
         label = "[", size = 10, color = "darkslategrey", alpha = 0.9
@@ -305,14 +305,14 @@
 
 
     plot_gg <- plot_gg +
-      geom_line(aes(x = test_doses, y = me), col = "blue", size = 1.2) + geom_point(aes(x = doses, y = probs))
+      geom_line(aes(x = test_doses, y = me), col = "blue", linewidth = 1.2) + geom_point(aes(x = doses, y = probs))
 
 
     plot_gg <- plot_gg +
       geom_segment(aes(
         x = fit$bmd[2], y = temp_fit(fit$bmd[1]), xend = fit$bmd[3],
         yend = temp_fit(fit$bmd[1])
-      ), color = "darkslategrey", size = 1.2, alpha = 0.9) +
+      ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9) +
       annotate(
         geom = "text", x = fit$bmd[2], y = temp_fit(fit$bmd[1]),
         label = "[", size = 10, color = "darkslategrey", alpha = 0.9
@@ -355,7 +355,7 @@
       max_dose <- max(data_d[, 1])
       min_dose <- min(data_d[, 1])
       test_doses <- seq(min_dose, max_dose, (max_dose - min_dose) / 500)
-      ma_samps <- sample(fit_idx, n_samps, replace = TRUE, prob = A$posterior_probs)
+      ma_samps <- sample(fit_idx, n_samps, replace = TRUE, prob = unname(A$posterior_probs))
       temp_f <- matrix(0, n_samps, length(test_doses))
       temp_bmd <- rep(0, length(test_doses))
 
@@ -428,7 +428,7 @@
         geom_ribbon(aes(x = test_doses, ymin = lq, ymax = uq), fill = "blue", alpha = 0.1)
 
       plot_gg <- plot_gg +
-        geom_line(aes(x = test_doses, y = me), col = "blue", size = 2) +
+        geom_line(aes(x = test_doses, y = me), col = "blue", linewidth = 2) +
         geom_point(aes(x = doses, y = probs))
 
 
@@ -440,7 +440,7 @@
         geom_segment(aes(
           x = A$bmd[2], y = temp_fit(A$bmd[1]), xend = A$bmd[3],
           yend = temp_fit(A$bmd[1])
-        ), color = "darkslategrey", size = 1.2, alpha = 0.9)
+        ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9)
       plot_gg <- plot_gg +
         annotate(
           geom = "text", x = A$bmd[2], y = temp_fit(A$bmd[1]),
@@ -522,7 +522,7 @@
           }
 
           col <- "coral3"
-          temp_df <- data.frame(x_axis = test_doses, y_axis = f, cols = col, model_no = ii, alpha_lev = A$posterior_probs[ii])
+          temp_df <- data.frame(x_axis = test_doses, y_axis = f, cols = col, model_no = ii, alpha_lev = unname(A$posterior_probs[ii]))
           df <- rbind(df, temp_df)
 
           # SL Updated 06/18/21 -- Transparency update based on posterior probability and Y scale for dichotomous case
@@ -610,7 +610,7 @@
         labs(x = "Dose", y = "Proportion", title = "Model : Dichotomous MA, Fit type : Laplace") +
         theme_minimal()
 
-      plot_gg <- plot_gg + geom_line(aes(x = test_doses, y = me), col = "blue", size = 1.2) +
+      plot_gg <- plot_gg + geom_line(aes(x = test_doses, y = me), col = "blue", linewidth = 1.2) +
         geom_point(aes(x = doses, y = probs))
 
 
@@ -620,7 +620,7 @@
         geom_segment(aes(
           x = A$bmd[2], y = temp_fit(A$bmd[1]), xend = A$bmd[3],
           yend = temp_fit(A$bmd[1])
-        ), color = "darkslategrey", size = 1.2, alpha = 0.9)
+        ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9)
       plot_gg <- plot_gg +
         annotate(
           geom = "text", x = A$bmd[2], y = temp_fit(A$bmd[1]),
@@ -668,7 +668,7 @@
           }
 
           col <- "coral3"
-          temp_df <- data.frame(x_axis = test_doses, y_axis = f, cols = col, model_no = ii, alpha_lev = A$posterior_probs[ii])
+          temp_df <- data.frame(x_axis = test_doses, y_axis = f, cols = col, model_no = ii, alpha_lev = unname(A$posterior_probs[ii]))
           df <- rbind(df, temp_df)
 
           # SL Updated 06/18/21 -- Transparency update based on posterior probability and Y scale for dichotomous case

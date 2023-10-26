@@ -3282,7 +3282,7 @@ OS_FLAG="$(uname)"
 if test x"${OS_FLAG}" == x"Darwin";then
      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-     OPENMP=""
+     OPENMP="-DNO_OMP"
 else
      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
@@ -3498,6 +3498,7 @@ else
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
 fi
+
 
 
     if test x"${have_cmake}" == x"no"; then

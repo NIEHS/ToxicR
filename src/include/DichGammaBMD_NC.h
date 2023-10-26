@@ -41,9 +41,30 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_cdf.h>
+#include <gsl/gsl_errno.h>
 
 #include "log_likelihoods.h"
 #include "binomModels.h"
+
+
+class ErrorHandler {
+	public: 
+
+	static void gsl_err_gamma_extra_z_handler(const char * reason,
+	const char * file, 
+	int line, 
+	int gsl_errno
+	) {
+		std::cerr << "GSL error in file " << file << ", line " << line << ", reason " << reason << std::endl;
+		if (gsl_errno == GSL_EDOM)  {
+			std::cerr << "Domain Error!" << std::endl;
+		} else if (gsl_errno == GSL_EINVAL) {
+			std::cerr << "Invalid argument!" << std::endl;
+		} else if (gsl_errno == GSL_EROUND) {
+			std::cerr << "Round off error!" << std::endl;
+		}
+	}
+};
 
 // void gradient(Eigen::MatrixXd v, double *g, void *data, std::function<double(Eigen::MatrixXd, void*)> math_func)
 struct log_gamma_inequality
@@ -335,7 +356,11 @@ public:
 		double a = GAMMA_A(theta(1, 0));
 		// clamp BMR to 0-1 (avoiding memory leaks)
 		BMR = std::max(1e-6, std::min(BMR, 1.0 - 1e-6));
+		
+		// gsl_set_error_handler(ErrorHandler::gsl_err_gamma_extra_z_handler);
+
 		double Z = GAMMA_EXTRA_Z(g, a, BMR);
+		
 
 		double BETA = Z / BMD;
 
