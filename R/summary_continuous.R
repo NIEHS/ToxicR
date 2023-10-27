@@ -107,7 +107,12 @@
   returnV <- list()
 
   #alpha <- .evaluate_alpha(...)
-  alpha <- model$options[4]
+  #alpha is different for dichotomous
+  if(any(grepl("dich", class(model)))){
+    alpha <- model$options[2]
+  }else{
+    alpha <- model$options[4]
+  }
 
   returnV$fit_method <- "Bayesian:MCMC"
   returnV$prior <- model$prior
@@ -151,7 +156,12 @@
   model <- object
   #alpha <- .evaluate_alpha(...)
   tmp_idx <- grep("Indiv_", names(model))
-  alpha <- model[[tmp_idx[1]]]$options[4]
+  #alpha is different for dichotomous
+  if(any(grepl("dichotomous", class(model)))){
+    alpha <- model[[tmp_idx[1]]]$options[2]
+  }else{
+    alpha <- model[[tmp_idx[1]]]$options[4]
+  }
 
   returnV <- list()
 
@@ -222,7 +232,12 @@
   model <- object
   #alpha <- .evaluate_alpha(...)
   tmp_idx <- grep("Indiv_", names(model))
-  alpha <- model[[tmp_idx[1]]]$options[4]
+  #alpha is different for dichotomous
+  if(any(grepl("dichotomous", class(model)))){
+    alpha <- model[[tmp_idx[1]]]$options[2]
+  }else{
+    alpha <- model[[tmp_idx[1]]]$options[4]
+  }
 
   returnV <- list()
 
