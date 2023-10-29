@@ -1,4 +1,14 @@
 # Changes
+## Version 23.10.1.1.1
+## The following cumulative fixes are in version 23.10.1.1.1
+-  The function summary() would sometimes return a different BMD/BMDL than ma_continuous_fit(),
+   this is now fixed. 
+-  When the profile likelihood is used and the profile did not properly bound the BMDL, the function
+   could return a negative BMDL.  This behavior has been fixed, and it now reports suspect model fits
+   of this form.
+-  For edge datasets, the MA may return an invalid result due to difficulty in computing the model 
+   weights using the Laplace approximation.  In these cases, the model weight is set to NA and removed 
+   from the average. 
 ## Version 23.4.1.1.0
 ## The following cumulative fixes are in version 23.4.1.1.0
  - Fixed log-probit fit, which was giving log-logistic plots. 
