@@ -532,17 +532,42 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
         temp[[ii]]$model <- "qlinear"
       }
 
-      te <- splinefun(temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 2], temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
-      temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
+      data_temp <- temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), ]
+      if (length(data_temp) > 0) {
+        data_temp <- data_temp[!is.na(data_temp[, 1]), ]
+        if (nrow(data_temp) > 6) {
+          te <- splinefun(sort(data_temp[, 2, drop = F]), sort(data_temp[, 1, drop = F]), method = "monoH.FC",ties=mean)
+          temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
+          if (max(data_temp[, 2]) < 1 - alpha) {
+            temp[[ii]]$bmd[3] <- 1e300
+          }
+        } else {
+          temp[[ii]]$bmd <- c(NA, NA, NA)
+        }
+      }else{
+        temp[[ii]]$bmd <- c(NA,NA,NA)
+      }
+
+      #te <- splinefun(temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 2], temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
+      #temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
+
+      #add NAs if bad hessian or NaN BMD
+      if(det(temp[[ii]]$covariance) < 0 || is.na(temp[[ii]]$bmd[1])){
+        temp$posterior_probs[ii] <- NA
+      }
+
       names(temp[[ii]]$bmd) <- c("BMD", "BMDL", "BMDU")
       # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
       names(temp)[ii] <- sprintf("Indiv_%s_%s", model_list[ii], distribution_list[ii])
 
       tmp_id <- which(names(temp) == "BMD_CDF")
       #  temp = temp[-tmp_id]
-      names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
+      temp[[ii]]$options <- c(o1, o2)
+
+      #names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
 
     }
+    names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
 
     class(temp) <- c("BMDdichotomous_MA", "BMDdichotomous_MA_laplace")
   } else {
@@ -573,8 +598,31 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
       if (temp[[jj]]$model == "quantal-linear") {
         temp[[jj]]$model <- "qlinear"
       }
-      te <- splinefun(temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 2], temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
-      temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
+
+      data_temp <- temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), ]
+      if (length(data_temp) > 0) {
+        data_temp <- data_temp[!is.na(data_temp[, 1]), ]
+        if (nrow(data_temp) > 6) {
+          te <- splinefun(sort(data_temp[, 2, drop = F]), sort(data_temp[, 1, drop = F]), method = "monoH.FC",ties=mean)
+          temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
+          if (max(data_temp[, 2]) < 1 - alpha) {
+            temp[[ii]]$bmd[3] <- 1e300
+          }
+        } else {
+          temp[[ii]]$bmd <- c(NA, NA, NA)
+        }
+      }else{
+        temp[[ii]]$bmd <- c(NA,NA,NA)
+      }
+
+      #te <- splinefun(temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 2], temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
+      #temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
+
+      #add NAs if bad hessian or NaN BMD
+      if(det(temp[[ii]]$covariance) < 0 || is.na(temp[[ii]]$bmd[1])){
+        tempn$posterior_probs[ii] <- NA
+      }
+
       class(temp[[jj]]) <- "BMDdich_fit_MCMC"
       jj <- jj + 1
     }
