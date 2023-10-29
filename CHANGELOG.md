@@ -8,7 +8,11 @@
    of this form.
 -  For edge datasets, the MA may return an invalid result due to difficulty in computing the model 
    weights using the Laplace approximation.  In these cases, the model weight is set to NA and removed 
-   from the average. 
+   from the average.
+## New Features
+ - By default, ToxicR now uses 2 threads to comply with CRAN's policy. All functions allow the user to 
+   specify more threads if available. This new default will slow down MA computations, but it is
+   necessary to put ToxicR back on CRAN. 
 ## Version 23.4.1.1.0
 ## The following cumulative fixes are in version 23.4.1.1.0
  - Fixed log-probit fit, which was giving log-logistic plots. 
