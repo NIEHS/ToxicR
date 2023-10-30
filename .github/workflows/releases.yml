@@ -62,7 +62,7 @@ jobs:
       - name: Read VERSION file
         id: getversion
         run: |
-          VERSION=$(grep Version DESCRIPTION | awk '{print $NF}')
+          VERSION=$(cat DESCRIPTION | grep -Po '(?<=Version\:\s).*' )
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
       - name: Install gsl (Mac)
         if: runner.os == 'macOS'
