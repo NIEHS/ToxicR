@@ -63,8 +63,7 @@ jobs:
         id: getversion
         run: |
           VERSION=$(grep Version DESCRIPTION | awk '{print $NF}')
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "::set-output name=version::$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
       - name: Install gsl (Mac)
         if: runner.os == 'macOS'
         run: |
@@ -79,26 +78,26 @@ jobs:
       - name: Test Install  (Windows)
         if: runner.os == 'Windows'
         shell: cmd
-        run: R CMD INSTALL --build ToxicR_%VERSION%.tar.gz
+        run: R CMD INSTALL --build ToxicR_${{ steps.getversion.outputs.VERSION }}.tar.gz
       - name: Test Install
         if: runner.os == 'Linux' || runner.os == 'macOs'
-        run: R CMD INSTALL --build ToxicR_%VERSION%.tar.gz
+        run: R CMD INSTALL --build ToxicR_${{ steps.getversion.outputs.VERSION }}.tar.gz
       - uses: svenstaro/upload-release-action@v2
         if: runner.os == 'macOs'
         with:
             tag: ${{ github.ref }}
-            file: ToxicR_%VERSION%.tgz
-            asset_name: ToxicR_%VERSION%-x86_64-macOs-R.${{ matrix.config.r }}.tgz
+            file: ToxicR_${{ steps.getversion.outputs.VERSION }}.tgz
+            asset_name: "ToxicR_${{ steps.getversion.outputs.VERSION }}-x86_64-macOs-R.${{ matrix.config.r }}.tgz"
       - uses: svenstaro/upload-release-action@v2
         if: runner.os == 'Linux'
         with:
             tag: ${{ github.ref }}
-            file: ToxicR_%VERSION%_R_x86_64-pc-linux-gnu.tar.gz
-            asset_name: ToxicR_%VERSION%-x86_64-linux-R.${{ matrix.config.r }}.zip
+            file: "ToxicR_${{ steps.getversion.outputs.VERSION }}_R_x86_64-pc-linux-gnu.tar.gz"
+            asset_name: ToxicR_${{ steps.getversion.outputs.VERSION }}-x86_64-linux-R.${{ matrix.config.r }}.zip
       - uses: svenstaro/upload-release-action@v2
         if: runner.os == 'Windows'
         with:
             tag: ${{ github.ref }}
-            file: ToxicR_%VERSION%.zip
-            asset_name: ToxicR_%VERSION%-windows-R.${{ matrix.config.r }}.zip
+            file: ToxicR_${{ steps.getversion.outputs.VERSION }}.zip
+            asset_name: ToxicR_${{ steps.getversion.outputs.VERSION }}-windows-R.${{ matrix.config.r }}.zip
         
