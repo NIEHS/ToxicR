@@ -1,7 +1,7 @@
 Package: ToxicR
 Type: Package
 Title: Analyzing Toxicology Dose-Response Data
-Version: 23.10.1.1.1.3
+Version: 23.10.1.1.2
 Date: 2023-10-23
 Authors@R: 
     c(
@@ -16,6 +16,13 @@ Authors@R:
     person(given ="Eric",
            family="Wimberly",
            role = "ctb"),
+    person(given = "Shail",
+           family = "Choksi",
+	   role = "ctb",
+	   comment = "Setup github actions for automated tests and builds."),
+    person(given = "Brian",
+           family = "Kidd",
+	   role = "ctb"),
     person(given = "Keith",
            family = "Shockley",
            role = "com"),
@@ -48,10 +55,6 @@ Authors@R:
            family = "Eddelbuettel",
            role = "ctb",
            comment ="Contributed script to download GSL, as in RcppGSL."),
-    person(given = "Shail",
-           family = "Choksi",
-	   role = "ctb",
-	   comment = "Setup github actions for automated tests and builds."),
     person("U.S. Deptartment of Health and Human Services (US HHS), National Institute of Environmental Health Sciences (NIEHS)",
            role="cph",
            comment ="Owns Copyright for all ToxicR code outside NLOPT and nloptr scripts.")
