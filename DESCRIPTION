@@ -1,7 +1,7 @@
 Package: ToxicR
 Type: Package
 Title: Analyzing Toxicology Dose-Response Data
-Version: 23.10.1.1.1
+Version: 23.10.1.1.2
 Date: 2023-10-23
 Authors@R: 
     c(
@@ -16,6 +16,13 @@ Authors@R:
     person(given ="Eric",
            family="Wimberly",
            role = "ctb"),
+    person(given = "Shail",
+           family = "Choksi",
+	   role = "ctb",
+	   comment = "Setup github actions for automated tests and builds."),
+    person(given = "Brian",
+           family = "Kidd",
+	   role = "ctb"),
     person(given = "Keith",
            family = "Shockley",
            role = "com"),

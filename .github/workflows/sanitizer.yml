@@ -1,4 +1,4 @@
-name: builds
+name: UBSAN/ASAN Checks
 
 on:
   pull_request:
