@@ -569,35 +569,44 @@
         fit_loop <- A[[ii]]
 
         if (fit_loop$model == "hill") {
-          temp_f[ii, ] <- .dich_hill_f(fit_loop$parameters, test_doses)
+          weight <- A$posterior_probs[ii]
+          temp_f[ii, ] <- .dich_hill_f(fit_loop$parameters, test_doses)*weight
         }
         if (fit_loop$model == "gamma") {
-          temp_f[ii, ] <- .dich_gamma_f(fit_loop$parameters, test_doses)
+          weight <- A$posterior_probs[ii]
+          temp_f[ii, ] <- .dich_gamma_f(fit_loop$parameters, test_doses)*weight
         }
         if (fit_loop$model == "logistic") {
-          temp_f[ii, ] <- .dich_logist_f(fit_loop$parameters, test_doses)
+          weight <- A$posterior_probs[ii]
+          temp_f[ii, ] <- .dich_logist_f(fit_loop$parameters, test_doses)*weight
         }
         if (fit_loop$model == "log-logistic") {
-          temp_f[ii, ] <- .dich_llogist_f(fit_loop$parameters, test_doses)
+          weight <- A$posterior_probs[ii]
+          temp_f[ii, ] <- .dich_llogist_f(fit_loop$parameters, test_doses)*weight
         }
         if (fit_loop$model == "probit") {
-          temp_f[ii, ] <- .dich_probit_f(fit_loop$parameters, test_doses)
+          weight <- A$posterior_probs[ii]
+          temp_f[ii, ] <- .dich_probit_f(fit_loop$parameters, test_doses)*weight
         }
         if (fit_loop$model == "log-probit") {
-          temp_f[ii, ] <- .dich_lprobit_f(fit_loop$parameters, test_doses)
+          weight <- A$posterior_probs[ii]
+          temp_f[ii, ] <- .dich_lprobit_f(fit_loop$parameters, test_doses)*weight
         }
         if (fit_loop$model == "multistage") {
-          temp_f[ii, ] <- .dich_multistage_f(fit_loop$parameters, test_doses)
+          weight <- A$posterior_probs[ii]
+          temp_f[ii, ] <- .dich_multistage_f(fit_loop$parameters, test_doses)*weight
         }
         if (fit_loop$model == "qlinear") {
-          temp_f[ii, ] <- .dich_qlinear_f(fit_loop$parameters, test_doses)
+          weight <- A$posterior_probs[ii]
+          temp_f[ii, ] <- .dich_qlinear_f(fit_loop$parameters, test_doses)*weight
         }
         if (fit_loop$model == "weibull") {
-          temp_f[ii, ] <- .dich_weibull_f(fit_loop$parameters, test_doses)
+          weight <- A$posterior_probs[ii]
+          temp_f[ii, ] <- .dich_weibull_f(fit_loop$parameters, test_doses)*weight
         }
       }
 
-      me <- colMeans(temp_f)
+      me <- colSums(temp_f)
 
       # Fitting line is not from sample- Need to double check with Matt
 
