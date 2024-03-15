@@ -57,7 +57,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
                                    prior = NULL, BMR = 0.1,
                                    alpha = 0.05, degree = 2, samples = 21000,
                                    burnin = 1000, threads=2, seed = 12331) {
-  setseedGSL(seed)
+  .setseedGSL(seed)
   Y <- as.matrix(Y)
   D <- as.matrix(D)
   N <- as.matrix(N)

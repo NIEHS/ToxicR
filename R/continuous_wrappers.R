@@ -114,7 +114,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                                    alpha = 0.05, samples = 25000, degree=2,
                                    burnin = 1000, BMD_priors = FALSE, ewald = FALSE,
                                    transform = FALSE, BMD_TYPE = NA, threads = 2, seed = 12331){
-    setseedGSL(seed)
+    .setseedGSL(seed)
     Y <- as.matrix(Y) 
     D <- as.matrix(D) 
     

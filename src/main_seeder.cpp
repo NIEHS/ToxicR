@@ -6,7 +6,7 @@ Seeder* Seeder::instance = nullptr;
 // function: setseedGSL
 // purpose: takes an integer value and sets the GSL seed
 // output: none
-// [[Rcpp::export("setseedGSL")]]
+// [[Rcpp::export(".setseedGSL")]]
 void setseedGSL(int s) {
   Seeder* seeder = Seeder::getInstance();
   seeder->setSeed(s);
