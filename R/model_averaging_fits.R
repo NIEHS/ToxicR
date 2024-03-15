@@ -415,6 +415,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 #' @param samples the number of samples to take (MCMC only)
 #' @param burnin the number of burnin samples to take (MCMC only)
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
+#' @param threads number of threads to use. Default = 2
 #' @return a model object containing a list of single models
 #' \itemize{
 #'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}

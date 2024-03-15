@@ -41,12 +41,11 @@
 #else
 #include <Eigen/Dense>
 #endif
-
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_spline.h>
-#include <gsl/gsl_randist.h>
 #include <gsl/gsl_cdf.h>
 
+#include "seeder.h"
 #include "dBMDstatmod.h"
 #include "cBMDstatmod.h"
 #include "bmd_calculate.h"
@@ -89,14 +88,12 @@ mcmcSamples MCMC_bmd_analysis_DNC(Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::M
   //  ziggurat is used as it is the fastest sampler algorithm gsl has
   Eigen::MatrixXd rNormal(n, samples);
   rNormal.setZero(); 
-  gsl_rng *r;
-  // gsl_rng_env_setup();
-  r = gsl_rng_alloc(gsl_rng_mt19937);
+  Seeder* seeder = Seeder::getInstance();
   for (int i = 0; i < samples; i++)
   {
     for (int j = 0; j < n; j++)
     {
-      rNormal(j, i) = gsl_ran_gaussian_ziggurat(r, 1.0);
+      rNormal(j, i) = seeder->get_gaussian_ziggurat();
     }
   }
 
@@ -138,7 +135,7 @@ mcmcSamples MCMC_bmd_analysis_DNC(Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::M
       double denom = penLike(0, i - 1) + b(0, 0);
 
       double test = exp(numer - denom);
-      double rr = gsl_rng_uniform(r);
+      double rr = seeder->get_uniform();
 
       if (isnan(test))
       {
@@ -167,7 +164,6 @@ mcmcSamples MCMC_bmd_analysis_DNC(Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::M
                         : model.log_likelihood.compute_BMD_ADDED_NC(nSamples.col(i), BMR);
   }
 
-  gsl_rng_free(r);
   /////////////////////////////////////////////////////////////////
   rVal.BMD = BMD;          // vector of burn in BMD samples
   rVal.samples = nSamples; // vector of sample parameters
@@ -228,15 +224,12 @@ mcmcSamples mcmc_continuous(cBMDModel<LL, PR> *model, int samples,
   Eigen::MatrixXd rNormal(n, samples);
   rNormal.setZero(); 
 
-  gsl_rng *r;
-  // gsl_rng_env_setup();
-  r = gsl_rng_alloc(gsl_rng_mt19937);
-  gsl_rng_set(r, mySeed);
+  Seeder* seeder = Seeder::getInstance();
   for (int i = 0; i < samples; i++)
   {
     for (int j = 0; j < n; j++)
     {
-      rNormal(j, i) = gsl_ran_gaussian_ziggurat(r, 1.0);
+      rNormal(j, i) = seeder->get_gaussian_ziggurat();
     }
   }
 
@@ -284,7 +277,7 @@ mcmcSamples mcmc_continuous(cBMDModel<LL, PR> *model, int samples,
       double numer = -model->negPenLike(value) + a(0, 0);
       double denom = penLike(0, i - 1) + b(0, 0);
       double test = exp(numer - denom);
-      double rr = gsl_rng_uniform(r);
+      double rr = seeder->get_uniform();
 
       if (isnan(test))
       {
@@ -314,7 +307,6 @@ mcmcSamples mcmc_continuous(cBMDModel<LL, PR> *model, int samples,
                                  BMR, pointP);
   }
 
-  gsl_rng_free(r);
   /////////////////////////////////////////////////////////////////
   rVal.BMD = BMD;          // vector of BMD samples
   rVal.samples = nSamples; // vector of sample parameters

@@ -32,6 +32,7 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 #include <nlopt.hpp>
+#include "seeder.h"
 #include "log_likelihoods.h"
 #include "IDPrior.h"
 #include "binomModels.h"
@@ -466,14 +467,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   }
   Eigen::MatrixXd test = startV;
   // test = M->startValue();
-  // Set up the random number portion for the code
-  // const gsl_rng_type * T;
-  gsl_rng * r;
-  
-  gsl_rng_env_setup();
- // T = gsl_rng_default;
-  r = gsl_rng_alloc (gsl_rng_mt19937);
-  gsl_rng_set(r, 8675309); // set the same seed for every GA run
+  Seeder* seeder = Seeder::getInstance();
   
   population[NI] = startV; 
   llist[NI] = M->negPenLike(test); 
@@ -484,7 +478,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   for (int i = 0; i < NI; i ++){
     // generate new value to be within the specified bounds
     for (int j = 0; j < M->nParms(); j++) {
-      test(j,0) = startV(j,0) + gsl_ran_flat(r,-1,1);// random number in the bounds
+      test(j,0) = startV(j,0) + seeder->get_ran_flat();// random number in the bounds
       
       if (test(j,0) > ub[j] ){
           test(j,0) = ub[j]; 
@@ -525,7 +519,6 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
   if (population.size() <= 25){
     // couln't find a good starting point return the starting value
     // and pray
-    gsl_rng_free(r); 
     for (int i = 0; i < M->nParms(); i++)	x[i] = startV(i, 0);
     return x; 
   }
@@ -570,7 +563,7 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
          // find the best individual out of tourny_size this individual is:
          // randomly mutatied and differentially evolved based upon the given 
          // individuals in the tourny. 
-         int sel = (int)(population.size()*gsl_rng_uniform(r)); // choose which element in the population
+         int sel = (int)(population.size()*seeder->get_uniform()); // choose which element in the population
          cur_tourny_nll[z] =  it_l[sel]; 
          cur_tourny_parms[z] = population[sel];
        } 
@@ -589,17 +582,17 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
        // randomly select another element to find the diference
        bool correctBounds = true;
        
-       int idx = (int)(cur_tourny_parms.size()-1)*gsl_rng_uniform(r) + 1;    
+       int idx = (int)(cur_tourny_parms.size()-1)*seeder->get_uniform() + 1;    
        Eigen::MatrixXd temp_delta = best_parm - cur_tourny_parms[idx];
        // Create a new child as a mix between the best and some other 
        // value. 
-       Eigen::MatrixXd child =  best_parm+ 0.8*temp_delta*(2*gsl_rng_uniform(r)-1);
+       Eigen::MatrixXd child =  best_parm+ 0.8*temp_delta*(2*seeder->get_uniform()-1);
        correctBounds = true; 
        
       
        for (int iii = 0; iii < M->nParms(); iii++) {
              // perterb the individual values in the child
-             child(iii,0) = child(iii,0) + 0.2*abs(child(iii,0))*(2*gsl_rng_uniform(r)-1);
+             child(iii,0) = child(iii,0) + 0.2*abs(child(iii,0))*(2*seeder->get_uniform()-1);
              if (lb[iii] > child(iii, 0) || ub[iii] < child(iii, 0)) {
                correctBounds = false;
                break;
@@ -668,14 +661,12 @@ std::vector<double> startValue_F(statModel<LL, PR>  *M,
      test = startV; 
    }
 
-//  cout << test <<  endl << endl; 
 	for (int i = 0; i < M->nParms(); i++)	x[i] = test(i, 0);
 
   for (int i = 0; i < M->nParms(); i++){
     if (!isnormal(x[i])){
       x[i] = 0; }
   }
-  gsl_rng_free(r);
 	return x;
 
 }
