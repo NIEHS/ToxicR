@@ -14,7 +14,9 @@
 typedef BSTR BMDS_MODEL_ID;
 #else
 #define BMDS_ENTRY_API
+#ifndef _stdcall
 #define _stdcall
+#endif
 typedef char *BMDS_MODEL_ID;
 #endif // defined WIN32 || defined _WINDOWS
 

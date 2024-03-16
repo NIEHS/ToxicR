@@ -83,7 +83,7 @@ double IDPrior::neg_log_prior(Eigen::MatrixXd theta, bool bound_check = false)
 		}
 	}
 	return -1.0 * returnV;
-};
+}
 
 ///////////////////////////////////////////////////////////
 // Function: neg_log_prior(Eigen::MatrixXd theta)
@@ -136,7 +136,7 @@ Eigen::MatrixXd IDPrior::log_prior(Eigen::MatrixXd theta)
 		}
 	}
 	return -1 * returnV.asDiagonal();
-};
+}
 
 //////////////////////////////////////////////////////
 // Function: prior_mean()
@@ -162,4 +162,4 @@ Eigen::MatrixXd IDPrior::prior_mean()
 		}
 	}
 	return pmean;
-};
+}

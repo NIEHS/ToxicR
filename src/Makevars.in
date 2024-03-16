@@ -1,4 +1,4 @@
-PKG_CXXFLAGS=  -I./code_base -I./include @OPENMP@ @NLOPT_CPPFLAGS@ @GSL_CPPFLAGS@ -DR_COMPILATION -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+PKG_CXXFLAGS=  -I./code_base -I./include @OPENMP@ @NLOPT_CPPFLAGS@ @GSL_CPPFLAGS@ -DR_COMPILATION -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS -DEIGEN_WARNINGS_DISABLED
 PKG_LIBS= $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) @NLOPT_LIBS@  @GSL_LIBS@ @OPENMP@
 CXX14FLAGS= -Wno-ignored-attributes -Wno-sign-compare -Wno-unused -Wno-builtin-macro-redefined
 CXX11FLAGS= -Wno-ignored-attributes -Wno-sign-compare -Wno-unused -Wno-builtin-macro-redefined

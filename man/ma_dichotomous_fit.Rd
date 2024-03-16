@@ -45,7 +45,7 @@ ma_dichotomous_fit(
 
 \item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
 
-\item{threads}{specify the number of OpenMP threads to use for the calculations. Default = 2}
+\item{threads}{number of threads to use. Default = 2}
 }
 \value{
 a model object containing a list of single models

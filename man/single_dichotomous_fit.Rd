@@ -16,7 +16,8 @@ single_dichotomous_fit(
   degree = 2,
   samples = 21000,
   burnin = 1000,
-  threads = 2
+  threads = 2,
+  seed = 12331
 )
 }
 \arguments{
@@ -44,6 +45,8 @@ single_dichotomous_fit(
 \item{burnin}{the number of burnin samples to take (MCMC only)}
 
 \item{threads}{specify the number of OpenMP threads to use for the calculations. Default = 2}
+
+\item{seed}{specify the GSL seed. Default = 12331}
 }
 \value{
 Returns a model object class with the following structure:

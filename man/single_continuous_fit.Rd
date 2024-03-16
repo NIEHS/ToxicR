@@ -22,7 +22,8 @@ single_continuous_fit(
   ewald = FALSE,
   transform = FALSE,
   BMD_TYPE = NA,
-  threads = 2
+  threads = 2,
+  seed = 12331
 )
 }
 \arguments{
@@ -98,6 +99,8 @@ for lognormal data.  For more information, see Aerts, Wheeler, and Abrahantes (2
 \item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
 
 \item{threads}{specify the number of OpenMP threads to use for the calculations. Default = 2}
+
+\item{seed}{specify the GSL seed. Default = 12331}
 }
 \value{
 Returns a model object class with the following structure:
@@ -134,7 +137,7 @@ M2[,2] <- c(6,5.2,2.4,1.1,0.75)
 M2[,3] <- c(20,20,19,20,20)
 M2[,4] <- c(1.2,1.1,0.81,0.74,0.66)
 model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMR_TYPE="sd", BMR=1, ewald = TRUE,
-                             distribution = "normal",fit_type="laplace",model_type = "hill",threads = 2)
+                             distribution = "normal",fit_type="laplace",model_type = "hill",threads = 2, seed = 12331)
 
 summary(model)
 }

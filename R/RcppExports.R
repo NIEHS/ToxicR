@@ -37,6 +37,10 @@
     .Call(`_ToxicR_polyk`, dose, tumor, daysOnStudy)
 }
 
+.setseedGSL <- function(s) {
+    invisible(.Call(`_ToxicR_setseedGSL`, s))
+}
+
 .set_threads <- function(num_threads) {
     invisible(.Call(`_ToxicR_set_threads`, num_threads))
 }
