@@ -17,7 +17,8 @@ ma_continuous_fit(
   samples = 21000,
   burnin = 1000,
   BMD_TYPE = NA,
-  threads = 2
+  threads = 2,
+  seed = 12331
 )
 }
 \arguments{
@@ -56,6 +57,8 @@ See \code{\link{single_continuous_fit}} for details on the models.}
 \item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
 
 \item{threads}{specify the number of OpenMP threads to use for the calculations. Default = 2}
+
+\item{seed}{specify the GSL seed. Default = 12331}
 }
 \value{
 This function model object containing a list of individual fits and model averaging fits
