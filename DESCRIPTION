@@ -1,8 +1,8 @@
 Package: ToxicR
 Type: Package
 Title: Analyzing Toxicology Dose-Response Data
-Version: 23.10.1.1.2
-Date: 2023-10-23
+Version: 23.10.1.1.3
+Date: 2024-04-12
 Authors@R: 
     c(
     person(given = "Matt",
@@ -85,7 +85,7 @@ Suggests: plotly (>= 4.9.2.1), rmarkdown, actuar (>= 3.2-0),ggpubr (>=
         0.4.0), testthat (>= 3.1.0),gridExtra (>= 2.3), VIM (>= 6.1.1),
         knitr (>= 1.36), modules
 NeedsCompilation: yes
-Packaged: 2023-04-11 20:00:54 UTC; Brian.kidd
+Packaged: 2024-04-12 20:00:54 UTC; shail.choksi
 Author: Matt Wheeler [aut, cre] (<https://orcid.org/0000-0002-8242-2391>),
   Sooyeong Lim [aut],
   Eric Wimberly [ctb],
