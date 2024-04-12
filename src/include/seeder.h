@@ -26,7 +26,6 @@ class Seeder {
 
     ~Seeder() {
         if(r) {
-            Rcpp::Rcout << "Singleton destroyed" << std::endl;
             gsl_rng_free(r);
         }
     }
@@ -35,21 +34,16 @@ class Seeder {
         if (seed < 0) {
             Rcpp::stop("Error: Seed must be a positive integer.");
         }
-        
-        // if(currentSeed > 0) {
-        //     Rcpp::Rcout << "Previous GSL seed: " << currentSeed << std::endl;
-        // }
 
         if(r) {
-            // Rcpp::Rcout << "Freeing r before setting it to a new value" << std::endl;
             gsl_rng_free(r);
         }
         gsl_rng_env_setup();
         r = gsl_rng_alloc(gsl_rng_mt19937);
         gsl_rng_set(r, seed);
-        if (currentSeed != seed) {  
-            Rcpp::Rcout << "Updated GSL seed: " << currentSeed << std::endl;
-        }
+        // if (currentSeed != seed) {  
+        //     Rcpp::Rcout << "Updated GSL seed: " << currentSeed << std::endl;
+        // }
         currentSeed = seed;
     } 
 

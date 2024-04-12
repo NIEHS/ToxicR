@@ -17,7 +17,8 @@ ma_dichotomous_fit(
   samples = 21000,
   burnin = 1000,
   BMD_TYPE = NA,
-  threads = 2
+  threads = 2,
+  seed = 12331
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ ma_dichotomous_fit(
 \item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
 
 \item{threads}{number of threads to use. Default = 2}
+
+\item{seed}{specify the GSL seed. Default = 12331}
 }
 \value{
 a model object containing a list of single models
