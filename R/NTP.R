@@ -161,7 +161,11 @@ ntp_polyk <- function(dose, tumor, daysOnStudy) {
 #' @return The results of a global test for difference from background.
 #' @examples
 #'
-#' ntp_jonckeere(response ~ sex + response_type, data = ntp_599_hemotology, dose_name = "concentration")
+#' ntp_jonckeere(
+#'      response ~ sex + response_type, 
+#'      data = ntp_599_hemotology, 
+#'      dose_name = "concentration"
+#' )
 ntp_jonckeere <- function(formula, data, dose_name = "dose", pair = "Williams") {
   if (!is.data.frame(data)) {
     stop("The data do not appear to be in the data frame format.")
@@ -863,7 +867,11 @@ ntp_dunn <- function(formula, data, dose_name = "dose") {
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
 #' @return The results of Dunnet's  test for each level in \eqn{dose_name}
 #' @examples
-#' a <- ntp_dunnett(response ~ sex + response_type, data = ntp_599_hemotology, dose_name = "concentration")
+#' a <- ntp_dunnett(
+#'        response ~ sex + response_type,
+#'        data = ntp_599_hemotology, 
+#'        dose_name = "concentration"
+#' )
 #' summary(a)
 ntp_dunnett <- function(formula, data, dose_name = "dose") {
   mult_comp_test <- NULL
