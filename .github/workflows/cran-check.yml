@@ -25,6 +25,7 @@ jobs:
         uses: actions/cache@v4
         with:
           key: r-${{ hashFiles('DESCRIPTION') }}
+          path: ./cache
       - uses: r-lib/actions/check-r-package@v2
         with:
           args: 'c("--no-manual", "--as-cran")'
