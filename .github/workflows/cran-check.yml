@@ -13,6 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-r@v2
+      - name: Restore R package cache
+        id: cache-packages
+        uses: actions/cache@v4
+        with:
+          key: r-${{ hashFiles('DESCRIPTION') }}
+          path: ${{ env.R_LIBS_USER }}
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck, any::roxygen2
@@ -20,12 +26,6 @@ jobs:
       - name: Document
         run: roxygen2::roxygenise()
         shell: Rscript {0}
-      - name: Cache R packages
-        id: cache-packages
-        uses: actions/cache@v4
-        with:
-          key: r-${{ hashFiles('DESCRIPTION') }}
-          path: ./cache
       - uses: r-lib/actions/check-r-package@v2
         with:
           args: 'c("--no-manual", "--as-cran")'
