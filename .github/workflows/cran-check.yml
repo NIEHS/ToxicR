@@ -10,6 +10,8 @@ permissions:
 jobs:
   cran-check: 
     runs-on: ubuntu-latest
+    env:
+      _R_CHECK_DONTTEST_EXAMPLES_: false
     steps:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-r@v2
