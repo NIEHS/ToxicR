@@ -186,15 +186,15 @@
       ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9) +
       annotate(
         geom = "text", x = fit$bmd[2], y = temp_fit(fit$bmd[1]),
-        label = "[", size = 10, color = "darkslategrey", alpha = 0.9
+        label = "[", linewidth = 10, color = "darkslategrey", alpha = 0.9
       ) +
       annotate(
         geom = "text", x = fit$bmd[3], y = temp_fit(fit$bmd[1]),
-        label = "]", size = 10, color = "darkslategrey", alpha = 0.9
+        label = "]", linewidth = 10, color = "darkslategrey", alpha = 0.9
       ) +
       annotate(
         geom = "point", x = fit$bmd[1], y = temp_fit(fit$bmd[1]),
-        size = 5, color = "darkslategrey", shape = 17, alpha = 0.9
+        linewidth = 5, color = "darkslategrey", shape = 17, alpha = 0.9
       )
 
 
@@ -315,15 +315,15 @@
       ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9) +
       annotate(
         geom = "text", x = fit$bmd[2], y = temp_fit(fit$bmd[1]),
-        label = "[", size = 10, color = "darkslategrey", alpha = 0.9
+        label = "[", linewidth = 10, color = "darkslategrey", alpha = 0.9
       ) +
       annotate(
         geom = "text", x = fit$bmd[3], y = temp_fit(fit$bmd[1]),
-        label = "]", size = 10, color = "darkslategrey", alpha = 0.9
+        label = "]", linewidth = 10, color = "darkslategrey", alpha = 0.9
       ) +
       annotate(
         geom = "point", x = fit$bmd[1], y = temp_fit(fit$bmd[1]),
-        size = 5, color = "darkslategrey", shape = 17, alpha = 0.9
+        linewidth = 5, color = "darkslategrey", shape = 17, alpha = 0.9
       )
 
     return(plot_gg + coord_cartesian(xlim = c(min(doses), max(doses)), expand = F))
@@ -444,15 +444,15 @@
       plot_gg <- plot_gg +
         annotate(
           geom = "text", x = A$bmd[2], y = temp_fit(A$bmd[1]),
-          label = "[", size = 10, color = "darkslategrey", alpha = 0.9
+          label = "[", linewidth = 10, color = "darkslategrey", alpha = 0.9
         ) +
         annotate(
           geom = "text", x = A$bmd[3], y = temp_fit(A$bmd[1]),
-          label = "]", size = 10, color = "darkslategrey", alpha = 0.9
+          label = "]", linewidth = 10, color = "darkslategrey", alpha = 0.9
         ) +
         annotate(
           geom = "point", x = A$bmd[1], y = temp_fit(A$bmd[1]),
-          size = 5, color = "darkslategrey", shape = 17, alpha = 0.9
+          linewidth = 5, color = "darkslategrey", shape = 17, alpha = 0.9
         )
 
 
@@ -636,15 +636,15 @@
       plot_gg <- plot_gg +
         annotate(
           geom = "text", x = A$bmd[2], y = temp_fit(A$bmd[1]),
-          label = "[", size = 10, color = "darkslategrey", alpha = 0.9
+          label = "[", linewidth = 10, color = "darkslategrey", alpha = 0.9
         ) +
         annotate(
           geom = "text", x = A$bmd[3], y = temp_fit(A$bmd[1]),
-          label = "]", size = 10, color = "darkslategrey", alpha = 0.9
+          label = "]", linewidth = 10, color = "darkslategrey", alpha = 0.9
         ) +
         annotate(
           geom = "point", x = A$bmd[1], y = temp_fit(A$bmd[1]),
-          size = 5, color = "darkslategrey", shape = 17, alpha = 0.9
+          linewidth = 5, color = "darkslategrey", shape = 17, alpha = 0.9
         )
       df <- NULL
 
