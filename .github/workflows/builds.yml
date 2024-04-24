@@ -59,7 +59,7 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          sudo apt-get install --yes valgrind
+          sudo apt-get install --yes valgrind libcurl4-openssl-dev
 
       - name: Install dependencies
         run: |
