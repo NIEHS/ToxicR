@@ -141,15 +141,6 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
 #' when loading the packaged). By default, \code{silent_load_pkgs = NULL}
 #' @return there will be no output from this function. Rather, packages
 #' given as inputs to the function will be installed, loaded, and attached.
-#' @examples
-#' \donttest{
-#' prep(data.table)
-#' prep("data.table", silent_if_successful = TRUE)
-#' prep("base", utils, ggplot2, "data.table")
-#' pkgs <- c("ggplot2", "data.table")
-#' prep(pkgs, pkg_names_as_object = TRUE)
-#' prep("data.table", silent_load_pkgs = "data.table")
-#' }
 #'
 prep <- function(..., pkg_names_as_object = FALSE, silent_if_successful = FALSE, silent_load_pkgs = FALSE) {
     arg_list <- as.list(match.call(expand.dots = FALSE))[["..."]]

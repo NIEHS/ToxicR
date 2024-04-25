@@ -288,7 +288,7 @@
   
   if (IS_SUFFICIENT){
     plot_gg<- plot_gg +
-      geom_errorbar(aes(x=doses, ymin=lerror, ymax=uerror),color="black",size=0.8,width=width)+
+      geom_errorbar(aes(x=doses, ymin=lerror, ymax=uerror),color="black",linewidth=0.8,width=width)+
       geom_point(aes(x=doses,y=mean),size=3, shape=21, fill="white")
     
   }else{
@@ -441,7 +441,7 @@
   
   if (IS_SUFFICIENT){
     plot_gg<- plot_gg +
-              geom_errorbar(aes(x=doses, ymin=lerror, ymax=uerror),color="grey",size=0.5, width=3)+
+              geom_errorbar(aes(x=doses, ymin=lerror, ymax=uerror),color="grey", linewidth=0.5, width=3)+
               geom_point(aes(x=doses,y=mean),size=3, shape=21, fill="white")
         
   }else{
@@ -576,7 +576,7 @@
          
               plot_gg<-ggplot()+xlim(-max(test_doses)*5,min(test_doses)*5)+
                   geom_point(aes(x=data_d[,1],y=data_d[,2]))+
-                  geom_errorbar(aes(x=data_d[,1], ymin=lerror, ymax=uerror),color="grey",size=0.8,width=width)+
+                  geom_errorbar(aes(x=data_d[,1], ymin=lerror, ymax=uerror),color="grey",linewidth=0.8,width=width)+
                   xlim(c(min(data_d[,1])-width,max(data_d[,1])*1.03))+
                   labs(x="Dose", y="Response",title="Continous MA fitting")+
                   theme_minimal()
@@ -819,7 +819,7 @@
 
          plot_gg<-ggplot()+xlim(-max(test_doses)*5,min(test_doses)*5)+
            geom_point(aes(x=data_d[,1],y=data_d[,2]))+
-           geom_errorbar(aes(x=data_d[,1], ymin=lerror, ymax=uerror),color="grey",size=0.8,width=width)+
+           geom_errorbar(aes(x=data_d[,1], ymin=lerror, ymax=uerror),color="grey",linewidth=0.8,width=width)+
            xlim(c(min(data_d[,1])-width,max(data_d[,1])*1.03))+
            labs(x="Dose", y="Response",title="Continous MA fitting")+
            theme_minimal()
