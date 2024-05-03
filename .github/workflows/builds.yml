@@ -58,13 +58,8 @@ jobs:
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
       - name: Install system dependencies
-        env:
-          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          Rscript -e "remotes::install_github('r-hub/sysreqs')"
-          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
-          sudo -s eval "$sysreqs"
-          sudo apt-get install --yes valgrind
+          sudo apt-get install --yes valgrind libcurl4-openssl-dev
 
       - name: Install dependencies
         run: |
@@ -82,79 +77,3 @@ jobs:
       - name: Check with valgrind
         run: rcmdcheck::rcmdcheck(build_args = "--no-build-vignettes", args = c("--use-valgrind", "--no-codoc", "--no-examples", "--no-manual", "--ignore-vignettes"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
-        
-      # - name: Upload check results
-      #   if: failure()
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ runner.os }}-rrelease-results
-      #     path: check
-  # builder:
-  #   runs-on: ${{ matrix.config.os }}
-  #   name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-  #   strategy: 
-  #     fail-fast: false
-  #     matrix:
-  #       config:
-  #         - {os: windows-latest, r: 'release'}
-  #         - {os: ubuntu-latest, r: 'release'}
-  #         - {os: macos-latest, r: 'release'}
-  #         - {os: windows-latest, r: '4.2'}
-  #         - {os: ubuntu-latest, r: '4.2'}
-  #         - {os: macos-latest, r: '4.2'}
-  #   env: 
-  #       R_KEEP_PKG_SOURCE: yes
-  #   steps:
-  #     # see this for details: https://msmith.de/2020/03/12/r-cmd-check-github-actions.html
-  #     - name: Configure git
-  #       run: git config --global core.autocrlf false
-  #     - uses: actions/checkout@v3
-  #     - uses: r-lib/actions/setup-pandoc@v2
-  #     - uses: r-lib/actions/setup-tinytex@v2
-  #     - uses: r-lib/actions/setup-r@v2
-  #     - uses: r-lib/actions/setup-r-dependencies@v2
-  #       with:
-  #         cache-version: 2
-  #         extra-packages: |
-  #           any::ggplot2
-  #           any::rcmdcheck
-  #           any::roxygen2
-  #         needs: |
-  #           check
-  #           roxygen2
-  #     - name: Install gsl (Mac)
-  #       if: runner.os == 'macOS'
-  #       run: |
-  #         brew install gsl
-  #     - name: Build package (Windows)
-  #       if: runner.os == 'Windows'
-  #       shell: cmd
-  #       run: R CMD build --no-build-vignettes .
-  #     - name: Build package
-  #       if: runner.os == 'Linux' || runner.os == 'macOs' 
-  #       run: R CMD build --no-build-vignettes .
-  #     - name: Test Install  (Windows)
-  #       if: runner.os == 'Windows'
-  #       shell: cmd
-  #       run: R CMD INSTALL --build ToxicR_23.4.1.1.0.tar.gz
-  #     - name: Test Install
-  #       if: runner.os == 'Linux' || runner.os == 'macOs'
-  #       run: R CMD INSTALL --build ToxicR_23.4.1.1.0.tar.gz
-  #     - name: Upload package (Windows)
-  #       if: runner.os == 'Windows'
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         path: ToxicR_23.4.1.1.0.zip
-  #         name: ToxicR_23.4.1.1.0-${{ runner.os }}-R.${{ matrix.config.r }}.zip
-  #     - name: Upload package (Linux)
-  #       if: runner.os == 'Linux'
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         path: ToxicR_23.4.1.1.0_R_x86_64-pc-linux-gnu.tar.gz
-  #         name: ToxicR_23.4.1.1.0-x86_64-linux-R.${{ matrix.config.r }}.zip
-  #     - name: Upload package (macOs)
-  #       if: runner.os == 'macOs'
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         path: ToxicR_23.4.1.1.0.tgz
-  #         name: ToxicR_23.4.1.1.0-x86_64-macOs-R.${{ matrix.config.r }}.tgz
