@@ -6,7 +6,14 @@
 
 #ifdef R_COMPILATION
 // necessary things to run in R
+#ifdef ToxicR_DEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <RcppEigen.h>
+#pragma GCC diagnostic pop
+#else
+#include <RcppEigen.h>
+#endif
 #include <RcppGSL.h>
 #else
 #include <Eigen/Dense>
@@ -22,165 +29,149 @@
  */
 
 /*implements the basic model model Y = X*/
-class lognormalPOWER_BMD_NC : public lognormalLLModel
-{
+class lognormalPOWER_BMD_NC : public lognormalLLModel {
 public:
-	lognormalPOWER_BMD_NC(Eigen::MatrixXd tY, Eigen::MatrixXd tX, bool SS,
-						  int junk) : lognormalLLModel(tY, tX, SS){
-										  // if it is a sufficient statistics model
-									  };
+  lognormalPOWER_BMD_NC(Eigen::MatrixXd tY, Eigen::MatrixXd tX, bool SS,
+                        int junk)
+      : lognormalLLModel(tY, tX, SS){
+            // if it is a sufficient statistics model
+        };
 
-	lognormalPOWER_BMD_NC(Eigen::MatrixXd tY, Eigen::MatrixXd tX, bool SS, bool CV,
-						  int junk) : lognormalLLModel(tY, tX, SS){
-										  // if it is a sufficient statistics model
-									  };
+  lognormalPOWER_BMD_NC(Eigen::MatrixXd tY, Eigen::MatrixXd tX, bool SS,
+                        bool CV, int junk)
+      : lognormalLLModel(tY, tX, SS){
+            // if it is a sufficient statistics model
+        };
 
-	lognormalPOWER_BMD_NC(){
+  lognormalPOWER_BMD_NC(){
 
-	};
+  };
 
-	virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta)
-	{
-		return mean(theta, X);
-	}
+  virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta) { return mean(theta, X); }
 
-	virtual cont_model mean_type()
-	{
-		return cont_model::power;
-	}
+  virtual cont_model mean_type() { return cont_model::power; }
 
-	lognormalPOWER_BMD_NC(lognormalPOWER_BMD_NC &M)
-	{
-		sufficient_statistics = M.sufficient_statistics;
-		Y = M.Y;
-		X = M.X;
-	};
+  lognormalPOWER_BMD_NC(lognormalPOWER_BMD_NC &M) {
+    sufficient_statistics = M.sufficient_statistics;
+    Y = M.Y;
+    X = M.X;
+  };
 
-	int nParms()
-	{
-		return 4; // Power model regression + constant variance
-	}
+  int nParms() {
+    return 4; // Power model regression + constant variance
+  }
 
-	virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta, Eigen::MatrixXd d)
-	{
-		double gamma = theta(0, 0);
-		double beta = theta(1, 0);
-		double k = theta(2, 0);
+  virtual Eigen::MatrixXd mean(Eigen::MatrixXd theta, Eigen::MatrixXd d) {
+    double gamma = theta(0, 0);
+    double beta = theta(1, 0);
+    double k = theta(2, 0);
 
-		Eigen::MatrixXd rV = gamma + beta * pow(d.array(), k);
+    Eigen::MatrixXd rV = gamma + beta * pow(d.array(), k);
 
-		return log(rV.array());
-	}
+    return log(rV.array());
+  }
 
-	// return true if it is a increasing function
+  // return true if it is a increasing function
 
-	// BASIC BMD Computation absolute to hybrid
-	double bmd_absolute(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
-	double bmd_stdev(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
-	double bmd_reldev(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
-	double bmd_point(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
-	double bmd_extra(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
-	double bmd_hybrid_extra(Eigen::MatrixXd theta, double BMRF, bool isIncreasing, double BPROB);
+  // BASIC BMD Computation absolute to hybrid
+  double bmd_absolute(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
+  double bmd_stdev(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
+  double bmd_reldev(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
+  double bmd_point(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
+  double bmd_extra(Eigen::MatrixXd theta, double BMRF, bool isIncreasing);
+  double bmd_hybrid_extra(Eigen::MatrixXd theta, double BMRF, bool isIncreasing,
+                          double BPROB);
 
-	// BASIC BMD Computation absolute to hybrid
-	double bmd_absolute_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing);
-	double bmd_stdev_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing);
-	double bmd_reldev_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing);
-	double bmd_point_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing);
-	double bmd_extra_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing);
-	double bmd_hybrid_extra_bound(Eigen::MatrixXd theta, double BMD, double BMRF, bool isIncreasing,
-								  double TAIL_PROB);
-	virtual int parameter_to_remove(contbmd TYPE);
+  // BASIC BMD Computation absolute to hybrid
+  double bmd_absolute_bound(Eigen::MatrixXd theta, double BMD, double BMRF,
+                            bool isIncreasing);
+  double bmd_stdev_bound(Eigen::MatrixXd theta, double BMD, double BMRF,
+                         bool isIncreasing);
+  double bmd_reldev_bound(Eigen::MatrixXd theta, double BMD, double BMRF,
+                          bool isIncreasing);
+  double bmd_point_bound(Eigen::MatrixXd theta, double BMD, double BMRF,
+                         bool isIncreasing);
+  double bmd_extra_bound(Eigen::MatrixXd theta, double BMD, double BMRF,
+                         bool isIncreasing);
+  double bmd_hybrid_extra_bound(Eigen::MatrixXd theta, double BMD, double BMRF,
+                                bool isIncreasing, double TAIL_PROB);
+  virtual int parameter_to_remove(contbmd TYPE);
 
-	///
-	/*Eigen::MatrixXd bmd_start_extra_hybrid(Eigen::MatrixXd theta, double BMD,
-											double BMRF, bool isIncreasing,
-											double TAIL_PROB);*/
-	//
-	virtual double bmd_start_absolute(unsigned n,
-									  const double *b,
-									  double *grad,
-									  void *data);
-	virtual std::vector<double> bmd_start_absolute_clean(std::vector<double> x,
-														 double BMRF, double BMD, bool isIncreasing);
+  ///
+  /*Eigen::MatrixXd bmd_start_extra_hybrid(Eigen::MatrixXd theta, double BMD,
+                                                                                  double BMRF, bool isIncreasing,
+                                                                                  double TAIL_PROB);*/
+  //
+  virtual double bmd_start_absolute(unsigned n, const double *b, double *grad,
+                                    void *data);
+  virtual std::vector<double> bmd_start_absolute_clean(std::vector<double> x,
+                                                       double BMRF, double BMD,
+                                                       bool isIncreasing);
 
-	//
-	/*Eigen::MatrixXd bmd_start_stdev(Eigen::MatrixXd theta, double BMD,
-									double BMRF, bool isIncreasing,
-									double TAIL_PROB);
-	//*/
-	virtual double bmd_start_reldev(unsigned n,
-									const double *b,
-									double *grad,
-									void *data);
+  //
+  /*Eigen::MatrixXd bmd_start_stdev(Eigen::MatrixXd theta, double BMD,
+                                                                  double BMRF,
+  bool isIncreasing, double TAIL_PROB);
+  //*/
+  virtual double bmd_start_reldev(unsigned n, const double *b, double *grad,
+                                  void *data);
 
-	virtual std::vector<double> bmd_start_reldev_clean(std::vector<double> x,
-													   double BMRF,
-													   double BMD,
-													   bool isIncreasing);
+  virtual std::vector<double> bmd_start_reldev_clean(std::vector<double> x,
+                                                     double BMRF, double BMD,
+                                                     bool isIncreasing);
 
-	/////////////////////////////////////////////////////////////////////////
-	// standard deviation starting value code
-	//
-	/////////////////////////////////////////////////////////////////////////
-	virtual double bmd_start_stddev(unsigned n,
-									const double *b,
-									double *grad,
-									void *data);
+  /////////////////////////////////////////////////////////////////////////
+  // standard deviation starting value code
+  //
+  /////////////////////////////////////////////////////////////////////////
+  virtual double bmd_start_stddev(unsigned n, const double *b, double *grad,
+                                  void *data);
 
-	virtual std::vector<double> bmd_start_stddev_clean(std::vector<double> x,
-													   double BMRF,
-													   double BMD,
-													   bool isIncreasing);
+  virtual std::vector<double> bmd_start_stddev_clean(std::vector<double> x,
+                                                     double BMRF, double BMD,
+                                                     bool isIncreasing);
 
-	/////////////////////////////////////////////////////////////////////////
-	// standard deviation starting value code
-	/////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////
+  // standard deviation starting value code
+  /////////////////////////////////////////////////////////////////////////
 
-	virtual double bmd_start_extra(unsigned n,
-								   const double *b,
-								   double *grad,
-								   void *data);
+  virtual double bmd_start_extra(unsigned n, const double *b, double *grad,
+                                 void *data);
 
-	virtual std::vector<double> bmd_start_extra_clean(std::vector<double> x,
-													  double BMRF,
-													  double BMD,
-													  bool isIncreasing);
+  virtual std::vector<double> bmd_start_extra_clean(std::vector<double> x,
+                                                    double BMRF, double BMD,
+                                                    bool isIncreasing);
 
-	/////////////////////////////////////////////////////////
-	virtual double bmd_start_point(unsigned n,
-								   const double *b,
-								   double *grad,
-								   void *data);
+  /////////////////////////////////////////////////////////
+  virtual double bmd_start_point(unsigned n, const double *b, double *grad,
+                                 void *data);
 
-	virtual std::vector<double> bmd_start_point_clean(std::vector<double> x,
-													  double BMRF,
-													  double BMD,
-													  bool isIncreasing);
+  virtual std::vector<double> bmd_start_point_clean(std::vector<double> x,
+                                                    double BMRF, double BMD,
+                                                    bool isIncreasing);
 
-	/////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
 
-	virtual double bmd_start_hybrid_extra(unsigned n,
-										  const double *b,
-										  double *grad,
-										  void *data);
+  virtual double bmd_start_hybrid_extra(unsigned n, const double *b,
+                                        double *grad, void *data);
 
-	std::vector<double> bmd_start_hybrid_extra_clean(std::vector<double> x,
-													 double BMRF, double BMD,
-													 bool isIncreasing, double tail_prob);
+  std::vector<double> bmd_start_hybrid_extra_clean(std::vector<double> x,
+                                                   double BMRF, double BMD,
+                                                   bool isIncreasing,
+                                                   double tail_prob);
 
-	/////////////////////////////////////////////////////////
-	/*
-	Eigen::MatrixXd bmd_start_point(Eigen::MatrixXd theta, double BMD,
-									double BMRF, bool isIncreasing,
-									double TAIL_PROB);
-	//
-	Eigen::MatrixXd bmd_start_extra(Eigen::MatrixXd theta, double BMD,
-									double BMRF, bool isIncreasing,
-									double TAIL_PROB);*/
+  /////////////////////////////////////////////////////////
+  /*
+  Eigen::MatrixXd bmd_start_point(Eigen::MatrixXd theta, double BMD,
+                                                                  double BMRF,
+  bool isIncreasing, double TAIL_PROB);
+  //
+  Eigen::MatrixXd bmd_start_extra(Eigen::MatrixXd theta, double BMD,
+                                                                  double BMRF,
+  bool isIncreasing, double TAIL_PROB);*/
 
 private:
-	// add BMD specific stuff here
+  // add BMD specific stuff here
 };
 
 #endif

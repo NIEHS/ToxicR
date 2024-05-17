@@ -13,3 +13,4 @@
 ^\.log$
 ^CHANGELOG\.md$
 ^cran-comments\.md$
+^llvm/

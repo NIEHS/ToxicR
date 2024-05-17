@@ -1,6 +1,13 @@
 #ifdef R_COMPILATION
 // necessary things to run in R
+#ifdef ToxicR_DEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <RcppEigen.h>
+#pragma GCC diagnostic pop
+#else
+#include <RcppEigen.h>
+#endif
 #include <RcppGSL.h>
 #else
 #include <Eigen/Dense>
@@ -10,44 +17,38 @@
 #define GRADIENT_FUNCTIONS_H
 
 template <class PR>
-Eigen::MatrixXd X_logPrior(Eigen::MatrixXd theta, Eigen::MatrixXd p)
-{
+Eigen::MatrixXd X_logPrior(Eigen::MatrixXd theta, Eigen::MatrixXd p) {
   PR prior(p);
   return prior.log_prior(theta);
 }
 
-void gradient(Eigen::MatrixXd v, double *g, void *data, std::function<double(Eigen::MatrixXd, void *)> math_func);
+void gradient(Eigen::MatrixXd v, double *g, void *data,
+              std::function<double(Eigen::MatrixXd, void *)> math_func);
 
 template <class LL>
-void xgrad2(Eigen::MatrixXd v, double *g, LL *data, Eigen::MatrixXd dose)
-{
+void xgrad2(Eigen::MatrixXd v, double *g, LL *data, Eigen::MatrixXd dose) {
 
   Eigen::VectorXd h(v.rows());
   double mpres = pow(1.0e-16, 0.33333);
   double x, temp;
-  double derEst;
+  // double derEst;
   Eigen::MatrixXd f1;
   Eigen::MatrixXd f2;
   Eigen::MatrixXd hvector = v;
 
-  for (int i = 0; i < v.rows(); i++)
-  {
+  for (int i = 0; i < v.rows(); i++) {
     x = v(i, 0);
-    if (fabs(x) > DBL_EPSILON)
-    {
+    if (fabs(x) > DBL_EPSILON) {
       h[i] = mpres * (fabs(x));
       temp = x + h[i];
       h[i] = temp - x;
-    }
-    else
-    {
+    } else {
       h[i] = mpres;
     }
   }
 
   /*find the gradients for each of the variables in the likelihood*/
-  for (int i = 0; i < v.rows(); i++)
-  {
+  for (int i = 0; i < v.rows(); i++) {
     /*perform a finite difference calculation on the specific derivative*/
     x = v(i, 0);
     // add h
@@ -65,35 +66,29 @@ void xgrad2(Eigen::MatrixXd v, double *g, LL *data, Eigen::MatrixXd dose)
 }
 
 template <class LL>
-void xgrad(Eigen::MatrixXd v, double *g, LL *data, Eigen::MatrixXd dose)
-{
+void xgrad(Eigen::MatrixXd v, double *g, LL *data, Eigen::MatrixXd dose) {
 
   Eigen::VectorXd h(v.rows());
   double mpres = pow(1.0e-16, 0.33333);
   double x, temp;
-  double derEst;
+  // double derEst;
   Eigen::MatrixXd f1;
   Eigen::MatrixXd f2;
   Eigen::MatrixXd hvector = v;
 
-  for (int i = 0; i < v.rows(); i++)
-  {
+  for (int i = 0; i < v.rows(); i++) {
     x = v(i, 0);
-    if (fabs(x) > DBL_EPSILON)
-    {
+    if (fabs(x) > DBL_EPSILON) {
       h[i] = mpres * (fabs(x));
       temp = x + h[i];
       h[i] = temp - x;
-    }
-    else
-    {
+    } else {
       h[i] = mpres;
     }
   }
 
   /*find the gradients for each of the variables in the likelihood*/
-  for (int i = 0; i < v.rows(); i++)
-  {
+  for (int i = 0; i < v.rows(); i++) {
     /*perform a finite difference calculation on the specific derivative*/
     x = v(i, 0);
     // add h

@@ -14,7 +14,14 @@
 
 #include <nlopt.hpp>
 #ifdef R_COMPILATION
+#ifdef ToxicR_DEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <RcppEigen.h>
+#pragma GCC diagnostic pop
+#else
+#include <RcppEigen.h>
+#endif
 #include <RcppGSL.h>
 #else
 #include <Eigen/Dense>
@@ -23,22 +30,21 @@
 
 #include <gsl/gsl_randist.h>
 
-template <class LL, class PR>
-class statModel
-{
+template <class LL, class PR> class statModel {
 public:
-	// basic constructor
-	statModel(LL t_L, PR t_PR) : log_likelihood(t_L), prior_model(t_PR){
+  // basic constructor
+  statModel(LL t_L, PR t_PR)
+      : log_likelihood(t_L), prior_model(t_PR){
 
-													  };
+                             };
 
 private:
-	// A stat model has a Log Likelihood and
-	// A prior model over the parameters
-	// Note: The prior over the parameters does not have to be an actual
-	// prior. It can merely place bounds (e.g., box, equality) on functions
-	// of the parameters.
-	LL log_likelihood;
-	PR prior_model;
+  // A stat model has a Log Likelihood and
+  // A prior model over the parameters
+  // Note: The prior over the parameters does not have to be an actual
+  // prior. It can merely place bounds (e.g., box, equality) on functions
+  // of the parameters.
+  LL log_likelihood;
+  PR prior_model;
 };
 #endif

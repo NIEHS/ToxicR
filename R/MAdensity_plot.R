@@ -15,7 +15,7 @@
 #' model <- ma_continuous_fit(doses, y,
 #'   fit_type = "mcmc", BMR_TYPE = "sd", BMR = 1
 #' )
-#' MAdensity_plot(model)
+#' try(MAdensity_plot(model))
 #' }
 #' @export
 MAdensity_plot <- function(A) {

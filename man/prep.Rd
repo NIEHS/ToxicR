@@ -43,13 +43,7 @@ Installs, loads, and attaches package(s). If package(s) are not
 installed, installs them prior to loading and attaching.
 }
 \examples{
-\donttest{
-prep(data.table)
-prep("data.table", silent_if_successful = TRUE)
-prep("base", utils, ggplot2, "data.table")
-pkgs <- c("ggplot2", "data.table")
-prep(pkgs, pkg_names_as_object = TRUE)
-prep("data.table", silent_load_pkgs = "data.table")
+\dontrun{
+try(prep("data.table"))
 }
-
 }

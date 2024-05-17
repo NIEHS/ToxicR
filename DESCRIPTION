@@ -1,8 +1,8 @@
 Package: ToxicR
 Type: Package
 Title: Analyzing Toxicology Dose-Response Data
-Version: 23.10.1.1.3
-Date: 2024-04-12
+Version: 23.10.1.2.0
+Date: 2024-05-17
 Authors@R: 
     c(
     person(given = "Matt",
@@ -18,8 +18,7 @@ Authors@R:
            role = "ctb"),
     person(given = "Shail",
            family = "Choksi",
-	   role = "ctb",
-	   comment = "Setup github actions for automated tests and builds."),
+	   role = "ctb"),
     person(given = "Brian",
            family = "Kidd",
 	   role = "ctb"),
@@ -89,6 +88,8 @@ Packaged: 2024-04-12 20:00:54 UTC; shail.choksi
 Author: Matt Wheeler [aut, cre] (<https://orcid.org/0000-0002-8242-2391>),
   Sooyeong Lim [aut],
   Eric Wimberly [ctb],
+  Shail Choksi [ctb],
+  Brian Kidd [ctb],
   Keith Shockley [com],
   Jennifer Fostel [com],
   Lonlong Yang [ctb] (Modfied Cochran-Armitage test.),

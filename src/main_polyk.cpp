@@ -1,15 +1,22 @@
 #ifdef R_COMPILATION
 // necessary things to run in R
+#ifdef ToxicR_DEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <RcppEigen.h>
+#pragma GCC diagnostic pop
+#else
+#include <RcppEigen.h>
+#endif
 #include <RcppGSL.h>
 #else
 #include <Eigen/Dense>
 #endif
 
-#include <vector>
-#include <algorithm>
-#include "polyK/polyK_setup.h"
 #include "polyK/polyK.h"
+#include "polyK/polyK_setup.h"
+#include <algorithm>
+#include <vector>
 using namespace Rcpp;
 
 // This is a simple example of exporting a C++ function to R. You can
@@ -24,20 +31,17 @@ using namespace Rcpp;
 
 // [[Rcpp::export(.polykCPP)]]
 NumericVector polyk(NumericVector dose, NumericVector tumor,
-                    NumericVector daysOnStudy)
-{
+                    NumericVector daysOnStudy) {
   std::vector<double> t_dose(dose.size(), 0.0);
   std::vector<int> t_tumor(tumor.size(), 0);
   std::vector<int> t_daysOnStudy(daysOnStudy.size(), 0.0);
-  std::vector<double> temp(tumor.size(),0.0);//;
-  if (dose.size() != tumor.size() ||
-      dose.size() != daysOnStudy.size())
-  {
-    stop("The variables @dose,@tumor, and @daysOnStudy need to have the same number of entries.");
+  std::vector<double> temp(tumor.size(), 0.0); //;
+  if (dose.size() != tumor.size() || dose.size() != daysOnStudy.size()) {
+    stop("The variables @dose,@tumor, and @daysOnStudy need to have the same "
+         "number of entries.");
   }
   // Copy over the data
-  for (int i = 0; i < dose.size(); i++)
-  {
+  for (int i = 0; i < dose.size(); i++) {
     t_dose[i] = dose[i];
     t_tumor[i] = (int)tumor[i];
     t_daysOnStudy[i] = (int)daysOnStudy[i];
@@ -57,18 +61,12 @@ NumericVector polyk(NumericVector dose, NumericVector tumor,
   // POLY_1PT5_TEST
   // POLY_6_TEST
 
-  auto t1 = pkTest.polyk_mod(pkData,
-                             pkData.getNumDoseLevels(),
-                             PolyK::POLY_1PT5_TEST,
-                             -1.0);
-  auto t2 = pkTest.polyk_mod(pkData,
-                             pkData.getNumDoseLevels(),
-                             PolyK::POLY_3_TEST,
-                             -1.0);
-  auto t3 = pkTest.polyk_mod(pkData,
-                             pkData.getNumDoseLevels(),
-                             PolyK::POLY_6_TEST,
-                             -1.0);
+  auto t1 = pkTest.polyk_mod(pkData, pkData.getNumDoseLevels(),
+                             PolyK::POLY_1PT5_TEST, -1.0);
+  auto t2 = pkTest.polyk_mod(pkData, pkData.getNumDoseLevels(),
+                             PolyK::POLY_3_TEST, -1.0);
+  auto t3 = pkTest.polyk_mod(pkData, pkData.getNumDoseLevels(),
+                             PolyK::POLY_6_TEST, -1.0);
   NumericVector rval(3);
   rval[0] = t1;
   rval[1] = t2;

@@ -2,8 +2,7 @@
 #ifndef __POLYK_ANIMAL_H
 #define __POLYK_ANIMAL_H
 
-class Animal
-{
+class Animal {
 private:
   double dose;
   int doseIdx;
@@ -11,42 +10,29 @@ private:
   int daysOnStudy;
 
 public:
-  Animal(){
-    dose = 0; doseIdx = 0; tumor = 0; daysOnStudy=0; 
+  Animal() {
+    dose = 0;
+    doseIdx = 0;
+    tumor = 0;
+    daysOnStudy = 0;
   };
 
-  Animal(double doseVal, int tumorVal, int daysVal)
-  {
+  Animal(double doseVal, int tumorVal, int daysVal) {
     dose = doseVal;
     tumor = tumorVal;
     daysOnStudy = daysVal;
     doseIdx = 0;
   };
 
-  double getDose()
-  {
-    return dose;
-  };
+  double getDose() { return dose; };
 
-  int getTumor()
-  {
-    return tumor;
-  };
+  int getTumor() { return tumor; };
 
-  int getDaysOnStudy()
-  {
-    return daysOnStudy;
-  };
+  int getDaysOnStudy() { return daysOnStudy; };
 
-  void setDoseIdx(int doseIndex)
-  {
-    doseIdx = doseIndex;
-  };
+  void setDoseIdx(int doseIndex) { doseIdx = doseIndex; };
 
-  int getDoseIdx()
-  {
-    return doseIdx;
-  };
+  int getDoseIdx() { return doseIdx; };
 
   // The animals are sorted by age
   /**
@@ -55,41 +41,31 @@ public:
    * @return 0 if equal
    */
 public:
-  void set(double dosed, int tumort, int daysOnStudyt)
-  {
+  void set(double dosed, int tumort, int daysOnStudyt) {
     dose = dosed;
     tumor = tumort;
     daysOnStudy = daysOnStudyt;
   };
 
-  bool operator>(const Animal &b)
-  {
-    return this->daysOnStudy > b.daysOnStudy;
-  };
-  bool operator>=(const Animal &b)
-  {
+  bool operator>(const Animal &b) { return this->daysOnStudy > b.daysOnStudy; };
+  bool operator>=(const Animal &b) {
     return this->daysOnStudy >= b.daysOnStudy;
   };
-  bool operator<(const Animal &b) const
-  {
+  bool operator<(const Animal &b) const {
     return this->daysOnStudy < b.daysOnStudy;
   };
-  bool operator()(const Animal &A, const Animal &B) const
-  {
+  bool operator()(const Animal &A, const Animal &B) const {
     return A.daysOnStudy < B.daysOnStudy;
     // Compare the 2 locations, return true if loc1 is less than loc2
   }
-  bool operator<=(const Animal &b)
-  {
+  bool operator<=(const Animal &b) {
     return this->daysOnStudy <= b.daysOnStudy;
   };
-  bool operator==(const Animal &b)
-  {
+  bool operator==(const Animal &b) {
     return this->daysOnStudy == b.daysOnStudy;
   };
 
-  void operator=(const Animal &A)
-  {
+  void operator=(const Animal &A) {
     this->dose = A.dose;
     this->daysOnStudy = A.daysOnStudy;
     this->doseIdx = A.doseIdx;

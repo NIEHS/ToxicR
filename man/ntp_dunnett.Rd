@@ -24,6 +24,10 @@ The results of Dunnet's  test for each level in \eqn{dose_name}
 ntp_dunett Dunnett's test
 }
 \examples{
-a <- ntp_dunnett(response ~ sex + response_type, data = ntp_599_hemotology, dose_name = "concentration")
+a <- ntp_dunnett(
+       response ~ sex + response_type,
+       data = ntp_599_hemotology, 
+       dose_name = "concentration"
+)
 summary(a)
 }

@@ -142,6 +142,10 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
 #' @return there will be no output from this function. Rather, packages
 #' given as inputs to the function will be installed, loaded, and attached.
 #'
+#' @examples
+#' \dontrun{
+#' try(prep("data.table"))
+#' }
 prep <- function(..., pkg_names_as_object = FALSE, silent_if_successful = FALSE, silent_load_pkgs = FALSE) {
     arg_list <- as.list(match.call(expand.dots = FALSE))[["..."]]
     if ("..." %in% names(arg_list)) {

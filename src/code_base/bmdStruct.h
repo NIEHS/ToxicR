@@ -1,23 +1,25 @@
 /*
- * Copyright 2020  US. Department of Health and Human Services (HHS), 
+ * Copyright 2020  US. Department of Health and Human Services (HHS),
  * National Institute of Environmental Health Sciences (NIEHS)
  * Email: Matt Wheeler  <matt.wheeler@nih.gov>
  *
- *Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- *and associated documentation files (the "Software"), to deal in the Software without restriction,
- *including without limitation the rights to use, copy, modify, merge, publish, distribute,
- *sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
- *is furnished to do so, subject to the following conditions:
+ *Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software *and associated documentation files (the "Software"), to deal
+ in the Software without restriction, *including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, *sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software *is
+ furnished to do so, subject to the following conditions:
  *
- *The above copyright notice and this permission notice shall be included in all copies
- *or substantial portions of the Software.
+ *The above copyright notice and this permission notice shall be included in all
+ copies *or substantial portions of the Software.
 
- *THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- *INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
- *PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- *HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- *CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
- *OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, *INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A *PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT *HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF *CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE *OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
  *
  *
  */
@@ -32,11 +34,10 @@
 //
 // dichotomous_analysis:
 //   Purpose - Contains all of the information for a dichotomous analysis.
-//   It is used do describe a single model analysis, in which all of the information
-//   is used, or a MA analysis, in which all the information save prior, degree, parms
-//   and prior_cols are used.
-struct dichotomous_analysis
-{
+//   It is used do describe a single model analysis, in which all of the
+//   information is used, or a MA analysis, in which all the information save
+//   prior, degree, parms and prior_cols are used.
+struct dichotomous_analysis {
   int model;       // Model Type as listed in dich_model
   int n;           // total number of observations obs/n
   double *Y;       // observed +
@@ -53,8 +54,7 @@ struct dichotomous_analysis
   int prior_cols; // colunns in the prior
 };
 
-struct dichotomous_PGOF_data
-{
+struct dichotomous_PGOF_data {
   int n;           // total number of observations obs/n
   double *Y;       // observed +
   double *doses;   //
@@ -65,8 +65,7 @@ struct dichotomous_PGOF_data
   double *est_parms;
 };
 
-struct dichotomous_PGOF_result
-{
+struct dichotomous_PGOF_result {
   int n;            // total number of observations obs/n
   double *expected; //
   double *residual; // size of the group
@@ -75,16 +74,14 @@ struct dichotomous_PGOF_result
   double df;
 };
 
-struct dichotomous_aod
-{
+struct dichotomous_aod {
   double A1;
   int N1; // total number of observations obs/n
   double A2;
   int N2;
 };
 
-struct continuous_expected_result
-{
+struct continuous_expected_result {
   int n;            // total number of observations obs/n
   double *expected; //
   double *sd;
@@ -96,19 +93,18 @@ struct continuous_expected_result
 // Purpose: Data structure that is populated with all of the necessary
 // information for a single model fit.
 //
-struct dichotomous_model_result
-{
-  int model;                    // dichotomous model specification
-  int nparms;                   // number of parameters in the model
-  double *parms;                // Parameter Estimate
-  double *cov;                  // Covariance Estimate
-  double max;                   // Value of the Likelihood/Posterior at the maximum
-  int dist_numE;                // number of entries in rows for the bmd_dist
-  double model_df;              // Used model degrees of freedom
-  double total_df;              // Total degrees of freedom
-  double *bmd_dist;             // bmd distribution (dist_numE x 2) matrix
-  double bmd;                   // the central estimate of the BMD
-  double gof_p_value;           // P-value from Chi Square goodness of fit
+struct dichotomous_model_result {
+  int model;          // dichotomous model specification
+  int nparms;         // number of parameters in the model
+  double *parms;      // Parameter Estimate
+  double *cov;        // Covariance Estimate
+  double max;         // Value of the Likelihood/Posterior at the maximum
+  int dist_numE;      // number of entries in rows for the bmd_dist
+  double model_df;    // Used model degrees of freedom
+  double total_df;    // Total degrees of freedom
+  double *bmd_dist;   // bmd distribution (dist_numE x 2) matrix
+  double bmd;         // the central estimate of the BMD
+  double gof_p_value; // P-value from Chi Square goodness of fit
   double gof_chi_sqr_statistic; // Chi Square Statistic for goodness of fit
 };
 
@@ -118,8 +114,7 @@ struct dichotomous_model_result
 // model average.
 //
 //
-struct dichotomousMA_analysis
-{
+struct dichotomousMA_analysis {
   int nmodels;         // number of models for the model average
   double **priors;     // List of pointers to prior arrays
                        // priors[i] is the prior array for the ith model ect
@@ -134,19 +129,17 @@ struct dichotomousMA_analysis
 //
 //
 //
-struct dichotomousMA_result
-{
+struct dichotomousMA_result {
   int nmodels;                              // number of models for each
   struct dichotomous_model_result **models; // Individual model fits for each
                                             // model average
-  int dist_numE;                            // number of entries in rows for the bmd_dist
-  double *post_probs;                       // posterior probabilities
-  double *bmd_dist;                         // bmd ma distribution (dist_numE x 2) matrix
+  int dist_numE;      // number of entries in rows for the bmd_dist
+  double *post_probs; // posterior probabilities
+  double *bmd_dist;   // bmd ma distribution (dist_numE x 2) matrix
 };
 
 // Continuous Structures
-struct continuous_analysis
-{
+struct continuous_analysis {
   enum cont_model model;
   int n;
   bool suff_stat;  // true if the data are in sufficient statistics format
@@ -171,8 +164,7 @@ struct continuous_analysis
   int transform_dose; // Use the arc-sin-hyperbolic inverse to transform dose.
 };
 
-struct continuousMA_analysis
-{
+struct continuousMA_analysis {
   int nmodels;         // number of models for each
   double **priors;     // pointer to pointer arrays for the prior
                        // each prior will have nparms[i] x prior_cols[i]
@@ -185,8 +177,7 @@ struct continuousMA_analysis
   double *modelPriors; // prior probability on the model
 };
 
-struct continuous_model_result
-{
+struct continuous_model_result {
   int model;        // continuous model specification
   int dist;         // distribution_type
   int nparms;       // number of parameters in the model
@@ -200,18 +191,16 @@ struct continuous_model_result
   double *bmd_dist; // bmd distribution (dist_numE x 2) matrix
 };
 
-struct continuousMA_result
-{
+struct continuousMA_result {
   int nmodels;                             // number of models for each
   struct continuous_model_result **models; // priors
-  int dist_numE;                           // number of entries in rows for the bmd_dist
-  double *post_probs;                      // posterior probabilities
-  double *bmd_dist;                        // bmd ma distribution (dist_numE x 2) matrix
+  int dist_numE;      // number of entries in rows for the bmd_dist
+  double *post_probs; // posterior probabilities
+  double *bmd_dist;   // bmd ma distribution (dist_numE x 2) matrix
 };
 
 // mcmc structures
-struct bmd_analysis_MCMC
-{
+struct bmd_analysis_MCMC {
   int model;            // model used in the analysis
   unsigned int burnin;  // burnin samples
   unsigned int samples; // total samples including burnin
@@ -220,14 +209,12 @@ struct bmd_analysis_MCMC
   double *parms;        // array of parameters length (samples X parms)
 };
 
-struct ma_MCMCfits
-{
+struct ma_MCMCfits {
   unsigned int nfits;
   struct bmd_analysis_MCMC **analyses;
 };
 
-struct continuous_deviance
-{
+struct continuous_deviance {
   double A1;
   int N1;
   double A2;
@@ -239,8 +226,7 @@ struct continuous_deviance
 };
 
 // odds and ends
-struct bmd_analysis_MCMC *new_mcmc_analysis(int model,
-                                            int parms,
+struct bmd_analysis_MCMC *new_mcmc_analysis(int model, int parms,
                                             unsigned int samples);
 void del_mcmc_analysis(struct bmd_analysis_MCMC *an);
 
@@ -254,13 +240,11 @@ void del_continuous_analysis(struct continuous_analysis a);
 struct dichotomousMA_result *new_dichotomousMA_result(int nmodels,
                                                       int dist_numE);
 
-struct continuous_model_result *new_continuous_model_result(int model,
-                                                            unsigned int n_parm,
-                                                            unsigned int n_elm);
+struct continuous_model_result *
+new_continuous_model_result(int model, unsigned int n_parm, unsigned int n_elm);
 
-struct dichotomous_model_result *new_dichotomous_model_result(int model,
-                                                              int parms,
-                                                              int dist_numE);
+struct dichotomous_model_result *
+new_dichotomous_model_result(int model, int parms, int dist_numE);
 
 void del_continuous_model_result(struct continuous_model_result *cm);
 void delete_dichotomousMA_result(struct dichotomousMA_result *res);
