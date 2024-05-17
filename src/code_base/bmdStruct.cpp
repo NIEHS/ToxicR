@@ -1,6 +1,13 @@
 #ifdef R_COMPILATION
 // necessary things to run in R
+#ifdef ToxicR_DEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <RcppEigen.h>
+#pragma GCC diagnostic pop
+#else
+#include <RcppEigen.h>
+#endif
 #include <RcppGSL.h>
 #else
 #include <Eigen/Dense>
@@ -8,8 +15,7 @@
 
 #include "bmdStruct.h"
 
-void del_continuous_analysis(continuous_analysis a)
-{
+void del_continuous_analysis(continuous_analysis a) {
   if (a.Y)
     delete[] a.Y;
   if (a.n_group)
@@ -27,10 +33,8 @@ void del_continuous_analysis(continuous_analysis a)
   a.prior = NULL;
 }
 
-dichotomous_model_result *new_dichotomous_model_result(int model,
-                                                       int parms,
-                                                       int dist_numE)
-{
+dichotomous_model_result *new_dichotomous_model_result(int model, int parms,
+                                                       int dist_numE) {
 
   dichotomous_model_result *dmodel = new dichotomous_model_result;
   dmodel->model = model;
@@ -44,10 +48,8 @@ dichotomous_model_result *new_dichotomous_model_result(int model,
   return dmodel;
 }
 
-void delete_dichotomous_model_result(dichotomous_model_result *dmodel)
-{
-  if (dmodel)
-  {
+void delete_dichotomous_model_result(dichotomous_model_result *dmodel) {
+  if (dmodel) {
     delete[] dmodel->parms;
     delete[] dmodel->cov;
     delete[] dmodel->bmd_dist;
@@ -56,9 +58,7 @@ void delete_dichotomous_model_result(dichotomous_model_result *dmodel)
   return;
 }
 
-dichotomousMA_result *new_dichotomousMA_result(int nmodels,
-                                               int dist_numE)
-{
+dichotomousMA_result *new_dichotomousMA_result(int nmodels, int dist_numE) {
   dichotomousMA_result *dres = new dichotomousMA_result;
   dres->nmodels = nmodels;
   dres->models = new dichotomous_model_result *[nmodels];
@@ -69,14 +69,10 @@ dichotomousMA_result *new_dichotomousMA_result(int nmodels,
   return dres;
 }
 
-void delete_dichotomousMA_result(dichotomousMA_result *res)
-{
-  if (res)
-  {
-    for (int i = 0; i < res->nmodels; i++)
-    {
-      if (res->models[i])
-      {
+void delete_dichotomousMA_result(dichotomousMA_result *res) {
+  if (res) {
+    for (int i = 0; i < res->nmodels; i++) {
+      if (res->models[i]) {
         delete_dichotomous_model_result(res->models[i]);
       }
     }
@@ -91,10 +87,8 @@ void delete_dichotomousMA_result(dichotomousMA_result *res)
 }
 
 /////////////////////////////////////////////////////////
-bmd_analysis_MCMC *new_mcmc_analysis(int model,
-                                     int parms,
-                                     unsigned int samples)
-{
+bmd_analysis_MCMC *new_mcmc_analysis(int model, int parms,
+                                     unsigned int samples) {
   bmd_analysis_MCMC *rV = new bmd_analysis_MCMC;
   rV->model = model;
   rV->samples = samples;
@@ -104,10 +98,8 @@ bmd_analysis_MCMC *new_mcmc_analysis(int model,
   return rV;
 }
 
-void del_mcmc_analysis(bmd_analysis_MCMC *an)
-{
-  if (an)
-  {
+void del_mcmc_analysis(bmd_analysis_MCMC *an) {
+  if (an) {
     delete[] an->BMDS;
     delete[] an->parms;
     delete an;
@@ -116,8 +108,7 @@ void del_mcmc_analysis(bmd_analysis_MCMC *an)
 
 continuous_model_result *new_continuous_model_result(int model,
                                                      unsigned int n_parm,
-                                                     unsigned int n_elm)
-{
+                                                     unsigned int n_elm) {
   continuous_model_result *rV = new continuous_model_result;
   rV->dist_numE = n_elm;
   rV->cov = new double[n_parm * n_parm];
@@ -127,33 +118,25 @@ continuous_model_result *new_continuous_model_result(int model,
   return rV;
 }
 
-void del_continuous_model_result(continuous_model_result *cm)
-{
+void del_continuous_model_result(continuous_model_result *cm) {
 
-  if (cm)
-  {
-    if (cm->cov)
-    {
+  if (cm) {
+    if (cm->cov) {
       delete[] cm->cov;
     }
-    if (cm->parms)
-    {
+    if (cm->parms) {
       delete[] cm->parms;
     }
-    if (cm->bmd_dist)
-    {
+    if (cm->bmd_dist) {
       delete[] cm->bmd_dist;
     }
     delete cm;
   }
 }
 
-void del_continuousMA_analysis(continuousMA_analysis CMA)
-{
-  if (CMA.priors)
-  {
-    for (int i = 0; i < CMA.nmodels; i++)
-    {
+void del_continuousMA_analysis(continuousMA_analysis CMA) {
+  if (CMA.priors) {
+    for (int i = 0; i < CMA.nmodels; i++) {
       delete[] CMA.priors[i];
     }
     delete[] CMA.nparms;
@@ -166,13 +149,10 @@ void del_continuousMA_analysis(continuousMA_analysis CMA)
   }
 }
 
-void cp_prior(Eigen::MatrixXd temp, double *priors)
-{
+void cp_prior(Eigen::MatrixXd temp, double *priors) {
 
-  for (int i = 0; i < temp.rows(); i++)
-  {
-    for (int j = 0; j < temp.cols(); j++)
-    {
+  for (int i = 0; i < temp.rows(); i++) {
+    for (int j = 0; j < temp.cols(); j++) {
       priors[i + j * temp.rows()] = temp(i, j);
     }
   }

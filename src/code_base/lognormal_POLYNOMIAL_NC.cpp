@@ -6,7 +6,14 @@
 
 #ifdef R_COMPILATION
 // necessary things to run in R
+#ifdef ToxicR_DEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <RcppEigen.h>
+#pragma GCC diagnostic pop
+#else
+#include <RcppEigen.h>
+#endif
 #include <RcppGSL.h>
 #else
 #include <Eigen/Dense>
@@ -209,7 +216,7 @@ double lognormalPOLYNOMIAL_BMD_NC::bmd_start_reldev(unsigned n,
 	Eigen::MatrixXd theta = sdata->theta;
 
 	Eigen::MatrixXd theta_2 = theta;
-	for (int i = 0; i < n; i++)
+	for (unsigned int i = 0; i < n; i++)
 	{
 		theta_2(i, 0) = b[i];
 	}
@@ -263,7 +270,7 @@ std::vector<double> lognormalPOLYNOMIAL_BMD_NC::bmd_start_reldev_clean(std::vect
 	double t;
 
 	Eigen::MatrixXd theta_2(x.size(), 1);
-	for (int i = 0; i < x.size(); i++)
+	for (size_t i = 0; i < x.size(); i++)
 	{
 		theta_2(i, 0) = x[i];
 	}
@@ -310,7 +317,7 @@ double lognormalPOLYNOMIAL_BMD_NC::bmd_start_stddev(unsigned n,
 	Eigen::MatrixXd d(2, 1);
 	d << 0.0, sdata->BMD;
 	Eigen::MatrixXd theta_2 = theta;
-	for (int i = 0; i < n; i++)
+	for (unsigned int i = 0; i < n; i++)
 	{
 		theta_2(i, 0) = b[i];
 	}
@@ -331,7 +338,7 @@ double lognormalPOLYNOMIAL_BMD_NC::bmd_start_stddev(unsigned n,
 
 	// compute the squared Euclidean Distance
 	returnV += pow(temp - theta(n - 1, 0), 2.0); // variance parameter
-	for (int i = 0; i < n - 1; i++)
+	for (unsigned int i = 0; i < n - 1; i++)
 	{
 		returnV += pow(theta(i, 0) - b[i], 2.0);
 	}
@@ -350,8 +357,8 @@ std::vector<double> lognormalPOLYNOMIAL_BMD_NC::bmd_start_stddev_clean(std::vect
 	Eigen::MatrixXd d(2, 1);
 	d << 0.0, BMD;
 	Eigen::MatrixXd theta_2(x.size(), 1);
-	;
-	for (int i = 0; i < x.size(); i++)
+	
+	for (size_t i = 0; i < x.size(); i++)
 	{
 		theta_2(i, 0) = x[i];
 	}
@@ -466,7 +473,7 @@ double lognormalPOLYNOMIAL_BMD_NC::bmd_start_hybrid_extra(unsigned n,
 	Eigen::MatrixXd theta = sdata->theta;
 	Eigen::MatrixXd theta2 = theta;
 	/////////////////////////////////////////////////////////////////////////////////////
-	for (int i = 0; i < n; i++)
+	for (unsigned int i = 0; i < n; i++)
 	{
 		theta2(i, 0) = b[i];
 	}
@@ -476,9 +483,9 @@ double lognormalPOLYNOMIAL_BMD_NC::bmd_start_hybrid_extra(unsigned n,
 	Eigen::MatrixXd temp_mean = mean(theta2, d);
 	Eigen::MatrixXd temp_var = variance(theta2, d);
 	/////////////////////////////////////////////////////////////////////////////////////
-	double mu_zero = temp_mean(0, 0);
-	double std_zero = sqrt(temp_var(0, 0));
-	double ct_off = gsl_cdf_lognormal_Pinv(sdata->isIncreasing ? NOT_ADVERSE_P : TAIL_PROB, mu_zero, std_zero);
+	// double mu_zero = temp_mean(0, 0);
+	// double std_zero = sqrt(temp_var(0, 0));
+	// double ct_off = gsl_cdf_lognormal_Pinv(sdata->isIncreasing ? NOT_ADVERSE_P : TAIL_PROB, mu_zero, std_zero);
 	/////////////////////////////////////////////////////////////////////////////////////
 	double returnV = 0.0;
 	double temp;
@@ -499,7 +506,7 @@ double lognormalPOLYNOMIAL_BMD_NC::bmd_start_hybrid_extra(unsigned n,
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	for (int i = 0; i <= n - 2; i++)
+	for (unsigned int i = 0; i <= n - 2; i++)
 	{
 		returnV += pow(theta(i, 0) - b[i], 2.0);
 	}
@@ -517,7 +524,7 @@ std::vector<double> lognormalPOLYNOMIAL_BMD_NC::bmd_start_hybrid_extra_clean(std
 	double TAIL_PROB = tail_prob;
 	Eigen::MatrixXd theta2(x.size(), 1);
 	/////////////////////////////////////////////////////////////////////////////////////
-	for (int i = 0; i < x.size(); i++)
+	for (size_t i = 0; i < x.size(); i++)
 	{
 		theta2(i, 0) = x[i];
 	}
@@ -527,11 +534,11 @@ std::vector<double> lognormalPOLYNOMIAL_BMD_NC::bmd_start_hybrid_extra_clean(std
 	Eigen::MatrixXd temp_mean = mean(theta2, d);
 	Eigen::MatrixXd temp_var = variance(theta2, d);
 	/////////////////////////////////////////////////////////////////////////////////////
-	double mu_zero = temp_mean(0, 0);
-	double std_zero = sqrt(temp_var(0, 0));
-	double ct_off = gsl_cdf_lognormal_Pinv(isIncreasing ? NOT_ADVERSE_P : TAIL_PROB, mu_zero, std_zero);
+	// double mu_zero = temp_mean(0, 0);
+	// double std_zero = sqrt(temp_var(0, 0));
+	// double ct_off = gsl_cdf_lognormal_Pinv(isIncreasing ? NOT_ADVERSE_P : TAIL_PROB, mu_zero, std_zero);
 	/////////////////////////////////////////////////////////////////////////////////////
-	double returnV = 0.0;
+	// double returnV = 0.0;
 	double temp;
 	double k1 = gsl_cdf_ugaussian_Pinv(NOT_ADVERSE_P * BMRF + TAIL_PROB);
 
@@ -767,7 +774,7 @@ double lognormalPOLYNOMIAL_BMD_NC::bmd_reldev(Eigen::MatrixXd theta, double BMRF
 
 double lognormalPOLYNOMIAL_BMD_NC::bmd_point(Eigen::MatrixXd theta, double BMRF, bool isIncreasing)
 {
-	double min, mid, max, mu_zero;
+	double min, mid, max;
 	min = 0.0;
 	max = X.maxCoeff();
 	;
@@ -776,7 +783,7 @@ double lognormalPOLYNOMIAL_BMD_NC::bmd_point(Eigen::MatrixXd theta, double BMRF,
 	d << min, mid, max;
 	Eigen::MatrixXd t_mean = mean(theta, d);
 	t_mean = exp(t_mean.array());
-	mu_zero = t_mean(0, 0);
+	// mu_zero = t_mean(0, 0);
 
 	int niter = 0;
 
@@ -863,7 +870,7 @@ double lognormalPOLYNOMIAL_BMD_NC::bmd_hybrid_extra(Eigen::MatrixXd theta, doubl
 
 	double test_prob = isIncreasing ? 1.0 - gsl_cdf_lognormal_P(ct_off, temp_mean(2, 0), sqrt(temp_var(2, 0)))
 									: gsl_cdf_lognormal_P(ct_off, temp_mean(2, 0), sqrt(temp_var(2, 0))); // standardize
-	double test = 0;
+	// double test = 0;
 
 	int k = 0;
 	while (test_prob < P && k < 10)

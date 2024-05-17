@@ -5,8 +5,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-
-
 // [[Rcpp::depends(RcppGSL)]]
 // [[Rcpp::depends(RcppEigen)]]
 // function: set_threads
@@ -15,9 +13,9 @@ using namespace Rcpp;
 // output: none
 // [[Rcpp::export(".set_threads")]]
 void set_threads(int num_threads) {
-    #ifndef NO_OMP
-    if (num_threads != omp_get_num_threads()) {
-        omp_set_num_threads(num_threads);
-    }
-    #endif
+#ifndef NO_OMP
+  if (num_threads != omp_get_num_threads()) {
+    omp_set_num_threads(num_threads);
+  }
+#endif
 }

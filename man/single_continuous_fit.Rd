@@ -136,8 +136,17 @@ M2[,1] <- c(0,25,50,100,200)
 M2[,2] <- c(6,5.2,2.4,1.1,0.75)
 M2[,3] <- c(20,20,19,20,20)
 M2[,4] <- c(1.2,1.1,0.81,0.74,0.66)
-model = single_continuous_fit(M2[,1,drop=FALSE], M2[,2:4], BMR_TYPE="sd", BMR=1, ewald = TRUE,
-                             distribution = "normal",fit_type="laplace",model_type = "hill",threads = 2, seed = 12331)
+model = single_continuous_fit(
+         M2[,1,drop=FALSE], 
+         M2[,2:4], 
+         BMR_TYPE="sd", 
+         BMR=1, ewald = TRUE,
+         distribution = "normal",
+         fit_type="laplace",
+         model_type = "hill",
+         threads = 2, 
+         seed = 12331
+)
 
 summary(model)
 }

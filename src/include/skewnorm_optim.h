@@ -4,21 +4,27 @@
 #define skewnorm_optimH
 #include "owenst_asa076.h"
 #ifdef R_COMPILATION
-    //necessary things to run in R
-    #include <RcppEigen.h>
-    #include <RcppGSL.h>
+// necessary things to run in R
+#ifdef ToxicR_DEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#include <RcppEigen.h>
+#pragma GCC diagnostic pop
 #else
-    #include <Eigen/Dense>
+#include <RcppEigen.h>
+#endif
+#include <RcppGSL.h>
+#else
+#include <Eigen/Dense>
 
 #endif
 
-#include <gsl/gsl_randist.h>
 #include <gsl/gsl_cdf.h>
+#include <gsl/gsl_randist.h>
 
-struct skewnorm_params
-  {
-    double xi, q;
-  };
+struct skewnorm_params {
+  double xi, q;
+};
 
 double skewnorm_pdf(double x, void *params);
 double skewnorm_cdf(double x, void *params);

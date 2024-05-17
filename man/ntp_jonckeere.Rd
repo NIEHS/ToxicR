@@ -30,5 +30,9 @@ Jonckherre's test for significant differences from background dose
 }
 \examples{
 
-ntp_jonckeere(response ~ sex + response_type, data = ntp_599_hemotology, dose_name = "concentration")
+ntp_jonckeere(
+     response ~ sex + response_type, 
+     data = ntp_599_hemotology, 
+     dose_name = "concentration"
+)
 }
