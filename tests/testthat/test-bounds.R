@@ -1,8 +1,9 @@
 context("Single Continuous Model bounds")
 
 test_that("Laplace gamma-efsa bounds are respected", {
-    zeros <- c(0.0, 0.0, 0.0, 0.0, 0.0)
     set.seed(1992)
+    .setseedGSL(1992)
+    zeros <- c(0.0, 0.0, 0.0, 0.0, 0.0)
     cont_data <- matrix(0, nrow = 5, ncol = 4)
     colnames(cont_data) <- c("Dose", "Mean", "N", "SD")
     cont_data[, 1] <- c(0, 50, 100, 200, 400)
@@ -16,6 +17,8 @@ test_that("Laplace gamma-efsa bounds are respected", {
 })
 
 test_that("Posterior Probabilities dont differ", {
+    set.seed(1992)
+    .setseedGSL(1992)
     cont_data <- matrix(0,nrow=5,ncol=4)
     colnames(cont_data) <- c("Dose","Mean","N","SD")
     cont_data[,1] <- c(0,0.001,0.03,1,20)
@@ -30,6 +33,8 @@ test_that("Posterior Probabilities dont differ", {
 })
 
 test_that("Negative Hessians don't have posterior probability calculated", {
+    set.seed(1992)
+    .setseedGSL(1992)
     cont_data <- matrix(0,nrow=5,ncol=4)
     colnames(cont_data) <- c("Dose","Mean","N","SD")
     cont_data[,1] <- c(0,0.001,0.03,1,20)
