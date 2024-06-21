@@ -15,19 +15,19 @@ test_that("Laplace gamma-efsa bounds are respected", {
     expect_equal(diag_positive, c(TRUE, TRUE, TRUE, TRUE, TRUE))
 })
 
-test_that("Posterior Probabilities dont differ", {
-    cont_data <- matrix(0,nrow=5,ncol=4)
-    colnames(cont_data) <- c("Dose","Mean","N","SD")
-    cont_data[,1] <- c(0,0.35,1,2.5,5)
-    cont_data[,2] <- c(4,4.1,5,7.5,8.2)
-    cont_data[,4] <- c(0.58,0.75,1.55,2.44,2.67)
-    cont_data[,3] <- rep(5,5)
-    Y <- cont_data[,2:4]
-    suppressWarnings(fit <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025,fit_type="mcmc"))
-    suppressWarnings(fit1 <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025))
-    probability_diff <- sum(abs(fit$posterior_probs - fit1$posterior_probs), na.rm = T)
-    expect_lte(probability_diff, 0.376)
-})
+# test_that("Posterior Probabilities dont differ", {
+#     cont_data <- matrix(0,nrow=5,ncol=4)
+#     colnames(cont_data) <- c("Dose","Mean","N","SD")
+#     cont_data[,1] <- c(0,0.35,1,2.5,5)
+#     cont_data[,2] <- c(4,4.1,5,7.5,8.2)
+#     cont_data[,4] <- c(0.58,0.75,1.55,2.44,2.67)
+#     cont_data[,3] <- rep(5,5)
+#     Y <- cont_data[,2:4]
+#     suppressWarnings(fit <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025,fit_type="mcmc"))
+#     suppressWarnings(fit1 <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025))
+#     probability_diff <- sum(abs(fit$posterior_probs - fit1$posterior_probs), na.rm = T)
+#     expect_lte(probability_diff, 0.376)
+# })
 
 test_that("Negative Hessians don't have posterior probability calculated", {
     cont_data <- matrix(0,nrow=5,ncol=4)

@@ -1,4 +1,9 @@
 # Changes
+## Version 23.10.1.2.0 
+## The following cumulative fixes are in version 23.10.1.2.0
+- Add the ability to set a seed for nlopt and GSL to allow for consistent results
+## New Features 
+- Added setseedGSL function with a default seed value of 12331
 ## Version 23.10.1.1.1
 ## The following cumulative fixes are in version 23.10.1.1.1
 -  The function summary() would sometimes return a different BMD/BMDL than ma_continuous_fit(),
