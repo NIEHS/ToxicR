@@ -6,18 +6,26 @@
 #include <Rcpp.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include <mutex>
+#include <thread>
 
 class Seeder {
 private:
-  gsl_rng *r = nullptr;
+  // gsl_rng *r = nullptr;
   static Seeder *instance;
-  int currentSeed = -1;
+  static std::mutex instanceMutex;
+
+  static thread_local gsl_rng *r;
+  // std::mutex seedMutex;
   Seeder() {}
 
 public:
+  static thread_local int currentSeed;
+  // int currentSeed = -1;
   Seeder(Seeder const &) = delete;
   Seeder &operator=(Seeder const &) = delete;
   static Seeder *getInstance() {
+    std::lock_guard<std::mutex> lock(instanceMutex);
     if (!instance) {
       instance = new Seeder();
     }
@@ -34,7 +42,7 @@ public:
     if (seed < 0) {
       Rcpp::stop("Error: Seed must be a positive integer.");
     }
-
+    // std::lock_guard<std::mutex> lock(seedMutex);
     if (r) {
       gsl_rng_free(r);
     }
@@ -47,12 +55,25 @@ public:
     currentSeed = seed;
   }
 
-  double get_uniform() { return gsl_rng_uniform(r); }
+  double get_uniform() {
+    // std::lock_guard<std::mutex> lock(seedMutex);
+    return gsl_rng_uniform(r);
+  }
 
-  double get_gaussian_ziggurat() { return gsl_ran_gaussian_ziggurat(r, 1.0); }
+  double get_gaussian_ziggurat() {
+    // std::lock_guard<std::mutex> lock(seedMutex);
+    return gsl_ran_gaussian_ziggurat(r, 1.0);
+  }
 
-  double get_ran_flat() { return gsl_ran_flat(r, -1, 1); }
+  double get_ran_flat() {
+    // std::lock_guard<std::mutex> lock(seedMutex);
+    return gsl_ran_flat(r, -1, 1);
+  }
 
-  gsl_rng *get_gsl_rng() { return r; }
+  gsl_rng *get_gsl_rng() {
+    // std::lock_guard<std::mutex> lock(seedMutex);
+    return r;
+  }
 };
+
 #endif

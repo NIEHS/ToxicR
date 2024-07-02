@@ -353,7 +353,7 @@ List run_continuous_ma_laplace(List model_priors, NumericVector model_type,
     ma_anal.disttype[i] = (int)dist_type[i];
     ma_result->models[i] =
         new_continuous_model_result(ma_anal.models[i], ma_anal.nparms[i],
-                                    400); // have 200 equally spaced values
+                                    200); // have 200 equally spaced values
   }
 
   /// Set up the other info
@@ -455,8 +455,8 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
   model_mcmc_info.analyses = new bmd_analysis_MCMC *[ma_anal.nmodels];
   model_mcmc_info.nfits = ma_anal.nmodels;
   ma_result->nmodels = ma_anal.nmodels;
-  ma_result->dist_numE = 600;
-  ma_result->bmd_dist = new double[600 * 2];
+  ma_result->dist_numE = 400;
+  ma_result->bmd_dist = new double[400 * 2];
   ma_result->post_probs = new double[ma_anal.nmodels];
   ma_result->models = new continuous_model_result *[ma_anal.nmodels];
 
@@ -473,7 +473,7 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
     // cout << ma_anal.models[i] << " " << dist_type[i] << endl;
     ma_result->models[i] =
         new_continuous_model_result(ma_anal.models[i], ma_anal.nparms[i],
-                                    300); // have 300 equally spaced values
+                                    200); // have 300 equally spaced values
     model_mcmc_info.analyses[i] =
         new_mcmc_analysis(ma_anal.models[i], ma_anal.nparms[i], samples);
   }

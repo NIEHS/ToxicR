@@ -34,6 +34,7 @@
 #include "analysis_of_deviance.h"
 #include "bmd_calculate.h"
 #include "mcmc_analysis.h"
+#include "seeder.h"
 
 #include <algorithm>
 #include <chrono>
@@ -2307,14 +2308,17 @@ void estimate_ma_laplace(continuousMA_analysis *MA, continuous_analysis *CA,
     orig_Y_LN.col(1) = temp;
     X = X / max_dose;
   }
-
+  // std::vector<bmd_analysis> b(MA->nmodels);
   bmd_analysis *b = new bmd_analysis[MA->nmodels];
-
+  Seeder *seeder = Seeder::getInstance();
+  int seed = seeder->currentSeed;
+  // Rcpp::Rcout << "current seed: " << seed << std::endl;
 #pragma omp parallel
   {
 #pragma omp for
     for (int i = 0; i < MA->nmodels; i++) {
-
+      // NOTE: do not remove - need to set the same seed for each parallel openmp thread for reproducible and consistent results
+      seeder->setSeed(seed);
       std::vector<bool> fixedB;
       std::vector<double> fixedV;
       // on each iteration make sure there parameters are emptied
@@ -2746,6 +2750,17 @@ void estimate_ma_laplace(continuousMA_analysis *MA, continuous_analysis *CA,
       }
     }
   }
+  // post probs are different right now. should be stable if everything works correctly
+  for (int j = 0; j < MA->nmodels; j++) {
+
+    b[j].COV =
+        rescale_cov_matrix(b[j].COV, b[j].MAP_ESTIMATE,
+                           (cont_model)MA->models[j], max_dose, 1.0, false);
+    b[j].MAP_ESTIMATE = rescale_parms(
+        b[j].MAP_ESTIMATE, (cont_model)MA->models[j], max_dose, 1.0, false);
+    b[j].MAP_BMD *= max_dose;
+    b[j].BMD_CDF.set_multiple(max_dose);
+  }
 
   double *post_probs = new double[MA->nmodels];
   double temp = 0.0;
@@ -2772,16 +2787,17 @@ void estimate_ma_laplace(continuousMA_analysis *MA, continuous_analysis *CA,
     post_probs[i] = exp(post_probs[i]);
   }
 
-  for (int j = 0; j < MA->nmodels; j++) {
+  // // post probs are different right now. should be stable if everything works correctly
+  // for (int j = 0; j < MA->nmodels; j++) {
 
-    b[j].COV =
-        rescale_cov_matrix(b[j].COV, b[j].MAP_ESTIMATE,
-                           (cont_model)MA->models[j], max_dose, 1.0, false);
-    b[j].MAP_ESTIMATE = rescale_parms(
-        b[j].MAP_ESTIMATE, (cont_model)MA->models[j], max_dose, 1.0, false);
-    b[j].MAP_BMD *= max_dose;
-    b[j].BMD_CDF.set_multiple(max_dose);
-  }
+  //   b[j].COV =
+  //       rescale_cov_matrix(b[j].COV, b[j].MAP_ESTIMATE,
+  //                          (cont_model)MA->models[j], max_dose, 1.0, false);
+  //   b[j].MAP_ESTIMATE = rescale_parms(
+  //       b[j].MAP_ESTIMATE, (cont_model)MA->models[j], max_dose, 1.0, false);
+  //   b[j].MAP_BMD *= max_dose;
+  //   b[j].BMD_CDF.set_multiple(max_dose);
+  // }
 
   for (int j = 0; j < MA->nmodels; j++) {
     post_probs[j] = post_probs[j] / norm_sum;
@@ -3645,11 +3661,16 @@ void estimate_ma_MCMC(continuousMA_analysis *MA, continuous_analysis *CA,
 
   unsigned int samples = CA->samples;
   unsigned int burnin = CA->burnin;
-
+  
+  Seeder *seeder = Seeder::getInstance();
+  int seed = seeder->currentSeed;
+  // Rcpp::Rcout << "current seed: " << seed << std::endl;
 #pragma omp parallel
   {
 #pragma omp for
     for (int i = 0; i < MA->nmodels; i++) {
+      // NOTE: do not remove - need to set the same seed for each parallel openmp thread for reproducible and consistent results
+      seeder->setSeed(seed);
       std::vector<bool> fixedB;
       std::vector<double> fixedV;
       fixedB
@@ -4035,6 +4056,13 @@ void estimate_ma_MCMC(continuousMA_analysis *MA, continuous_analysis *CA,
     }
   }
 
+  /////////////////////////////////////////
+  /////////// Rescale mcmc
+  for (int i = 0; i < MA->nmodels; i++) {
+    rescale_mcmc(&a[i], (cont_model)MA->models[i], max_dose, MA->disttype[i],
+                 2);
+  }
+
   bmd_analysis *b = new bmd_analysis[MA->nmodels];
   double temp_m_dose = orig_X.maxCoeff();
   for (int i = 0; i < MA->nmodels; i++) {
@@ -4087,23 +4115,16 @@ void estimate_ma_MCMC(continuousMA_analysis *MA, continuous_analysis *CA,
     norm_sum += post_probs[i];
   }
 
-  /////////////////////////////////////////
-  /////////// Rescale mcmc
-  for (int i = 0; i < MA->nmodels; i++) {
-    rescale_mcmc(&a[i], (cont_model)MA->models[i], max_dose, MA->disttype[i],
-                 2);
-  }
+  // for (int j = 0; j < MA->nmodels; j++) {
+  //   b[j].COV =
+  //       rescale_cov_matrix(b[j].COV, b[j].MAP_ESTIMATE,
+  //                          (cont_model)MA->models[j], max_dose, 1.0, false);
 
-  for (int j = 0; j < MA->nmodels; j++) {
-    b[j].COV =
-        rescale_cov_matrix(b[j].COV, b[j].MAP_ESTIMATE,
-                           (cont_model)MA->models[j], max_dose, 1.0, false);
-
-    b[j].MAP_ESTIMATE = rescale_parms(
-        b[j].MAP_ESTIMATE, (cont_model)MA->models[j], max_dose, 1.0, false);
-    b[j].MAP_BMD *= max_dose;
-    b[j].BMD_CDF.set_multiple(max_dose);
-  }
+  //   b[j].MAP_ESTIMATE = rescale_parms(
+  //       b[j].MAP_ESTIMATE, (cont_model)MA->models[j], max_dose, 1.0, false);
+  //   b[j].MAP_BMD *= max_dose;
+  //   b[j].BMD_CDF.set_multiple(max_dose);
+  // }
   ////////////////////////////////////////////
   for (int i = 0; i < MA->nmodels; i++) {
     post_probs[i] = post_probs[i] / norm_sum;
