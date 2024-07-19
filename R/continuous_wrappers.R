@@ -123,7 +123,6 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
                                    alpha = 0.05, samples = 25000, degree=2,
                                    burnin = 1000, BMD_priors = FALSE, ewald = FALSE,
                                    transform = FALSE, BMD_TYPE = NA, threads = 2, seed = 12331){
-    .setseedGSL(seed)
     Y <- as.matrix(Y) 
     D <- as.matrix(D) 
     
@@ -362,7 +361,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       
       .set_threads(threads)
       rvals <- .run_continuous_single_mcmc(fitmodel,model_data$SSTAT,model_data$X,
-                                          PR ,options, is_log_normal, sstat) 
+                                          PR ,options, is_log_normal, sstat, seed) 
    
       if (model_type == "exp-3"){
         rvals$PARMS = rvals$PARMS[,-3]
@@ -418,7 +417,7 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       options[7] <- (ewald == TRUE)*1
       .set_threads(threads)
       rvals   <- .run_continuous_single(fitmodel,model_data$SSTAT,model_data$X,
-  						                          PR,options, dist_type)
+  						                          PR,options, dist_type, seed)
      
       rvals$bmd_dist = rvals$bmd_dist[!is.infinite(rvals$bmd_dist[,1]),,drop=F]
       rvals$bmd_dist = rvals$bmd_dist[!is.na(rvals$bmd_dist[,1]),,drop=F]

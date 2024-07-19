@@ -50,11 +50,10 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
                               BMR_TYPE = "sd", BMR = 0.1, point_p = 0.01,
                               alpha = 0.05, EFSA = TRUE, samples = 21000,
                               burnin = 1000, BMD_TYPE = NA, threads=2, seed = 12331) {
-  .setseedGSL(seed)
+  # .setseedGSL(seed)
   myD <- Y
   Y <- as.matrix(Y)
   D <- as.matrix(D)
-
   is_neg <- .check_negative_response(Y)
 
   DATA <- cbind(D, Y)
@@ -62,7 +61,6 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   Y <- Y[test == TRUE, , drop = F]
   D <- D[test == TRUE, , drop = F]
   DATA <- cbind(D, Y)
-
   current_models <- c("hill", "exp-3", "exp-5", "power", "FUNL", "exp-aerts", "invexp-aerts", 
         "gamma-aerts", "invgamma-aerts", "hill-aerts", "lomax-aerts", "invlomax-aerts", "lognormal-aerts",
         "logskew-aerts", "invlogskew-aerts", "logistic-aerts", "probit-aerts", "LMS", "gamma-efsa")
@@ -185,7 +183,6 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     dlists[ii] <- which(prior_list[[ii]]$dist == current_dists)
   }
 
-
   ###################
   DATA <- cbind(D, Y)
   if (ncol(DATA) == 4) {
@@ -226,7 +223,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   if (fit_type == "mcmc") {
     temp_r <- .run_continuous_ma_mcmc(
       priors, models, dlists, Y, D,
-      options
+      options, seed
     )
     tempn <- temp_r$ma_results
 
@@ -315,7 +312,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   } else {
     temp <- .run_continuous_ma_laplace(
       priors, models, dlists, Y, D,
-      options
+      options, seed
     )
     t_names <- names(temp)
 
@@ -516,7 +513,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     # Laplace Run
     temp <- .run_ma_dichotomous(
       data, priors, model_i,
-      model_p, FALSE, o1, o2
+      model_p, FALSE, o1, o2, seed
     )
     # clean up the run
     temp$ma_bmd <- temp$BMD_CDF
@@ -579,7 +576,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     # MCMC run
     temp_r <- .run_ma_dichotomous(
       data, priors, model_i,
-      model_p, TRUE, o1, o2
+      model_p, TRUE, o1, o2, seed
     )
     tempn <- temp_r$ma_results
     tempm <- temp_r$mcmc_runs

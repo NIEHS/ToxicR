@@ -79,10 +79,10 @@ build_single_dichotomous_dataset2 <- function(){
   mData
 }
 
-validate_model <- function(model, name, parameters, bmd_estimates) {
+validate_model <- function(model, name, parameters, bmd_estimates, tolerance = 10e-2) {
         expect_equal(name, model$full_model)
-        expect_equal(parameters, model$parameters, tolerance = 10e-2)
-        expect_equal(setNames(bmd_estimates, c("BMD", "BMDL", "BMDU")), model$bmd, tolerance = 10e-2)
+        expect_equal(parameters, model$parameters, tolerance = tolerance)
+        expect_equal(setNames(bmd_estimates, c("BMD", "BMDL", "BMDU")), model$bmd, tolerance = tolerance)
         # show(model$full_model)
         # show(model$parameters)
         # show(model$bmd)

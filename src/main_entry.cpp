@@ -67,6 +67,7 @@ SOFTWARE.
 #include "dichotomous_entry_code.h"
 #include "list_r_conversion.h"
 #include "owenst_asa076.h"
+#include "seeder.h"
 
 using namespace Rcpp;
 
@@ -94,7 +95,9 @@ double owenst_fn(double x, double fx) { return tfn(x, fx); }
 // [[Rcpp::export(".run_single_dichotomous")]]
 List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data,
                             Eigen::MatrixXd pr, NumericVector options1,
-                            IntegerVector options2) {
+                            IntegerVector options2, int seed) {
+  Seeder *seeder = Seeder::getInstance();
+  seeder->setSeed(seed);
   dichotomous_analysis Anal;
   Anal.BMD_type = (options1[0] == 1) ? eExtraRisk : eAddedRisk;
   Anal.BMR = options1[0];
@@ -192,8 +195,9 @@ List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data,
 // [[Rcpp::export(".run_continuous_single")]]
 List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y,
                            Eigen::MatrixXd X, Eigen::MatrixXd prior,
-                           NumericVector options, IntegerVector dist_type) {
-
+                           NumericVector options, IntegerVector dist_type, int seed) {
+  Seeder *seeder = Seeder::getInstance();
+  seeder->setSeed(seed);
   bool is_increasing = (bool)options[4];
   // double alpha = (double)options[3];
   double tail_p = (double)options[2];
@@ -311,17 +315,15 @@ List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y,
                                   200); // have 200 equally spaced values
   ////////////////////////////////////
   continuous_deviance aod1;
-#pragma omp parallel
+#pragma omp parallel sections
   {
-#pragma omp sections
-    {
 #pragma omp section
       { estimate_sm_laplace(&anal, result, isFast); }
 
 #pragma omp section
       {
 
-        if (anal.disttype == distribution::log_normal) {
+        if (anal2.disttype == distribution::log_normal) {
 
           estimate_log_normal_aod(&anal2, &aod1);
 
@@ -329,7 +331,6 @@ List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y,
           estimate_normal_aod(&anal2, &aod1);
         }
       }
-    }
   }
   continuous_expected_result exp_r;
   exp_r.expected = new double[anal.n];

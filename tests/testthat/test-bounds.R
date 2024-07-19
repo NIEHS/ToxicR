@@ -26,7 +26,7 @@ test_that("Posterior Probabilities dont differ", {
     suppressWarnings(fit <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025,fit_type="mcmc"))
     suppressWarnings(fit1 <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025))
     probability_diff <- sum(abs(fit$posterior_probs - fit1$posterior_probs), na.rm = T)
-    expect_lte(probability_diff, 0.376)
+    expect_lte(probability_diff, 0.01)
 })
 
 test_that("Negative Hessians don't have posterior probability calculated", {
