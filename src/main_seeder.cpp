@@ -1,6 +1,5 @@
 #include "seeder.h"
 #include <nlopt.hpp>
-Seeder *Seeder::instance = nullptr;
 
 // [[Rcpp::depends(RcppGSL)]]
 // function: setseedGSL

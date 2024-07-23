@@ -5,32 +5,32 @@
     .Call(`_ToxicR_owenst_fn`, x, fx)
 }
 
-.run_single_dichotomous <- function(model, data, pr, options1, options2) {
-    .Call(`_ToxicR_run_single_dichotomous`, model, data, pr, options1, options2)
+.run_single_dichotomous <- function(model, data, pr, options1, options2, seed) {
+    .Call(`_ToxicR_run_single_dichotomous`, model, data, pr, options1, options2, seed)
 }
 
-.run_continuous_single <- function(model, Y, X, prior, options, dist_type) {
-    .Call(`_ToxicR_run_continuous_single`, model, Y, X, prior, options, dist_type)
+.run_continuous_single <- function(model, Y, X, prior, options, dist_type, seed) {
+    .Call(`_ToxicR_run_continuous_single`, model, Y, X, prior, options, dist_type, seed)
 }
 
-.run_continuous_ma_laplace <- function(model_priors, model_type, dist_type, Y, X, options) {
-    .Call(`_ToxicR_run_continuous_ma_laplace`, model_priors, model_type, dist_type, Y, X, options)
+.run_continuous_ma_laplace <- function(model_priors, model_type, dist_type, Y, X, options, seed) {
+    .Call(`_ToxicR_run_continuous_ma_laplace`, model_priors, model_type, dist_type, Y, X, options, seed)
 }
 
-.run_continuous_ma_mcmc <- function(model_priors, model_type, dist_type, Y, X, options) {
-    .Call(`_ToxicR_run_continuous_ma_mcmc`, model_priors, model_type, dist_type, Y, X, options)
+.run_continuous_ma_mcmc <- function(model_priors, model_type, dist_type, Y, X, options, seed) {
+    .Call(`_ToxicR_run_continuous_ma_mcmc`, model_priors, model_type, dist_type, Y, X, options, seed)
 }
 
-.run_ma_dichotomous <- function(data, priors, models, model_p, is_MCMC, options1, options2) {
-    .Call(`_ToxicR_run_ma_dichotomous`, data, priors, models, model_p, is_MCMC, options1, options2)
+.run_ma_dichotomous <- function(data, priors, models, model_p, is_MCMC, options1, options2, seed) {
+    .Call(`_ToxicR_run_ma_dichotomous`, data, priors, models, model_p, is_MCMC, options1, options2, seed)
 }
 
-.run_dichotomous_single_mcmc <- function(model, Y, D, pr, options) {
-    .Call(`_ToxicR_run_dichotomous_single_mcmc`, model, Y, D, pr, options)
+.run_dichotomous_single_mcmc <- function(model, Y, D, pr, options, seed) {
+    .Call(`_ToxicR_run_dichotomous_single_mcmc`, model, Y, D, pr, options, seed)
 }
 
-.run_continuous_single_mcmc <- function(model, Y, D, priors, options, is_logNormal, suff_stat) {
-    .Call(`_ToxicR_run_continuous_single_mcmc`, model, Y, D, priors, options, is_logNormal, suff_stat)
+.run_continuous_single_mcmc <- function(model, Y, D, priors, options, is_logNormal, suff_stat, seed) {
+    .Call(`_ToxicR_run_continuous_single_mcmc`, model, Y, D, priors, options, is_logNormal, suff_stat, seed)
 }
 
 .polykCPP <- function(dose, tumor, daysOnStudy) {

@@ -459,23 +459,20 @@ void estimate_sm_laplace(dichotomous_analysis *DA,
 void estimate_ma_MCMC(dichotomousMA_analysis *MA, dichotomous_analysis *DA,
                       dichotomousMA_result *res, ma_MCMCfits *ma) {
 
-#pragma omp parallel
-  {
-#pragma omp for
-    for (int i = 0; i < MA->nmodels; i++) {
-      dichotomous_analysis temp = *DA; // copy over the initial stuff
-      temp.prior = MA->priors[i];
-      temp.parms = MA->actual_parms[i];
-      temp.prior_cols = MA->prior_cols[i];
-      temp.model = MA->models[i];
-      if (MA->models[i] == dich_model::d_multistage) {
-        temp.degree = temp.parms - 1;
-      } else {
-        temp.degree = 0;
-      }
-      // fit the individual model
-      estimate_sm_mcmc(&temp, res->models[i], ma->analyses[i], false);
+#pragma omp parallel for
+  for (int i = 0; i < MA->nmodels; i++) {
+    dichotomous_analysis temp = *DA; // copy over the initial stuff
+    temp.prior = MA->priors[i];
+    temp.parms = MA->actual_parms[i];
+    temp.prior_cols = MA->prior_cols[i];
+    temp.model = MA->models[i];
+    if (MA->models[i] == dich_model::d_multistage) {
+      temp.degree = temp.parms - 1;
+    } else {
+      temp.degree = 0;
     }
+    // fit the individual model
+    estimate_sm_mcmc(&temp, res->models[i], ma->analyses[i], false);
   }
   double *post_probs = new double[MA->nmodels];
   double temp = 0.0;
@@ -606,23 +603,20 @@ void estimate_ma_MCMC(dichotomousMA_analysis *MA, dichotomous_analysis *DA,
 void estimate_ma_laplace(dichotomousMA_analysis *MA, dichotomous_analysis *DA,
                          dichotomousMA_result *res) {
 
-#pragma omp parallel
-  {
-#pragma omp for
-    for (int i = 0; i < MA->nmodels; i++) {
-      dichotomous_analysis temp = *DA; // copy over the initial stuff
-      temp.prior = MA->priors[i];
-      temp.parms = MA->actual_parms[i];
-      temp.prior_cols = MA->prior_cols[i];
-      temp.model = MA->models[i];
-      if (MA->models[i] == dich_model::d_multistage) {
-        temp.degree = temp.parms - 1;
-      } else {
-        temp.degree = 0;
-      }
-      // fit the individual model
-      estimate_sm_laplace(&temp, res->models[i], false);
+#pragma omp parallel for
+  for (int i = 0; i < MA->nmodels; i++) {
+    dichotomous_analysis temp = *DA; // copy over the initial stuff
+    temp.prior = MA->priors[i];
+    temp.parms = MA->actual_parms[i];
+    temp.prior_cols = MA->prior_cols[i];
+    temp.model = MA->models[i];
+    if (MA->models[i] == dich_model::d_multistage) {
+      temp.degree = temp.parms - 1;
+    } else {
+      temp.degree = 0;
     }
+    // fit the individual model
+    estimate_sm_laplace(&temp, res->models[i], false);
   }
 
   double *post_probs = new double[MA->nmodels];

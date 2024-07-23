@@ -43,6 +43,7 @@
 #include "bmds_entry.h"
 #include "continuous_model_functions.h"
 #include <stdio.h>
+#include "seeder.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -314,8 +315,9 @@ List convert_continuous_maresults_to_list(continuousMA_result *result) {
 // [[Rcpp::export(".run_continuous_ma_laplace")]]
 List run_continuous_ma_laplace(List model_priors, NumericVector model_type,
                                NumericVector dist_type, Eigen::MatrixXd Y,
-                               Eigen::MatrixXd X, NumericVector options) {
-
+                               Eigen::MatrixXd X, NumericVector options, int seed) {
+  Seeder *seeder = Seeder::getInstance();
+  seeder->setSeed(seed);
   bool is_increasing = (bool)options[4];
   // double alpha = (double)options[3];
   double tail_p = (double)options[2];
@@ -353,7 +355,7 @@ List run_continuous_ma_laplace(List model_priors, NumericVector model_type,
     ma_anal.disttype[i] = (int)dist_type[i];
     ma_result->models[i] =
         new_continuous_model_result(ma_anal.models[i], ma_anal.nparms[i],
-                                    400); // have 200 equally spaced values
+                                    200); // have 200 equally spaced values
   }
 
   /// Set up the other info
@@ -430,7 +432,9 @@ List convert_mcmc_results(const ma_MCMCfits *a) {
 // [[Rcpp::export(".run_continuous_ma_mcmc")]]
 List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
                             NumericVector dist_type, Eigen::MatrixXd Y,
-                            Eigen::MatrixXd X, NumericVector options) {
+                            Eigen::MatrixXd X, NumericVector options, int seed) {
+  Seeder *seeder = Seeder::getInstance();
+  seeder->setSeed(seed);
   unsigned int burnin = (unsigned int)options[6];
   bool is_increasing = (bool)options[4];
   // double alpha = (double)options[3];
@@ -455,8 +459,8 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
   model_mcmc_info.analyses = new bmd_analysis_MCMC *[ma_anal.nmodels];
   model_mcmc_info.nfits = ma_anal.nmodels;
   ma_result->nmodels = ma_anal.nmodels;
-  ma_result->dist_numE = 600;
-  ma_result->bmd_dist = new double[600 * 2];
+  ma_result->dist_numE = 400;
+  ma_result->bmd_dist = new double[400 * 2];
   ma_result->post_probs = new double[ma_anal.nmodels];
   ma_result->models = new continuous_model_result *[ma_anal.nmodels];
 
@@ -473,7 +477,7 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
     // cout << ma_anal.models[i] << " " << dist_type[i] << endl;
     ma_result->models[i] =
         new_continuous_model_result(ma_anal.models[i], ma_anal.nparms[i],
-                                    300); // have 300 equally spaced values
+                                    200); // have 300 equally spaced values
     model_mcmc_info.analyses[i] =
         new_mcmc_analysis(ma_anal.models[i], ma_anal.nparms[i], samples);
   }
@@ -503,7 +507,6 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
       anal.sd[i] = Y(i, 2);
     }
   }
-
   estimate_ma_MCMC(&ma_anal, &anal, ma_result, &model_mcmc_info);
 
   List t1 = convert_mcmc_results(&model_mcmc_info);
@@ -534,8 +537,9 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
 // [[Rcpp::export(.run_ma_dichotomous)]]
 List run_ma_dichotomous(Eigen::MatrixXd data, List priors, NumericVector models,
                         NumericVector model_p, bool is_MCMC,
-                        NumericVector options1, IntegerVector options2) {
-
+                        NumericVector options1, IntegerVector options2, int seed) {
+  Seeder *seeder = Seeder::getInstance();
+  seeder->setSeed(seed);
   dichotomous_analysis Anal;
   Anal.BMD_type = (options2[2] == 1) ? eExtraRisk : eAddedRisk;
   Anal.BMR = options1[0];

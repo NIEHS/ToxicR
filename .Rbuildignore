@@ -1,4 +1,5 @@
 ^.*\.Rproj$
+^.*\.Rcheck$
 ^\.DS_Store$
 ^\.(RData|Rhistory|RProj\.user)$
 ^\.gitignore$

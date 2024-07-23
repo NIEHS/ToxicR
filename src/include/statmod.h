@@ -10,7 +10,6 @@
 //
 //
 #include "stdafx.h"
-
 #include <cmath>
 
 #define OPTIM_NO_FLAGS 0
@@ -49,7 +48,6 @@
 #define statmodH
 
 using namespace std;
-
 struct optimizationResult {
   nlopt::result result;
   double functionV;
@@ -723,6 +721,7 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   //  set up a bunch of differnt plausible optimizers in case of failure
   //  the first one is mainly to get a better idea of a starting value
   //  though it often converges to the optimum.
+
   nlopt::opt opt1(nlopt::LN_SBPLX, M->nParms());
   nlopt::opt opt3(nlopt::LD_LBFGS, M->nParms());
   nlopt::opt opt2(nlopt::LN_BOBYQA, M->nParms());

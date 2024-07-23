@@ -3,8 +3,6 @@ name: UBSAN/ASAN Checks
 on:
   pull_request:
     branches: [ "main" ]
-  push:
-    branches: [ "github-actions-build", "brian-bk22-plotting-patch", "bounds-check-testing" ]
   workflow_dispatch: 
     
   
