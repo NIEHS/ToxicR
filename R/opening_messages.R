@@ -17,7 +17,8 @@
 # CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 .onAttach <- function(libname, pkgname) {
-  msg <- "
+  version <- as.character(utils::packageVersion("ToxicR"))
+  msg <- paste0("
 
   _______               _____
  |__   __|      \U1F913     |  __ \\
@@ -25,7 +26,7 @@
     | |/ _ \\ \\/ / |/ __|  _  /
     | | (_) >  <| | (__| | \\ \\
     |_|\\___/_/\\_\\_|\\___|_|  \\_\\
-                           24.1.1.2.4
+                           ",version,"
     ___
     | |
     / \\                   ____()()
@@ -39,7 +40,7 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-"
+")
 
   # notify the option to update? (5 possible cases)
   # 1. error in getting the current package version -> yes
@@ -50,7 +51,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   # in short, notify the option to update unless the version numbers match
   # get version of the currently installed package
   current_pkg_version <- tryCatch(
-    as.character(utils::packageVersion("ToxicR")),
+    version,
     error = function(e) "unknown")
   # github url
   github_url <- paste0(
@@ -81,7 +82,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       compare_version_result == 0) {
     startup_message <- paste0(
       "Package attached: ToxicR v", current_pkg_version,
-      " (same as the most recent version available through GitHub).")
+      " (the most recent version available through GitHub).")
   } else if (
     # skip update for case 4
     current_pkg_version != "unknown" &
@@ -103,7 +104,13 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   }
   packageStartupMessage(msg)
   packageStartupMessage(startup_message)
-  .set_threads(2);
-  open_mp_message <- "OpenMP threads set to 2.\n"
+  status <- .set_threads(2)
+  if (status == 1) {
+    open_mp_message <- "OpenMP threads set to 2.\n"
+  } else if (status == 0) {
+    open_mp_message <- "OpenMP will not be used for parallelization.\n"
+  } else {
+    open_mp_message <- "OpenMP is not supported on this architecture.\n"
+  }
   packageStartupMessage(open_mp_message)
 }
