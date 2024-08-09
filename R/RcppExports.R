@@ -42,6 +42,6 @@
 }
 
 .set_threads <- function(num_threads) {
-    invisible(.Call(`_ToxicR_set_threads`, num_threads))
+    .Call(`_ToxicR_set_threads`, num_threads)
 }
 

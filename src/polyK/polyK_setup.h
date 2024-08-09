@@ -2,10 +2,10 @@
 #include <array>
 #include <list>
 #include <vector>
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <RcppEigen.h>
-#pragma GCC diagnostic pop
+// #pragma GCC diagnostic pop
 #include <RcppGSL.h>
 
 #include "polyK_animal.h"

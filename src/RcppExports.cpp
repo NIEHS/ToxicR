@@ -167,13 +167,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // set_threads
-void set_threads(int num_threads);
+int set_threads(int num_threads);
 RcppExport SEXP _ToxicR_set_threads(SEXP num_threadsSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type num_threads(num_threadsSEXP);
-    set_threads(num_threads);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(set_threads(num_threads));
+    return rcpp_result_gen;
 END_RCPP
 }
 

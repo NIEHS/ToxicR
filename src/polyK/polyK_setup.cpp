@@ -1,10 +1,10 @@
 
 
 // necessary things to run in R
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wignored-attributes"
 #include <RcppEigen.h>
-#pragma GCC diagnostic pop
+// #pragma GCC diagnostic pop
 
 #include "polyK_animal.h"
 #include "polyK_setup.h"

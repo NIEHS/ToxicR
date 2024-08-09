@@ -1,8 +1,10 @@
 *.o
 *.so
+*.Rproj
 .Rproj.user
 .Rhistory
 .vscode/*
 .RData
 *.tar.gz
 *.dll
+install.sh

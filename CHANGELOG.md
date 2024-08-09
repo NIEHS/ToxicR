@@ -1,6 +1,6 @@
 # Changes
-## Version 23.10.1.2.3 
-## The following cumulative fixes are in version 23.10.1.2.3
+## Version 23.10.1.2.4 
+## The following cumulative fixes are in version 23.10.1.2.4
 - Add the ability to set a seed for nlopt and GSL to allow for consistent results
 - Set additional checks and guards for openMP
 ## New Features 

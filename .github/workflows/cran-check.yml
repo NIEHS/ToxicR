@@ -64,13 +64,8 @@ jobs:
       - name: Build and Check ToxicR
         if: runner.os != 'Windows'
         run: |
-          R CMD build .
-          file config.log
-          cat config.log
           r_output=$(R CMD build .)
-          echo "$r_output"
-          package_name=$(echo "$r_output" | sed -n "s/.*building ‘\([^’]*\.tar\.gz\)’.*/\1/p") 
-          echo "$package_name"
+          package_name=$(echo "$r_output" | sed -n "s/.*building ‘\([^’]*\.tar\.gz\)’.*/\1/p")
           R CMD check --as-cran --no-manual $package_name
         shell: bash
         working-directory: "."
@@ -78,13 +73,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           r_output=$(R CMD build .)
-          echo "$r_output"
           package_name=$(echo "$r_output" | sed -n "s/.*building '\([^']*\.tar\.gz\)'.*/\1/p")
-          echo "$package_name"
           R CMD check --as-cran --no-manual $package_name
-          file ToxicR.Rcheck/00install.log
-          file ToxicR/ToxicR.Rcheck/00install.log
-          cat ToxicR.Rcheck/00install.log
-          cat ToxicR.Rcheck/00check.log
         shell: bash
         working-directory: "."
