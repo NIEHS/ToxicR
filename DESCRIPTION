@@ -1,8 +1,8 @@
 Package: ToxicR
 Type: Package
 Title: Analyzing Toxicology Dose-Response Data
-Version: 24.1.1.2.3
-Date: 2024-07-31
+Version: 24.1.1.2.4
+Date: 2024-08-08
 Authors@R: 
     c(
     person(given = "Matt",
@@ -77,7 +77,7 @@ Imports: Rcpp (>= 1.0.0), ggplot2 (>= 3.3.2), shiny (>= 1.5.0), coda
         (>= 0.19-4), scales (>= 1.1.1), forcats, ggridges (>= 0.5.3),
         doBy (>= 4.6.11), multcomp (>= 1.4), dplyr (>= 1.0.7), remotes
 LinkingTo: Rcpp, RcppEigen, RcppGSL
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Encoding: UTF-8
 VignetteBuilder: knitr
 Suggests: plotly (>= 4.9.2.1), rmarkdown, actuar (>= 3.2-0),ggpubr (>=
