@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       containers: ${{ steps.rhub-setup.outputs.containers }}
-      platforms: ubuntu-clang
+      platforms: ${{ steps.rhub-setup.outputs.platforms }}
 
     steps:
     # NO NEED TO CHECKOUT HERE
