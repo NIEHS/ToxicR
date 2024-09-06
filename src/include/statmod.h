@@ -699,6 +699,10 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
       x = startValue_F(M, startV, lb, ub, op_size);
 
     } catch (...) {
+      Rcpp::warning("Unable to compute start value for Fischer scoring algorithm.");
+      for (int i = 0; i < M->nParms(); i++) {
+        x[i] = startV(i, 0);
+      }
     }
   } else {
     for (unsigned int i = 0; i < x.size(); i++) {
