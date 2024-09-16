@@ -694,10 +694,10 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   std::vector<double> x(startV.rows());
   if (OPTIM_USE_GENETIC & flags) {
     bool op_size = (OPTIM_USE_BIG_GENETIC & flags);
+    
     try {
-
+      #pragma omp critical
       x = startValue_F(M, startV, lb, ub, op_size);
-
     } catch (...) {
       Rcpp::warning("Unable to compute start value for Fischer scoring algorithm.");
       for (int i = 0; i < M->nParms(); i++) {

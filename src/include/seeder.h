@@ -39,7 +39,7 @@ public:
       #endif
       instance->T = gsl_rng_mt19937;
       instance->currentSeed = 0;
-      instance->rngs.reserve(instance->max_threads);
+      instance->rngs.resize(instance->max_threads);
     }
 
     return instance;
@@ -51,7 +51,7 @@ public:
       int num_prev_threads = max_threads;
       max_threads = threads;
       
-      rngs.reserve(threads);
+      rngs.resize(threads);
       #pragma omp parallel for
       for (int i = 0; i < threads; i++) {
         int thread_num = omp_get_thread_num();
