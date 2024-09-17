@@ -29,10 +29,12 @@
 // #pragma GCC diagnostic ignored "-Wignored-attributes"
 // #include <RcppEigen.h>
 // #pragma GCC diagnostic pop
-// #else
+#ifdef R_COMPILATION
 #include <RcppEigen.h>
-// #endif
 #include <RcppGSL.h>
+#else
+#include <Eigen/Dense>
+#endif
 
 #include <cmath>
 #include <limits>

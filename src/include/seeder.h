@@ -24,51 +24,45 @@ private:
 
 public:
   int currentSeed;
-  std::vector<gsl_rng*> rngs;
-  const gsl_rng_type * T;
+  std::vector<gsl_rng *> rngs;
+  const gsl_rng_type *T;
   Seeder(Seeder const &) = delete;
   Seeder &operator=(Seeder const &) = delete;
+
+  ~Seeder() {
+    for (int i = 0; i < max_threads; i++) {
+      gsl_rng_free(rngs[i]);
+    }
+  }
+#ifndef NO_OMP // OpenMP - Multi-threaded seeder
   static Seeder *getInstance() {
     std::lock_guard<std::mutex> lock(instanceMutex);
     if (!instance) {
       instance = new Seeder();
-      #ifndef NO_OMP
+      omp_set_dynamic(0); // Disable dynamic threads
+      omp_set_nested(0);  // Disable nested parallelism
       instance->max_threads = omp_get_num_threads();
-      #else 
-      instance->max_threads = 1;
-      #endif
       instance->T = gsl_rng_mt19937;
       instance->currentSeed = 0;
-      instance->rngs.resize(instance->max_threads);
+      instance->rngs.resize(instance->max_threads, nullptr);
     }
-
     return instance;
   }
 
   void reset_max_threads(int threads) {
-  #ifndef NO_OMP
-    if(max_threads < threads) {
+    if (max_threads < threads) {
       int num_prev_threads = max_threads;
       max_threads = threads;
-      
-      rngs.resize(threads);
-      #pragma omp parallel for
-      for (int i = 0; i < threads; i++) {
+      rngs.resize(threads, nullptr); // Resize and initialize
+#pragma omp parallel
+      {
         int thread_num = omp_get_thread_num();
-        if (thread_num < num_prev_threads) {
-          continue;
+        if (thread_num >= num_prev_threads) {
+          gsl_rng *r_local = gsl_rng_alloc(T);
+          gsl_rng_set(r_local, currentSeed);
+          rngs[thread_num] = r_local;
         }
-        thread_local gsl_rng* r_local = gsl_rng_alloc(T);
-        gsl_rng_set(r_local, currentSeed);
-        rngs[thread_num] = r_local;
       }
-    }
-  #endif
-  }
-
-  ~Seeder() {
-    for(int i = 0; i < max_threads; i++) {
-      gsl_rng_free(rngs[i]);
     }
   }
 
@@ -76,67 +70,67 @@ public:
     if (seed < 0) {
       Rcpp::stop("Error: Seed must be a positive integer.");
     }
-    
-    #ifndef NO_OMP
-    if(rngs.empty()) {
-      #pragma omp parallel for
-      for (int i = 0; i < max_threads; i++) {
-        int thread_num = omp_get_thread_num();
-        thread_local gsl_rng* r_local = gsl_rng_alloc(T);
-        gsl_rng_set(r_local, seed);
-        rngs[thread_num] = r_local;
-      }
+
+    if (rngs.empty()) {
+      rngs.resize(max_threads, nullptr); // Resize and initialize
     }
-    else {
-      #pragma omp parallel for
-      for (int i = 0; i < max_threads; i++) {
-        int thread_num = omp_get_thread_num();
+#pragma omp parallel
+    {
+      int thread_num = omp_get_thread_num();
+      if (rngs[thread_num]) {
         gsl_rng_free(rngs[thread_num]);
-        thread_local gsl_rng* r_local = gsl_rng_alloc(gsl_rng_mt19937);
-        gsl_rng_set(r_local, seed);
-        rngs[thread_num] = r_local;
       }
+      gsl_rng *r_local = gsl_rng_alloc(T);
+      gsl_rng_set(r_local, seed);
+      rngs[thread_num] = r_local;
     }
-    #else // MacOs or non-OpenMP architecture
-    int thread_num = 0; // master thread
-    gsl_rng_free(rngs[thread_num]);
-    gsl_rng* r_local = gsl_rng_alloc(gsl_rng_mt19937);
-    gsl_rng_set(r_local, seed);
-    rngs[thread_num] = r_local;
-    #endif
-  }
-  
-  double get_uniform() {
-    double r_val;
-    #ifndef NO_OMP
-    int thread_num = omp_get_thread_num();
-    #else 
-    int thread_num = 0;
-    #endif
-    r_val = gsl_rng_uniform(rngs[thread_num]);
-    return r_val;
   }
 
+  double get_uniform() { return gsl_rng_uniform(rngs[omp_get_thread_num()]); }
+
   double get_gaussian_ziggurat() {
-    double r_val;
-    #ifndef NO_OMP
-    int thread_num = omp_get_thread_num();
-    #else 
-    int thread_num = 0;
-    #endif
-    r_val = gsl_ran_gaussian_ziggurat(rngs[thread_num], 1.0);
-    return r_val;
+    return gsl_ran_gaussian_ziggurat(rngs[omp_get_thread_num()], 1.0);
   }
 
   double get_ran_flat() {
-    double r_val;
-    #ifndef NO_OMP
-    int thread_num = omp_get_thread_num();
-    #else 
-    int thread_num = 0;
-    #endif
-    r_val = gsl_ran_flat(rngs[thread_num], -1, 1);
-    return r_val;
+    return gsl_ran_flat(rngs[omp_get_thread_num()], -1, 1);
   }
+#else // Non-OpenMP - single-threaded
+  static Seeder *getInstance() {
+    if (!instance) {
+      instance = new Seeder();
+      instance->max_threads = 1;
+      instance->T = gsl_rng_mt19937;
+      instance->currentSeed = 0;
+      instance->rngs.resize(instance->max_threads, nullptr);
+      gsl_rng *r_local = gsl_rng_alloc(T);
+      gsl_rng_set(r_local, currentSeed);
+      rngs[thread_num] = r_local;
+    }
+    return instance;
+  }
+  // No need to reset threads
+  void reset_max_threads(int threads) { return; }
+
+  void setSeed(int seed) {
+    if (seed < 0) {
+      Rcpp::stop("Error: Seed must be a positive integer.");
+    }
+    int thread_num = 0; // master thread
+    gsl_rng_free(rngs[thread_num]);
+    gsl_rng *r_local = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(r_local, seed);
+    rngs[thread_num] = r_local;
+  }
+
+  double get_uniform() { return gsl_rng_uniform(rngs[0]); }
+
+  double get_gaussian_ziggurat() {
+    return gsl_ran_gaussian_ziggurat(rngs[0], 1.0);
+  }
+
+  double get_ran_flat() { return gsl_ran_flat(rngs[0], -1, 1); }
+
+#endif // NO_OMP
 };
-#endif
+#endif // SEEDER
