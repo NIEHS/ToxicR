@@ -566,7 +566,7 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
 
       int idx = (int)(cur_tourny_parms.size() - 1) * seeder->get_uniform() + 1;
       // take the min to avoid out of bounds e.g when get_uniform ~= 1.0
-      idx = std::min(idx, cur_tourny_parms.size() - 1);
+      idx = std::min<int>(idx, (int)cur_tourny_parms.size() - 1);
       Eigen::MatrixXd temp_delta = best_parm - cur_tourny_parms[idx];
       // Create a new child as a mix between the best and some other
       // value.
