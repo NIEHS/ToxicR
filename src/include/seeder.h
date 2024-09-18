@@ -77,9 +77,9 @@ public:
 #pragma omp parallel
     {
       int thread_num = omp_get_thread_num();
-      if (rngs[thread_num]) {
-        gsl_rng_free(rngs[thread_num]);
-      }
+      // if (rngs[thread_num]) {
+      //   gsl_rng_free(rngs[thread_num]);
+      // }
       gsl_rng *r_local = gsl_rng_alloc(T);
       gsl_rng_set(r_local, seed);
       rngs[thread_num] = r_local;
@@ -117,7 +117,7 @@ public:
       Rcpp::stop("Error: Seed must be a positive integer.");
     }
     int thread_num = 0; // master thread
-    gsl_rng_free(rngs[thread_num]);
+    // gsl_rng_free(rngs[thread_num]);
     gsl_rng *r_local = gsl_rng_alloc(gsl_rng_mt19937);
     gsl_rng_set(r_local, seed);
     rngs[thread_num] = r_local;
