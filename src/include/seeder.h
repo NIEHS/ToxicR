@@ -41,7 +41,7 @@ public:
     if (!instance) {
       instance = new Seeder();
       omp_set_dynamic(0); // Disable dynamic threads
-      omp_set_nested(0);  // Disable nested parallelism
+      omp_set_max_active_levels(1);  // Disable nested parallelism
       instance->max_threads = omp_get_num_threads();
       instance->T = gsl_rng_mt19937;
       instance->currentSeed = 0;
