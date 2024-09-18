@@ -54,12 +54,12 @@ public:
       int num_prev_threads = max_threads;
       max_threads = threads;
       rngs.resize(threads, nullptr); // Resize and initialize
-      omp_set_num_threads(max_threads);
-      #pragma omp parallel for
+
+#pragma omp parallel for num_threads(max_threads)
       for (int i = num_prev_threads; i < max_threads; i++) {
-          gsl_rng *r_local = gsl_rng_alloc(T);
-          gsl_rng_set(r_local, currentSeed);
-          rngs[i] = r_local;
+        gsl_rng *r_local = gsl_rng_alloc(T);
+        gsl_rng_set(r_local, currentSeed);
+        rngs[i] = r_local;
       }
     }
   }
@@ -72,9 +72,8 @@ public:
     if (rngs.empty()) {
       rngs.resize(max_threads, nullptr); // Resize and initialize
     }
-    omp_set_num_threads(max_threads);
-#pragma omp parallel for
-  for (int i = 0; i < max_threads; i++) {
+#pragma omp parallel for num_threads(max_threads)
+    for (int i = 0; i < max_threads; i++) {
       // if (rngs[i]) {
       //   gsl_rng_free(rngs[i]);
       // }
