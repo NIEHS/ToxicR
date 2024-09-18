@@ -25,15 +25,13 @@ private:
 public:
   int currentSeed;
   static thread_local gsl_rng *r_local;
-  std::vector<gsl_rng *> rngs;
   const gsl_rng_type *T;
   Seeder(Seeder const &) = delete;
   Seeder &operator=(Seeder const &) = delete;
 
   ~Seeder() {
-    for (int i = 0; i < max_threads; i++) {
-      gsl_rng_free(rngs[i]);
-    }
+    gsl_rng_free(r_local);
+    r_local = nullptr;
   }
 #ifndef NO_OMP // OpenMP - Multi-threaded seeder
   static Seeder *getInstance() {
@@ -45,7 +43,6 @@ public:
       instance->max_threads = omp_get_num_threads();
       instance->T = gsl_rng_mt19937;
       instance->currentSeed = 0;
-      instance->rngs.resize(instance->max_threads, nullptr);
     }
     return instance;
   }
@@ -95,10 +92,8 @@ public:
       instance->max_threads = 1;
       instance->T = gsl_rng_mt19937;
       instance->currentSeed = 0;
-      instance->rngs.resize(instance->max_threads, nullptr);
-      gsl_rng *r_local = gsl_rng_alloc(T);
+      r_local = gsl_rng_alloc(T);
       gsl_rng_set(r_local, currentSeed);
-      rngs[thread_num] = r_local;
     }
     return instance;
   }
