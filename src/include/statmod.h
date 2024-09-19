@@ -491,14 +491,14 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
     }
   }
   // look for bad population entries and keep llist and population in sync
-  auto it_pop = population.begin();
+  auto it_pop1 = population.begin();
   auto it_llist = llist.begin();
-  while (it_pop != population.end()) {
-    if (it_pop->size() == 0) {
-      it_pop = population.erase(it_pop);
+  while (it_pop1 != population.end()) {
+    if (it_pop1->size() == 0) {
+      it_pop = population.erase(it_pop1);
       it_llist = llist.erase(it_llist);
     } else {
-      ++it_pop;
+      ++it_pop1;
       ++it_llist;
     }
   }
