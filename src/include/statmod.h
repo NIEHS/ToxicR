@@ -554,7 +554,10 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
         // individuals in the tourney.
 
         // choose which element in the population
-        int sel = ((int)population.size() * (int)seeder->get_uniform());
+        int sel = (int)(seeder->get_uniform() * population.size());
+        if (sel >= population.size()) {
+          sel = population.size() - 1;
+        }
         cur_tourny_nll[z] = it_l[sel];
         cur_tourny_parms[z] = population[sel];
       }
@@ -573,9 +576,11 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
       // randomly select another element to find the diference
       bool correctBounds = true;
 
-      int idx = (int)(cur_tourny_parms.size() - 1) * seeder->get_uniform() + 1;
-      // take the min to avoid out of bounds e.g when get_uniform ~= 1.0
-      idx = std::min<int>(idx, (int)cur_tourny_parms.size() - 1);
+      int idx =
+          1 + (int)(seeder->get_uniform() * (cur_tourny_parms.size() - 1));
+      if (idx >= cur_tourny_parms.size()) {
+        idx = cur_tourny_parms.size() - 1;
+      }
       Eigen::MatrixXd temp_delta = best_parm - cur_tourny_parms[idx];
       // Create a new child as a mix between the best and some other
       // value.
