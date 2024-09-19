@@ -458,17 +458,22 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   // genetic algorithm double initial_temp;
   for (int i = 0; i < NI; i++) {
     // generate new value to be within the specified bounds
-    for (int j = 0; j < M->nParms(); j++) {
-      test(j, 0) =
-          startV(j, 0) + seeder->get_ran_flat(); // random number in the bounds
+    // for (int j = 0; j < M->nParms(); j++) {
+    //   test(j, 0) =
+    //       startV(j, 0) + seeder->get_ran_flat(); // random number in the
+    //       bounds
 
-      if (test(j, 0) > ub[j]) {
-        test(j, 0) = ub[j];
-      }
-      if (test(j, 0) < lb[j]) {
-        test(j, 0) = lb[j];
-      }
+    //   if (test(j, 0) > ub[j]) {
+    //     test(j, 0) = ub[j];
+    //   }
+    //   if (test(j, 0) < lb[j]) {
+    //     test(j, 0) = lb[j];
+    //   }
+    // }
+    for (int j = 0; j < M->nParms(); j++) {
+      test(j, 0) = lb[j] + seeder->get_uniform() * (ub[j] - lb[j]);
     }
+
     test_l = M->negPenLike(test);
     // put the new value in sorted order based upon likelihood
     // score
@@ -485,12 +490,16 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
       population.insert(population.begin() + insert_idx, test);
     }
   }
-  // look for bad population entries
-  for (int i = population.size() - 1; i > 1; --i) {
-    if (population[i].size() == 0) {
-      population.erase(population.begin() + i);
-      i = population.size(); // removed the value
-                             // start over
+  // look for bad population entries and keep llist and population in sync
+  auto it_pop = population.begin();
+  auto it_llist = llist.begin();
+  while (it_pop != population.end()) {
+    if (it_pop->size() == 0) {
+      it_pop = population.erase(it_pop);
+      it_llist = llist.erase(it_llist);
+    } else {
+      ++it_pop;
+      ++it_llist;
     }
   }
 
@@ -590,19 +599,13 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
         test_l = std::numeric_limits<double>::infinity();
       }
 
-      // put this new child into the population
-      int S = population.size();
-      int insert_idx = -1;
-      for (int j = 0; j < S; j++) {
-        // this is the first occurance
-        if (test_l < llist[j]) {
-          insert_idx = j;
-          break;
-        }
-      }
-
-      if (insert_idx >= 0) {
-        llist.insert(llist.begin() + insert_idx, test_l);
+      // Insert the new child into the population if it's better than the worst
+      auto it = std::lower_bound(llist.begin(), llist.end(), test_l);
+      if (test_l < llist.back()) {
+        int insert_idx = std::distance(llist.begin(), it);
+        llist.pop_back();
+        population.pop_back();
+        llist.insert(it, test_l);
         population.insert(population.begin() + insert_idx, child);
       }
     }

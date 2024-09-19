@@ -30,16 +30,18 @@ public:
   Seeder &operator=(Seeder const &) = delete;
 
   ~Seeder() {
-    gsl_rng_free(r_local);
-    r_local = nullptr;
+    if (r_local) {
+      gsl_rng_free(r_local);
+      r_local = nullptr;
+    }
   }
 #ifndef NO_OMP // OpenMP - Multi-threaded seeder
   static Seeder *getInstance() {
     std::lock_guard<std::mutex> lock(instanceMutex);
     if (!instance) {
       instance = new Seeder();
-      omp_set_dynamic(0); // Disable dynamic threads
-      omp_set_max_active_levels(1);  // Disable nested parallelism
+      omp_set_dynamic(0);           // Disable dynamic threads
+      omp_set_max_active_levels(1); // Disable nested parallelism
       instance->max_threads = omp_get_num_threads();
       instance->T = gsl_rng_mt19937;
       instance->currentSeed = 0;
