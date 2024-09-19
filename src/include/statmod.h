@@ -495,7 +495,7 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   auto it_llist = llist.begin();
   while (it_pop1 != population.end()) {
     if (it_pop1->size() == 0) {
-      it_pop = population.erase(it_pop1);
+      it_pop1 = population.erase(it_pop1);
       it_llist = llist.erase(it_llist);
     } else {
       ++it_pop1;
