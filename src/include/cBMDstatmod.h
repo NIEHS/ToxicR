@@ -261,7 +261,7 @@ double cBMDModel<LL, PR>::returnBMD(Eigen::MatrixXd theta, contbmd BMDType,
 //          void    *data     : Extra data needed. In this case, it is a
 //          statModel<LL,PR> object,
 //							   which is used to
-//compute the negative penalized likelihood
+// compute the negative penalized likelihood
 //////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 double cequality_constraint(unsigned n, const double *b, double *grad,
@@ -439,7 +439,7 @@ optimizationResult cfindMAX_W_EQUALITY(cBMDModel<LL, PR> *M,
 //          void    *data     : Extra data needed. In this case, it is a
 //          statModel<LL,PR> object,
 //							   which is used to
-//compute the negative penalized likelihood
+// compute the negative penalized likelihood
 //////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 double neg_pen_likelihood_contbound(unsigned n, const double *b, double *grad,
@@ -567,12 +567,12 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
   opt.set_maxeval(20000);
 
   nlopt::opt opt3(nlopt::LN_SBPLX, vecSize);
-  opt.set_initial_step(1e-4);
-  opt.set_min_objective(neg_pen_likelihood_contbound<LL, PR>, &info);
-  opt.set_lower_bounds(lb);
-  opt.set_upper_bounds(ub);
-  opt.set_xtol_abs(5e-4);
-  opt.set_maxeval(20000);
+  opt3.set_initial_step(1e-4);
+  opt3.set_min_objective(neg_pen_likelihood_contbound<LL, PR>, &info);
+  opt3.set_lower_bounds(lb);
+  opt3.set_upper_bounds(ub);
+  opt3.set_xtol_abs(5e-4);
+  opt3.set_maxeval(20000);
   ///////////////////////////////////////////////////////////////////////////////
 
   //	if(M->modelling_type() == cont_model::gamma_aerts){
@@ -663,8 +663,8 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 
 ///////////////////////////////////////////////////////////////////////////////
 // Function profile_BMDNC(dBMDModel<LL, PR>  *M,
-//						 bool isExtra,		// true if
-//it is
+//						 bool isExtra,		// true
+//if it is
 // false if it is added 						 double
 // BMR, double BMDchange, double totalChange, bool robust) Purpose: This
 // function iteratively changes the BMD by a BMDchange%
