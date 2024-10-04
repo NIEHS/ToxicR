@@ -635,21 +635,23 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
                                    << ", good_opt= " << good_opt);
   }
   //	cout << "Opt "<< good_opt << endl;
-  std::vector<double> xxx(x.size() + 1);
+  Eigen::MatrixXd xxx = Eigen::MatrixXd::Zero(M->nParms(), 1);
+  // std::vector<double> xxx(x.size() + 1);
   count = 0;
   for (int i = 0; i < M->nParms(); i++) {
     if (i != p_remove) {
-      xxx[i] = x[count];
+      xxx(i, 0) = x[count];
       count++;
     }
   }
 
   if (good_opt) { // if the opimization criteria worked
     x = M->bound_fix(xxx, BMDType, BMRF, tail_prob, BMD, isInc);
-    Eigen::Map<Eigen::MatrixXd> d(x.data(), M->nParms(), 1); // return values
+    Eigen::MatrixXd result_matrix = Eigen::MatrixXd::Zero(x.size(), 1);
+    result_matrix = x;
     oR.result = result;
     oR.functionV = minf;
-    oR.max_parms = d;
+    oR.max_parms = result_matrix;
   } else {
     oR.result = result;
     oR.functionV = std::numeric_limits<double>::quiet_NaN();
@@ -664,7 +666,7 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 ///////////////////////////////////////////////////////////////////////////////
 // Function profile_BMDNC(dBMDModel<LL, PR>  *M,
 //						 bool isExtra,		// true
-//if it is
+// if it is
 // false if it is added 						 double
 // BMR, double BMDchange, double totalChange, bool robust) Purpose: This
 // function iteratively changes the BMD by a BMDchange%
