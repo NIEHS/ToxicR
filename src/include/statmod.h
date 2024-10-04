@@ -477,18 +477,10 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
     test_l = M->negPenLike(test);
     // put the new value in sorted order based upon likelihood
     // score
-    int insert_idx = -1;
-    for (int j = 0; j < NI; j++) {
-      if (test_l < llist[j]) { // this is the first occurance
-        insert_idx = j;
-        break;
-      }
-    }
-
-    if (insert_idx >= 0) {
-      llist.insert(llist.begin() + insert_idx, test_l);
-      population.insert(population.begin() + insert_idx, test);
-    }
+    auto it = std::lower_bound(llist.begin(), llist.end(), test_l);
+    llist.insert(it, test_l);
+    population.insert(population.begin() + std::distance(llist.begin(), it),
+                      test);
   }
   // look for bad population entries and keep llist and population in sync
   auto it_pop1 = population.begin();
