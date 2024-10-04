@@ -648,7 +648,9 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
   if (good_opt) { // if the opimization criteria worked
     x = M->bound_fix(xxx, BMDType, BMRF, tail_prob, BMD, isInc);
     Eigen::MatrixXd result_matrix = Eigen::MatrixXd::Zero(x.size(), 1);
-    result_matrix = x;
+    for (int i = 0; i < x.size(); ++i) {
+      result_matrix(i, 0) = x[i]; 
+    }
     oR.result = result;
     oR.functionV = minf;
     oR.max_parms = result_matrix;
