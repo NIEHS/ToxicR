@@ -31,13 +31,11 @@ SOFTWARE.
 // #pragma GCC diagnostic ignored "-Wignored-attributes"
 // #include <RcppEigen.h>
 // #pragma GCC diagnostic pop
-
-#ifdef R_COMPILATION
+// #else
 #include <RcppEigen.h>
+// #endif
 #include <RcppGSL.h>
-#else
-#include <Eigen/Dense>
-#endif
+
 #include <iostream>
 #include <string>
 #include <vector>
