@@ -13,7 +13,6 @@
 #define _USE_MATH_DEFINES
 
 #ifndef R_COMPILATION
-#include <iostream>
 #pragma message("Not R_COMPILATION in stdafx.h")
 
 #if defined WIN32 || defined _WINDOWS

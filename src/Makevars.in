@@ -1,8 +1,8 @@
-PKG_CXXFLAGS=-I./code_base -I./include @OPENMP@ @NLOPT_CPPFLAGS@ @GSL_CPPFLAGS@ -DR_COMPILATION -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+PKG_CXXFLAGS=-I./code_base -I./include @OPENMP@ @NLOPT_CPPFLAGS@ @GSL_CPPFLAGS@ -DR_COMPILATION
 PKG_LIBS=$(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) @NLOPT_LIBS@  @GSL_LIBS@ @OPENMP@
 
 # Debug / clear eigen warnings from compilation 
-#PKG_CXXFLAGS+=-Wno-ignored-attributes -DToxicR_DEBUG
+#PKG_CXXFLAGS+=-Wno-ignored-attributes -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS -DToxicR_DEBUG
 # Include all C++ files in src/ and its subdirectories
 SOURCES=@SRC_SOURCES@ @SUBDIR_SOURCES@
 
