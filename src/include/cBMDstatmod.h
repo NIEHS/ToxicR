@@ -514,11 +514,12 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
   double minf = 0;
   nlopt::result result = nlopt::FAILURE;
   int vecSize = start.rows() - 1;
-  std::vector<double> x(vecSize); // drop the number of parameters by 1
+  // std::vector<double> x(vecSize); // drop the number of parameters by 1
   std::vector<double> lb(vecSize);
   std::vector<double> ub(vecSize);
   Eigen::MatrixXd datal = M->parmLB();
   Eigen::MatrixXd datau = M->parmUB();
+  Eigen::MatrixXd x = Eigen::MatrixXd::Zero(vecSize, 1); // drop the number of parameters by 1
   int count = 0;
   ///////////////////////////////////////////////////////////////////////////////
   // remove the extra parameter from the list
@@ -635,12 +636,12 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
                                    << ", good_opt= " << good_opt);
   }
   //	cout << "Opt "<< good_opt << endl;
-  Eigen::MatrixXd xxx = Eigen::MatrixXd::Zero(M->nParms(), 1);
-  // std::vector<double> xxx(x.size() + 1);
+  // Eigen::MatrixXd xxx = Eigen::MatrixXd::Zero(M->nParms(), 1);
+  std::vector<double> xxx(x.size() + 1);
   count = 0;
   for (int i = 0; i < M->nParms(); i++) {
     if (i != p_remove) {
-      xxx(i, 0) = x[count];
+      xxx[i] = x[count];
       count++;
     }
   }
