@@ -416,7 +416,6 @@ single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
       
       options[7] <- (ewald == TRUE)*1
       .set_threads(threads)
-      .setseedGSL(seed)
       rvals   <- .run_continuous_single(fitmodel,model_data$SSTAT,model_data$X,
   						                          PR,options, dist_type, seed)
      
