@@ -618,7 +618,7 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
 //	cout << "Error Forced stop" << endl;
-#elif
+#else
     } catch (nlopt::roundoff_limited2 &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");

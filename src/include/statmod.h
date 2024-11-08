@@ -779,7 +779,7 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
       // std::endl;
 
     } // catch
-    
+
 #ifdef _WIN32 || defined(__APPLE__)
     catch (nlopt::roundoff_limited &exce) {
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
@@ -792,8 +792,8 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
       // Rcpp::Rcout << "forced stop nlopt: " << exce.what() << std::endl;
       //  cout << "there" << endl;
     } // catch
-    #elif
-        catch (nlopt::roundoff_limited2 &exce) {
+#else
+    catch (nlopt::roundoff_limited2 &exce) {
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
       // Rcpp::Rcout << "Roundoff_limited nlopt: " << exce.what() <<
       // std::endl;
@@ -804,7 +804,7 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
       // Rcpp::Rcout << "forced stop nlopt: " << exce.what() << std::endl;
       //  cout << "there" << endl;
     } // catch
-    #endif
+#endif
     catch (const std::runtime_error &exce) {
       DEBUG_LOG(file,
                 "opt_iter= " << opt_iter << ", general error: " << exce.what());
