@@ -55,7 +55,6 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   Y <- as.matrix(Y)
   D <- as.matrix(D)
   .setseedGSL(seed)
-  .set_threads(threads)
   is_neg <- .check_negative_response(Y)
 
   DATA <- cbind(D, Y)

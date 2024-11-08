@@ -38,6 +38,27 @@ public:
     return &instance;
   }
 
+  void reset_max_threads(int threads) {
+  #ifndef NO_OMP
+    if(max_threads < threads) {
+      int num_prev_threads = max_threads;
+      max_threads = threads;
+      
+      rngs.reserve(threads);
+      #pragma omp parallel for
+      for (int i = 0; i < threads; i++) {
+        int thread_num = omp_get_thread_num();
+        if (thread_num < num_prev_threads) {
+          continue;
+        }
+        thread_local gsl_rng* r_local = gsl_rng_alloc(T);
+        gsl_rng_set(r_local, currentSeed);
+        rngs[thread_num] = r_local;
+      }
+    }
+  #endif
+  }
+
   ~Seeder() {
     if (rng) {
       gsl_rng_free(rng);
@@ -56,7 +77,7 @@ public:
     nlopt_srand(seed);
     currentSeed = seed;
   }
-
+  
   double get_uniform() {
     if (!rng) {
       Rcpp::warning("Error: RNG not initialized.");
