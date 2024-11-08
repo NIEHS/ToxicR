@@ -571,12 +571,12 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
   opt.set_maxeval(20000);
 
   nlopt::opt opt3(nlopt::LN_SBPLX, vecSize);
-  opt.set_initial_step(1e-4);
-  opt.set_min_objective(neg_pen_likelihood_contbound<LL, PR>, &info);
-  opt.set_lower_bounds(lb);
-  opt.set_upper_bounds(ub);
-  opt.set_xtol_abs(5e-4);
-  opt.set_maxeval(20000);
+  opt3.set_initial_step(1e-4);
+  opt3.set_min_objective(neg_pen_likelihood_contbound<LL, PR>, &info);
+  opt3.set_lower_bounds(lb);
+  opt3.set_upper_bounds(ub);
+  opt3.set_xtol_abs(5e-4);
+  opt3.set_maxeval(20000);
   ///////////////////////////////////////////////////////////////////////////////
 
   //	if(M->modelling_type() == cont_model::gamma_aerts){
@@ -592,22 +592,18 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
       switch (opt_iter) {
       case 0:
         opt_iter++;
-        result =
-            opt2.optimize(x, minf); // fastest algorithm first
-                                    //				cout << "huh1";
+        // fastest algorithm first
+        result = opt2.optimize(x, minf); 
         break;
       case 1:
         opt_iter++;
-        result =
-            opt3.optimize(x, minf); // second fastest algorithm next
-                                    //				cout << "huh2";
+        // second fastest algorithm next
+        result = opt3.optimize(x, minf); 
         break;
       default:
-        opt_iter++;
-        result = opt.optimize(
-            x,
-            minf); // most stable one third -- but slower
-                   //				cout << "huh3 " << result;
+        opt_iter++; 
+        // most stable one third -- but slower
+        result = opt.optimize(x, minf);
       }
       // file << "result= " << result << ", minf= " << minf << endl;
       // flush(file);
