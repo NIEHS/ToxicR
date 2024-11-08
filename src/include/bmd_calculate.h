@@ -37,14 +37,15 @@
 #include <vector>
 #ifdef R_COMPILATION
 // necessary things to run in R
-#ifdef ToxicR_DEBUG
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
+// necessary things to run in R
+// #ifdef ToxicR_DEBUG
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wignored-attributes"
+// #include <RcppEigen.h>
+// #pragma GCC diagnostic pop
+// #else
 #include <RcppEigen.h>
-#pragma GCC diagnostic pop
-#else
-#include <RcppEigen.h>
-#endif
+// #endif
 #include <RcppGSL.h>
 #else
 #include <Eigen/Dense>
@@ -67,6 +68,8 @@ class bmd_cdf {
 
 public:
   bmd_cdf() : probs(), BMD() {
+
+    // Rcpp::Rcout << "Init GSL bmd_cdf none" << std::endl;
     spline_bmd_cdf = NULL;
     spline_bmd_inv = NULL;
     acc_bmd_cdf = NULL;
@@ -81,6 +84,7 @@ public:
 
   bmd_cdf &operator=(const bmd_cdf &M) {
 
+    // Rcpp::Rcout << "Init GSL bmd_cdf operator" << std::endl;
     probs = M.probs;
     BMD = M.BMD;
     multiple = M.multiple;
@@ -98,7 +102,10 @@ public:
       error =
           gsl_spline_init(spline_bmd_inv, probs.data(), BMD.data(), BMD.size());
 
+      // Rcpp::Rcout << "Init GSL bmd_cdf operator assigned splines" << std::endl;
       if (error) {
+        // Rcpp::Rcout << "Init GSL bmd_cdf operator assigned splines with error"
+                    // << std::endl;
         if (spline_bmd_inv) {
           gsl_spline_free(spline_bmd_inv);
         }
@@ -120,6 +127,9 @@ public:
                                 BMD.size());
 
         if (error) {
+          // Rcpp::Rcout
+              // << "Init GSL bmd_cdf operator assigned splines with error again"
+              // << std::endl;
           if (spline_bmd_inv) {
             gsl_spline_free(spline_bmd_inv);
           }
@@ -147,6 +157,7 @@ public:
 
   bmd_cdf(std::vector<double> tx, std::vector<double> ty) : probs(tx), BMD(ty) {
     int error;
+    // Rcpp::Rcout << "Init GSL bmd_cdf" << std::endl;
     multiple = 1.0;
     max_prob = *max_element(probs.begin(), probs.end());
     min_prob = *min_element(probs.begin(), probs.end());
@@ -155,6 +166,7 @@ public:
     min_BMD = *min_element(BMD.begin(), BMD.end());
 
     if (probs.size() == BMD.size() && BMD.size() > 0) {
+      // Rcpp::Rcout << "Setting gsl spline" << std::endl;
       acc_bmd_inv = gsl_interp_accel_alloc();
       acc_bmd_cdf = gsl_interp_accel_alloc();
       spline_bmd_inv = gsl_spline_alloc(gsl_interp_steffen, BMD.size());
@@ -163,6 +175,7 @@ public:
           gsl_spline_init(spline_bmd_inv, probs.data(), BMD.data(), BMD.size());
 
       if (error) {
+        // Rcpp::Rcout << "GSL Init error" << std::endl;
         if (spline_bmd_inv) {
           gsl_spline_free(spline_bmd_inv);
         }
@@ -184,6 +197,7 @@ public:
                                 BMD.size());
 
         if (error) {
+          // Rcpp::Rcout << "GSL Init error again" << std::endl;
           if (spline_bmd_inv) {
             gsl_spline_free(spline_bmd_inv);
           }
@@ -201,6 +215,7 @@ public:
           acc_bmd_cdf = NULL;
           spline_bmd_inv = NULL;
           acc_bmd_inv = NULL;
+          // Rcpp::Rcout << "GSL all null" << std::endl;
         }
       }
     }
@@ -226,11 +241,18 @@ public:
   }
 
   double inv(double p) {
-
     if (spline_bmd_cdf != NULL && acc_bmd_cdf != NULL) {
 
+      // Rcpp::Rcout << "Spline and accelerator not NULL" << std::endl;
       if (p > min_prob && p < max_prob) {
-        return gsl_spline_eval(spline_bmd_inv, p, acc_bmd_inv) * multiple;
+        double result =
+            gsl_spline_eval(spline_bmd_inv, p, acc_bmd_inv) * multiple;
+        // Debugging output
+        // if (std::isnan(result)) {
+        //   Rcpp::Rcout << "NaN detected in gsl_spline_eval result for p = " << p
+        //               << std::endl;
+        // }
+        return result;
       }
       if (p < min_prob)
         return 0;
@@ -657,8 +679,8 @@ bmd_analysis bmd_analysis_DNC(Eigen::MatrixXd Y, Eigen::MatrixXd D,
 
   dBMDModel<LL, PR> model(dichotimousM, model_prior, fixedB, fixedV);
   signed int flags = OPTIM_USE_GENETIC | OPTIM_USE_SUBPLX;
-  optimizationResult oR = findMAP<LL, PR>(&model, flags);
 
+  optimizationResult oR = findMAP<LL, PR>(&model, flags);
   bmd_analysis rVal;
   double BMD =
       isExtra ? model.extra_riskBMDNC(BMR) : model.added_riskBMDNC(BMR);
@@ -703,12 +725,22 @@ bmd_analysis bmd_analysis_DNC(Eigen::MatrixXd Y, Eigen::MatrixXd D,
     }
   }
 
-  if (!std::isinf(BMD) && !isnan(BMD) &&
-      BMD > 0 // flag numerical thins so it doesn't blow up.
-      && result.rows() > 5) {
+  // if (!std::isinf(BMD) && !isnan(BMD) &&
+  //     BMD > 0 // flag numerical thins so it doesn't blow up.
+  //     && result.rows() > 5) {
 
-    bmd_cdf cdf(x, y);
-    rVal.BMD_CDF = cdf;
+  //   bmd_cdf cdf(x, y);
+  //   rVal.BMD_CDF = cdf;
+  // }
+  if (!std::isinf(BMD) && !isnan(BMD) && BMD > 0 && result.rows() > 5 &&
+      !x.empty() && !y.empty()) {
+
+    try {
+      bmd_cdf cdf(x, y);
+      rVal.BMD_CDF = cdf;
+    } catch (const std::exception &e) {
+      Rcpp::Rcout << "Error initializing bmd_cdf: " << e.what() << std::endl;
+    }
   }
 
   Eigen::MatrixXd estimated_p = model.log_likelihood.mean(oR.max_parms);

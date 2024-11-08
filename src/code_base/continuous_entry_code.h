@@ -31,14 +31,14 @@
 #endif
 
 #ifdef R_COMPILATION
-#ifdef ToxicR_DEBUG
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
+// #ifdef ToxicR_DEBUG
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wignored-attributes"
+// #include <RcppEigen.h>
+// #pragma GCC diagnostic pop
+// #else
 #include <RcppEigen.h>
-#pragma GCC diagnostic pop
-#else
-#include <RcppEigen.h>
-#endif
+// #endif
 #include <RcppGSL.h>
 using namespace Rcpp;
 using Rcpp::as;
@@ -134,7 +134,7 @@ Eigen::MatrixXd X_gradient_cont_norm(Eigen::MatrixXd theta, Eigen::MatrixXd Y,
   LL data_likelihood(Y, D, SS, CV, junk);
   Eigen::MatrixXd rValue(Y.rows(), data_likelihood.nParms());
 
-  double *grad = new double[data_likelihood.nParms() + 10];
+  Eigen::VectorXd grad(data_likelihood.nParms() + 10);
 
   Eigen::MatrixXd md = D;
   for (int i = 0; i < D.rows(); i++) {
@@ -144,7 +144,6 @@ Eigen::MatrixXd X_gradient_cont_norm(Eigen::MatrixXd theta, Eigen::MatrixXd Y,
       rValue(i, j) = grad[j];
     }
   }
-  delete[] grad;
   return rValue;
 }
 
@@ -184,10 +183,10 @@ Eigen::MatrixXd X_gradient_cont(Eigen::MatrixXd theta, Eigen::MatrixXd Y,
 
   LL data_likelihood(Y, D, SS, degree);
   Eigen::MatrixXd rValue(Y.rows(), data_likelihood.nParms());
+  Eigen::VectorXd grad(data_likelihood.nParms());
+  // double *grad = new double[data_likelihood.nParms() + 10];
 
-  double *grad = new double[data_likelihood.nParms() + 10];
-
-  Eigen::MatrixXd md = D;
+  Eigen::VectorXd md;
   for (int i = 0; i < D.rows(); i++) {
     md = D.row(i);
     xgrad<LL>(theta, grad, &data_likelihood, md);
@@ -196,7 +195,6 @@ Eigen::MatrixXd X_gradient_cont(Eigen::MatrixXd theta, Eigen::MatrixXd Y,
     }
   }
 
-  delete[] grad;
   return rValue;
 }
 

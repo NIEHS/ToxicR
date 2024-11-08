@@ -26,24 +26,24 @@ SOFTWARE.
  *
  */
 
-#ifdef ToxicR_DEBUG
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
-#include <RcppEigen.h>
-#pragma GCC diagnostic pop
-#else
-#include <RcppEigen.h>
-#endif
-#include <RcppGSL.h>
+// #ifdef ToxicR_DEBUG
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wignored-attributes"
+// #include <RcppEigen.h>
+// #pragma GCC diagnostic pop
 
+#ifdef R_COMPILATION
+#include <RcppEigen.h>
+#include <RcppGSL.h>
+#else
+#include <Eigen/Dense>
+#endif
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include "bmds_entry.h"
-
+#include <bmds_entry.h>
 #include <statmod.h>
-
 #include <IDPrior.h>
 #include <binomModels.h>
 #include <log_likelihoods.h>
@@ -67,6 +67,7 @@ SOFTWARE.
 #include "dichotomous_entry_code.h"
 #include "list_r_conversion.h"
 #include "owenst_asa076.h"
+#include "seeder.h"
 
 using namespace Rcpp;
 
@@ -94,7 +95,10 @@ double owenst_fn(double x, double fx) { return tfn(x, fx); }
 // [[Rcpp::export(".run_single_dichotomous")]]
 List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data,
                             Eigen::MatrixXd pr, NumericVector options1,
-                            IntegerVector options2) {
+                            IntegerVector options2, int seed) {
+  Seeder *seeder = Seeder::getInstance();
+  seeder->setSeed(seed);
+  // Rcpp::Rcout << "In single dichotomous and set seed" << std::endl;
   dichotomous_analysis Anal;
   Anal.BMD_type = (options1[0] == 1) ? eExtraRisk : eAddedRisk;
   Anal.BMR = options1[0];
@@ -124,6 +128,7 @@ List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data,
 
   cp_prior(pr, Anal.prior);
 
+  // Rcpp::Rcout << "Done cp prior" << std::endl;
   dichotomous_model_result res;
   res.parms = new double[pr.rows()];
   res.cov = new double[pr.rows() * pr.rows()];
@@ -132,6 +137,14 @@ List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data,
 
   estimate_sm_laplace(&Anal, &res);
 
+// // Debugging output to check for NaNs
+// for (int i = 0; i < res.dist_numE * 2; ++i) {
+//   if (std::isnan(res.bmd_dist[i])) {
+//     // Rcpp::Rcout << "NaN detected in bmd_dist at index " << i << std::endl;
+//   }
+// }
+
+  // Rcpp::Rcout << "Estimated sm laplace" << std::endl;
   dichotomous_PGOF_data GOFdata;
   GOFdata.n = Anal.n;
   GOFdata.Y = Anal.Y;
@@ -192,8 +205,11 @@ List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data,
 // [[Rcpp::export(".run_continuous_single")]]
 List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y,
                            Eigen::MatrixXd X, Eigen::MatrixXd prior,
-                           NumericVector options, IntegerVector dist_type) {
-
+                           NumericVector options, IntegerVector dist_type,
+                           int seed) {
+  Seeder *seeder = Seeder::getInstance();
+  seeder->setSeed(seed);
+  // Rcpp::Rcout << "In run_continuous_single and set seed" << std::endl;
   bool is_increasing = (bool)options[4];
   // double alpha = (double)options[3];
   double tail_p = (double)options[2];
@@ -231,6 +247,7 @@ List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y,
   // Check on the polynomial stuff
   //
 
+  // Rcpp::Rcout << "Prior calculated" << std::endl;
   if (anal.model == cont_model::polynomial) {
     // figure out the degree
     if (anal.disttype == distribution::normal) {
@@ -281,6 +298,7 @@ List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y,
   // Check on the polynomial stuff
   //
 
+  // Rcpp::Rcout << "Prior2 calculated" << std::endl;
   if (anal2.model == cont_model::polynomial) {
     // figure out the degree
     if (anal2.disttype == distribution::normal) {
@@ -303,40 +321,48 @@ List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y,
     }
   }
 
-  ////////////////////////////////////
-
+  // Rcpp::Rcout << "Getting cont result" << std::endl;
   ////////////////////////////////////
   continuous_model_result *result =
       new_continuous_model_result(anal.model, anal.parms,
                                   200); // have 200 equally spaced values
   ////////////////////////////////////
   continuous_deviance aod1;
-#pragma omp parallel
-  {
-#pragma omp sections
-    {
-#pragma omp section
-      { estimate_sm_laplace(&anal, result, isFast); }
+// #ifndef NO_OMP
+// #pragma omp parallel sections
+//   {
+// #pragma omp section
+//     { estimate_sm_laplace(&anal, result, isFast); }
 
-#pragma omp section
-      {
+// #pragma omp section
+//     {
+//       if (anal2.disttype == distribution::log_normal) {
+//         estimate_log_normal_aod(&anal2, &aod1);
 
-        if (anal.disttype == distribution::log_normal) {
+//       } else {
+//         estimate_normal_aod(&anal2, &aod1);
+//       }
+//     }
+//   }
+// #else
+  // Rcpp::Rcout << "Result bmd result: " << std::endl;
 
-          estimate_log_normal_aod(&anal2, &aod1);
+  estimate_sm_laplace(&anal, result, isFast);
+  // Rcpp::Rcout << "Estimated sm laplace" << std::endl;
 
-        } else {
-          estimate_normal_aod(&anal2, &aod1);
-        }
-      }
-    }
+  if (anal2.disttype == distribution::log_normal) {
+    estimate_log_normal_aod(&anal2, &aod1);
+  } else {
+    estimate_normal_aod(&anal2, &aod1);
   }
+// #endif
   continuous_expected_result exp_r;
   exp_r.expected = new double[anal.n];
   exp_r.n = anal.n;
   exp_r.sd = new double[anal.n];
   continuous_expectation(&anal, result, &exp_r);
 
+  // Rcpp::Rcout << "Continuous expectation calculated" << std::endl;
   NumericMatrix AOD(5, 2);
   AOD(0, 0) = aod1.A1;
   AOD(0, 1) = aod1.N1;

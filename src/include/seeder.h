@@ -3,38 +3,44 @@
 #ifndef SEEDER
 #define SEEDER
 
+// Check for MinGW or MSVC (both support __declspec(thread))
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#define THREAD_LOCAL __declspec(thread)
+
+// Check for GCC or Clang on non-Windows systems
+#elif defined(__GNUC__) || defined(__clang__)
+#define THREAD_LOCAL thread_local
+
+#else
+#define THREAD_LOCAL // Fallback for unsupported compilers
+#endif
 #include <Rcpp.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 #include <mutex>
 #include <thread>
+#include <vector>
+#include <nlopt.hpp>
 
 class Seeder {
 private:
-  // gsl_rng *r = nullptr;
-  static Seeder *instance;
-  static std::mutex instanceMutex;
+  THREAD_LOCAL static gsl_rng *rng;
+  const gsl_rng_type *T = gsl_rng_mt19937;
+  int currentSeed = 0;
 
-  static thread_local gsl_rng *r;
-  // std::mutex seedMutex;
   Seeder() {}
-
-public:
-  static thread_local int currentSeed;
-  // int currentSeed = -1;
   Seeder(Seeder const &) = delete;
   Seeder &operator=(Seeder const &) = delete;
+
+public:
   static Seeder *getInstance() {
-    std::lock_guard<std::mutex> lock(instanceMutex);
-    if (!instance) {
-      instance = new Seeder();
-    }
-    return instance;
+    static Seeder instance;
+    return &instance;
   }
 
   ~Seeder() {
-    if (r) {
-      gsl_rng_free(r);
+    if (rng) {
+      gsl_rng_free(rng);
     }
   }
 
@@ -42,38 +48,37 @@ public:
     if (seed < 0) {
       Rcpp::stop("Error: Seed must be a positive integer.");
     }
-    // std::lock_guard<std::mutex> lock(seedMutex);
-    if (r) {
-      gsl_rng_free(r);
+    if (!rng) {
+      rng = gsl_rng_alloc(T);
     }
-    gsl_rng_env_setup();
-    r = gsl_rng_alloc(gsl_rng_mt19937);
-    gsl_rng_set(r, seed);
-    // if (currentSeed != seed) {
-    //     Rcpp::Rcout << "Updated GSL seed: " << currentSeed << std::endl;
-    // }
+    gsl_rng_set(rng, seed);
+    // Rcpp::Rcout << "GSL seed set to: " << seed << std::endl;
+    nlopt_srand(seed);
     currentSeed = seed;
   }
 
   double get_uniform() {
-    // std::lock_guard<std::mutex> lock(seedMutex);
-    return gsl_rng_uniform(r);
+    if (!rng) {
+      Rcpp::warning("Error: RNG not initialized.");
+      setSeed(currentSeed);
+    }
+    return gsl_rng_uniform(rng);
   }
 
   double get_gaussian_ziggurat() {
-    // std::lock_guard<std::mutex> lock(seedMutex);
-    return gsl_ran_gaussian_ziggurat(r, 1.0);
+    if (!rng) {
+      Rcpp::warning("Error: RNG not initialized.");
+      setSeed(currentSeed);
+    }
+    return gsl_ran_gaussian_ziggurat(rng, 1.0);
   }
 
   double get_ran_flat() {
-    // std::lock_guard<std::mutex> lock(seedMutex);
-    return gsl_ran_flat(r, -1, 1);
-  }
-
-  gsl_rng *get_gsl_rng() {
-    // std::lock_guard<std::mutex> lock(seedMutex);
-    return r;
+    if (!rng) {
+      Rcpp::warning("Error: RNG not initialized.");
+      setSeed(currentSeed);
+    }
+    return gsl_ran_flat(rng, -1, 1);
   }
 };
-
 #endif

@@ -57,10 +57,12 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
                                    prior = NULL, BMR = 0.1,
                                    alpha = 0.05, degree = 2, samples = 21000,
                                    burnin = 1000, threads=2, seed = 12331) {
-  .setseedGSL(seed)
   Y <- as.matrix(Y)
   D <- as.matrix(D)
   N <- as.matrix(N)
+  
+  .setseedGSL(seed)
+  .set_threads(threads)
 
   DATA <- cbind(D, Y, N)
   test <- .check_for_na(DATA)
@@ -114,8 +116,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
 
   if (fitter == 1) { # MLE fit
     bounds <- .bmd_default_frequentist_settings(model_type, degree)
-    .set_threads(threads)
-    temp <- .run_single_dichotomous(dmodel, DATA, bounds, o1, o2)
+    temp <- .run_single_dichotomous(dmodel, DATA, bounds, o1, o2, seed)
     # class(temp$bmd_dist) <- "BMD_CDF"
     temp_me <- temp$bmd_dist
 
@@ -136,8 +137,7 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
   }
 
   if (fitter == 2) { # laplace fit
-    .set_threads(threads)
-    temp <- .run_single_dichotomous(dmodel, DATA, prior$priors, o1, o2)
+    temp <- .run_single_dichotomous(dmodel, DATA, prior$priors, o1, o2, seed)
     # class(temp$bmd_dist) <- "BMD_CDF"
     temp_me <- temp$bmd_dist
     temp_me <- temp_me[!is.infinite(temp_me[, 1]), ]
@@ -156,10 +156,9 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     class(temp) <- "BMDdich_fit_maximized"
   }
   if (fitter == 3) {
-    .set_threads(threads)
     temp <- .run_dichotomous_single_mcmc(
       dmodel, DATA[, 2:3, drop = F], DATA[, 1, drop = F], prior$priors,
-      c(BMR, alpha, samples, burnin)
+      c(BMR, alpha, samples, burnin), seed
     )
     # class(temp$fitted_model$bmd_dist) <- "BMD_CDF"
     temp$bmd_dist <- cbind(quantile(temp$mcmc_result$BMD_samples, seq(0.005, 0.995, 0.005),na.rm=TRUE), seq(0.005, 0.995, 0.005))

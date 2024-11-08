@@ -43,7 +43,7 @@ Eigen::MatrixXd X_gradient(Eigen::MatrixXd theta, Eigen::MatrixXd Y,
   LL data_likelihood(Y, D, degree);
   Eigen::MatrixXd rValue(Y.rows(), data_likelihood.nParms());
 
-  double *grad = new double[data_likelihood.nParms()];
+  Eigen::VectorXd grad(data_likelihood.nParms());
 
   Eigen::MatrixXd md;
   for (int i = 0; i < D.rows(); i++) {
@@ -54,7 +54,6 @@ Eigen::MatrixXd X_gradient(Eigen::MatrixXd theta, Eigen::MatrixXd Y,
       rValue(i, j) = grad[j] * Y(i, 1); // n*p'
     }
   }
-  delete[] grad;
   return rValue;
 }
 

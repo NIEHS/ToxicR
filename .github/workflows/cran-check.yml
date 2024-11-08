@@ -9,6 +9,8 @@ permissions:
 
 jobs:
   cran-check:
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       fail-fast: false 
       matrix:
@@ -18,13 +20,9 @@ jobs:
           {os: "windows-latest", r: "release", compiler_version: 15},
           {os: "windows-latest", r: "devel", compiler_version: 15},
           {os: "macos-latest", r: "release", compiler_version: 15},
-          {os: "macos-latest", r: "devel", compiler_version: 15},
+          # {os: "macos-latest", r: "devel", compiler_version: 15},
           {os: "macos-latest", r: "release", compiler_version: 14},
         ]
-        # os: [ubuntu-latest]
-        # r: ['release']
-        # compiler: ['clang']
-        # compiler_version: [14, 17]
     runs-on: ${{matrix.os}}
     name: ${{ matrix.os }}_${{ matrix.r}}
     steps:
@@ -56,54 +54,26 @@ jobs:
         with:
           extra-packages: any::rcmdcheck, any::roxygen2
           needs: check
-      - name: Setup compiler
+      - name: Install mac-r-tools
         if: runner.os == 'macOs'
-        uses: KyleMayes/install-llvm-action@v2
-        with:
-          version: ${{matrix.compiler_version}}
-          env: true
-          directory: ".."
-      - name: Setup Xcode
-        if: runner.os == 'macOs'
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest
+        run: |
+          install.packages("remotes")
+          remotes::install_github("coatless-mac/macrtools")
+          macrtools::macos_rtools_install()
+        shell: Rscript {0}
       - name: Build and Check ToxicR
         if: runner.os != 'Windows'
         run: |
-          R CMD build .
-          file config.log
-          cat config.log
           r_output=$(R CMD build .)
-          echo "$r_output"
-          package_name=$(echo "$r_output" | sed -n "s/.*building ‘\([^’]*\.tar\.gz\)’.*/\1/p") 
-          echo "$package_name"
+          package_name=$(echo "$r_output" | sed -n "s/.*building ‘\([^’]*\.tar\.gz\)’.*/\1/p")
           R CMD check --as-cran --no-manual $package_name
-          file ToxicR.Rcheck/00install.log
-          file ToxicR/ToxicR.Rcheck/00install.log
-          cat ToxicR.Rcheck/00install.log
-          cat ToxicR.Rcheck/00check.log
         shell: bash
         working-directory: "."
       - name: Build and Check ToxicR
         if: runner.os == 'Windows'
         run: |
           r_output=$(R CMD build .)
-          echo "$r_output"
           package_name=$(echo "$r_output" | sed -n "s/.*building '\([^']*\.tar\.gz\)'.*/\1/p")
-          echo "$package_name"
           R CMD check --as-cran --no-manual $package_name
-          file ToxicR.Rcheck/00install.log
-          file ToxicR/ToxicR.Rcheck/00install.log
-          cat ToxicR.Rcheck/00install.log
-          cat ToxicR.Rcheck/00check.log
         shell: bash
         working-directory: "."
-      # - name: Show testthat output
-      #   if: always()
-      #   run: |
-      #     echo ::group::Show testthat output
-      #     find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-      #     echo ::endgroup::
-      #   shell: bash
-      #   working-directory: "."

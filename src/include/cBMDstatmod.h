@@ -18,14 +18,15 @@
 #include <cmath>
 #ifdef R_COMPILATION
 // necessary things to run in R
-#ifdef ToxicR_DEBUG
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-attributes"
+// necessary things to run in R
+// #ifdef ToxicR_DEBUG
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wignored-attributes"
+// #include <RcppEigen.h>
+// #pragma GCC diagnostic pop
+// #else
 #include <RcppEigen.h>
-#pragma GCC diagnostic pop
-#else
-#include <RcppEigen.h>
-#endif
+// #endif
 #include <RcppGSL.h>
 #else
 #include <Eigen/Dense>
@@ -260,7 +261,7 @@ double cBMDModel<LL, PR>::returnBMD(Eigen::MatrixXd theta, contbmd BMDType,
 //          void    *data     : Extra data needed. In this case, it is a
 //          statModel<LL,PR> object,
 //							   which is used to
-//compute the negative penalized likelihood
+// compute the negative penalized likelihood
 //////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 double cequality_constraint(unsigned n, const double *b, double *grad,
@@ -372,21 +373,25 @@ optimizationResult cfindMAX_W_EQUALITY(cBMDModel<LL, PR> *M,
     ///////////////////////////////////////////////
 
     opt_iter++;              // iterate the optimization try counter
-    result = nlopt::FAILURE; // Avoid uninit var exception checking result after
-                             // NLOPT exception
+    result = nlopt::FAILURE; // Avoid uninit var exception checking result
+                             // after NLOPT exception
     try {
       result = opt.optimize(x, minf);
       good_opt = true;
-    } catch (nlopt::roundoff_limited &exc) {
+    } catch (nlopt::roundoff_limited2 &exc) {
       good_opt = false;
       // cout << "Error Round off" << endl;
     } catch (nlopt::forced_stop &exc) {
       good_opt = false;
       // cout << "Error Forced stop" << endl;
     } catch (const std::invalid_argument &exc) {
+      // Rcpp::Rcout << "NLOPT result code: " << result << std::endl;
       good_opt = false;
       //	cout << "SHIT!!" << endl;
+    } catch (const std::runtime_error &exc) {
+      // Rcpp::Rcout << "NLOPT result code: " << result << std::endl;
     } catch (const std::exception &exc) {
+      // Rcpp::Rcout << "NLOPT result code: " << result << std::endl;
       good_opt = false;
       // cout << "Exception!!" << endl;
     }
@@ -438,7 +443,7 @@ optimizationResult cfindMAX_W_EQUALITY(cBMDModel<LL, PR> *M,
 //          void    *data     : Extra data needed. In this case, it is a
 //          statModel<LL,PR> object,
 //							   which is used to
-//compute the negative penalized likelihood
+// compute the negative penalized likelihood
 //////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 double neg_pen_likelihood_contbound(unsigned n, const double *b, double *grad,
@@ -608,11 +613,11 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
       // flush(file);
       good_opt = true;
       // opt_iter++;
-    } catch (nlopt::roundoff_limited &exc) {
+    } catch (nlopt::roundoff_limited2 &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
       //	cout << "Error Round off" << endl;
-    } catch (nlopt::forced_stop &exc) {
+    } catch (nlopt::forced_stop2 &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
       //	cout << "Error Forced stop" << endl;
@@ -659,11 +664,10 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 
   return oR;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 // Function profile_BMDNC(dBMDModel<LL, PR>  *M,
-//						 bool isExtra,		// true if
-//it is
+//						 bool isExtra,		// true
+// if it is
 // false if it is added 						 double
 // BMR, double BMDchange, double totalChange, bool robust) Purpose: This
 // function iteratively changes the BMD by a BMDchange%
