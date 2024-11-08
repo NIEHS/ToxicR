@@ -300,15 +300,15 @@ List run_continuous_single_mcmc(NumericVector model, Eigen::MatrixXd Y,
 
   cp_prior(priors, mcmcAnal->prior);
   ////////////////////////////////////
-
   continuous_model_result *res =
       new_continuous_model_result(mcmcAnal->model, mcmcAnal->parms, 200);
 
   estimate_sm_mcmc(mcmcAnal, res, output);
 
   double v_c, v_nc, v_pow;
-  estimate_normal_variance(mcmcAnal, &v_c, &v_nc, &v_pow);
 
+  estimate_normal_variance(mcmcAnal, &v_c, &v_nc, &v_pow);
+  
   NumericVector v_inform(3);
   v_inform[0] = v_c;
   v_inform[1] = v_nc;

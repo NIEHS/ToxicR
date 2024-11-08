@@ -29,10 +29,18 @@
 // #pragma GCC diagnostic ignored "-Wignored-attributes"
 // #include <RcppEigen.h>
 // #pragma GCC diagnostic pop
+<<<<<<< HEAD
 // #else
 #include <RcppEigen.h>
 // #endif
+=======
+#ifdef R_COMPILATION
+#include <RcppEigen.h>
+>>>>>>> nlopt-update
 #include <RcppGSL.h>
+#else
+#include <Eigen/Dense>
+#endif
 
 #include <cmath>
 #include <limits>
@@ -435,6 +443,7 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
                             Eigen::MatrixXd X, NumericVector options, int seed) {
   Seeder *seeder = Seeder::getInstance();
   seeder->setSeed(seed);
+  // Rcpp::Rcout << "In run_continuous_ma_mcmc and set seed" << std::endl;
   unsigned int burnin = (unsigned int)options[6];
   bool is_increasing = (bool)options[4];
   // double alpha = (double)options[3];

@@ -42,10 +42,14 @@
 #include <cmath>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+<<<<<<< HEAD
 #include <nlopt.hpp>
 #include <utility>
 
+=======
+>>>>>>> nlopt-update
 #include <iostream>
+#include <nlopt.hpp>
 #pragma once
 #ifndef statmodH
 #define statmodH
@@ -388,7 +392,7 @@ Eigen::MatrixXd statModel<LL, PR>::varMatrix(Eigen::MatrixXd theta) {
 //          void    *data     : Extra data needed. In this case, it is a
 //          statModel<LL,PR> object,
 //							   which is used to
-//compute the negative penalized likelihood
+// compute the negative penalized likelihood
 //////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 double neg_pen_likelihood(unsigned n, const double *b, double *grad,
@@ -470,8 +474,8 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   for (int i = 0; i < NI; i++) {
     // generate new value to be within the specified bounds
     for (int j = 0; j < M->nParms(); j++) {
-      test(j, 0) =
-          startV(j, 0) + seeder->get_ran_flat(); // random number in the bounds
+      // random number in the bounds
+      test(j, 0) = startV(j, 0) + seeder->get_ran_flat();
 
       if (test(j, 0) > ub[j]) {
         test(j, 0) = ub[j];
@@ -482,8 +486,7 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
     }
     test_l = M->negPenLike(test);
     bool break_loop = false;
-    // put the new value in sorted order based upon likelihood
-    // score
+    // put the new value in sorted order based upon likelihood score
     for (int j = 0; !break_loop && j < NI; j++) {
       if (test_l < llist[j]) { // this is the first occurance
         std::vector<double>::iterator it_l = llist.begin();
@@ -501,8 +504,8 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   for (int i = population.size() - 1; i > 1; --i) {
     if (population[i].size() == 0) {
       population.erase(population.begin() + i);
-      i = population.size(); // removed the value
-                             // start over
+      // remove the value and start over
+      i = population.size();
     }
   }
 
@@ -520,7 +523,6 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
       std::min<int>(population_with_scores.size(), 175));
 
   int ngenerations;
-  ;
   int ntourny;
   int tourny_size;
   if (isBig) {
@@ -534,17 +536,11 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   }
 
   for (int xx = 0; xx < ngenerations; xx++) {
-    std::vector<std::pair<double, Eigen::MatrixXd>> new_candidates;
-
-    std::vector<double> tourny_winners;
-    std::vector<Eigen::MatrixXd> tourny_vals;
-
     for (int ay = 0; ay < ntourny; ay++) {
 
       std::vector<double> cur_tourny_nll(
           tourny_size, std::numeric_limits<double>::infinity());
       std::vector<Eigen::MatrixXd> cur_tourny_parms(tourny_size, population[0]);
-      // make sure there are no entries in the current tourny.
 
       // select the elements from the population
       for (int z = 0; z < tourny_size; z++) {
@@ -552,10 +548,10 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
         // find the best individual out of tourny_size this individual is:
         // randomly mutatied and differentially evolved based upon the given
         // individuals in the tourny.
-        int sel = (int)(population.size() *
-                        seeder->get_uniform()); // choose which element in the
-                                                // population
-        cur_tourny_nll[z] = it_l[sel];
+
+        // choose which element in the population
+        int sel = (int)(population.size() * seeder->get_uniform());
+        cur_tourny_nll[z] = llist[sel];
         cur_tourny_parms[z] = population[sel];
       }
       // Find the best individual in the tournament
@@ -577,13 +573,11 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
       // the best is the zero element
       // randomly select another element to find the diference
       bool correctBounds = true;
-
       int idx = (int)(cur_tourny_parms.size() - 1) * seeder->get_uniform() + 1;
       Eigen::MatrixXd temp_delta = best_parm - cur_tourny_parms[idx];
-      // Create a new child as a mix between the best and some other
-      // value.
+      // Create a new child as a mix between the best and some other value.
       Eigen::MatrixXd child =
-          best.second + 0.8 * temp_delta * (2 * seeder->get_uniform() - 1);
+          best_parm + 0.8 * temp_delta * (2 * seeder->get_uniform() - 1);
 
       // Apply random perturbation and ensure bounds
       for (int iii = 0; iii < M->nParms(); ++iii) {
@@ -640,9 +634,15 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   double t1 = M->negPenLike(test);
   double t2 = M->negPenLike(startV);
 
-  // Revert to the original starting value if the genetic search did not improve
-  if (t2 < t1) {
+  if (t2 < t1) { // the random search was no better than the first value.
     test = startV;
+  }
+
+  for (int i = 0; i < M->nParms(); i++) {
+    if (std::isnan(test(i, 0))) {
+      // something really messed up revert to initial starting values
+      test = startV;
+    }
   }
 
   // Check for NaN values in the final result
@@ -672,26 +672,22 @@ template <class LL, class PR>
 optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
                            unsigned int flags = OPTIM_USE_GENETIC |
                                                 OPTIM_USE_SUBPLX) {
+  // Rcpp::Rcout << "findMAP in statmod called" << std::endl;
+  // Rcpp::Rcout << "startV: " << startV << std::endl;
   optimizationResult oR;
-  Eigen::MatrixXd temp_data = M->parmLB();
-  std::vector<double> lb(M->nParms());
-
-  for (int i = 0; i < M->nParms(); i++)
-    lb[i] = temp_data(i, 0);
-  temp_data = M->parmUB();
-
-  std::vector<double> ub(M->nParms());
-
-  for (int i = 0; i < M->nParms(); i++)
-    ub[i] = temp_data(i, 0);
+  // Eigen::MatrixXd temp_data = M->parmLB();
+  Eigen::MatrixXd lbMat = M->parmLB();
+  Eigen::MatrixXd ubMat = M->parmUB();
+  std::vector<double> lb(lbMat.data(), lbMat.data() + M->nParms());
+  std::vector<double> ub(ubMat.data(), ubMat.data() + M->nParms());
   std::vector<double> x(startV.rows());
   if (OPTIM_USE_GENETIC & flags) {
+    // Rcpp::Rcout << "OPTIM USE Genetic" << std::endl;
     bool op_size = (OPTIM_USE_BIG_GENETIC & flags);
     try {
-
       x = startValue_F(M, startV, lb, ub, op_size);
-
-    } catch (...) {
+    } catch (const std::exception &e) {
+      Rcpp::stop("Exception in startValue_F: %s", e.what());
     }
   } else {
     for (unsigned int i = 0; i < x.size(); i++) {
@@ -699,10 +695,9 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
     }
   }
 
-  // int yy = x.size();
-
+  // Rcpp::Rcout << "Recalculated startV: " << startV << std::endl;
   for (int i = 0; i < M->nParms(); i++) {
-    if (!isnormal(x[i])) {
+    if (!std::isfinite(x[i])) {
       x[i] = 0;
     }
   }
@@ -715,8 +710,7 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   //  set up a bunch of differnt plausible optimizers in case of failure
   //  the first one is mainly to get a better idea of a starting value
   //  though it often converges to the optimum.
-
-  nlopt::opt opt1(nlopt::LN_SBPLX, M->nParms());
+  nlopt::opt opt1(nlopt::LN_SBPLX, M->nParms()); // nlopt::LN_NELDERMEAD
   nlopt::opt opt3(nlopt::LD_LBFGS, M->nParms());
   nlopt::opt opt2(nlopt::LN_BOBYQA, M->nParms());
 
@@ -733,13 +727,8 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
 
     // Ensure that starting values are within bounds
     for (int i = 0; i < M->nParms(); i++) {
-      double temp = x[i];
-      if (temp < lb[i])
-        temp = lb[i];
-      else if (temp > ub[i])
-        temp = ub[i];
-      x[i] = temp;
-    } // end for
+      x[i] = std::min(std::max(x[i], lb[i]), ub[i]);
+    }
 
     switch (opt_iter) {
     case 0:
@@ -789,32 +778,40 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
 
         opt_iter = 10; // if it made it here it will break the loop
       }
-
     } // try
-    catch (const std::invalid_argument &exc) {
+    catch (const std::invalid_argument &exce) {
       DEBUG_LOG(file, "opt_iter= " << opt_iter
-                                   << ", error: invalid arg: " << exc.what());
+                                   << ", error: invalid arg: " << exce.what());
+      // Rcpp::Rcout << "invalid_argument nlopt: " << exce.what() <<
+      // std::endl;
 
     } // catch
-    catch (nlopt::roundoff_limited &exec) {
+    catch (nlopt::roundoff_limited2 &exce) {
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
+      // Rcpp::Rcout << "Roundoff_limited nlopt: " << exce.what() <<
+      // std::endl;
       //  cout << "bogo" << endl;
     } // catch
-    catch (nlopt::forced_stop &exec) {
+    catch (nlopt::forced_stop2 &exce) {
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: forced_stop");
+      // Rcpp::Rcout << "forced stop nlopt: " << exce.what() << std::endl;
       //  cout << "there" << endl;
     } // catch
-    catch (const std::exception &exc) {
+    catch (const std::runtime_error &exce) {
       DEBUG_LOG(file,
-                "opt_iter= " << opt_iter << ", general error: " << exc.what());
+                "opt_iter= " << opt_iter << ", general error: " << exce.what());
+      Rcpp::Rcout << "runtime_error nlopt: " << result << std::endl;
+      // throw exce;
+    } catch (const std::exception &exce) {
+      DEBUG_LOG(file,
+                "opt_iter= " << opt_iter << ", general error: " << exce.what());
+      // throw exce;
+      // Rcpp::Rcout << "catch all nlopt: " << exce.what() << std::endl;
       // cout << "???" << endl;
-    } catch (...) {
-
     } // catch
 
     DEBUG_CLOSE_LOG(file);
   } // for opt_iter
-
   Eigen::Map<Eigen::MatrixXd> d(x.data(), M->nParms(), 1);
   oR.result = result;
   oR.functionV = minf;
@@ -824,10 +821,10 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   M->setEST(d);
 
   if (result < 0) {
-    // cerr << __FUNCTION__ << " at line: " << __LINE__ << " result= " << result
+    // cerr << __FUNCTION__ << " at line: " << __LINE__ << " result= " <<
+    // result
     // << endl;
   }
-
   return oR;
 }
 

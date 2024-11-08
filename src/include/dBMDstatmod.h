@@ -7,8 +7,10 @@
 // Date   : 12/21/2017
 // Changes:
 //        Date: 11/06/2018 - Added code in the profile function to stop
-//							the upper bound calculation when it
-//is 5 times greater 					        than the maximum administered dose.
+//							the upper bound calculation
+//when it
+// is 5 times greater 					        than the maximum
+// administered dose.
 //
 
 #pragma once
@@ -220,8 +222,8 @@ template <class A, class B> struct inequalityInfo : public optimInfo<A, B> {
 //                              It is currently unused.
 //          void    *data     : Extra data needed. In this case, it is a
 //          statModel<LL,PR> object,
-//							   which is used to compute the
-//negative penalized likelihood
+//							   which is used to
+//compute the negative penalized likelihood
 //////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 double DICHOTOMOUS_BMD_neg_pen_likelihood(unsigned n, const double *b,
@@ -273,8 +275,8 @@ double DICHOTOMOUS_BMD_neg_pen_likelihood(unsigned n, const double *b,
 //                              It is currently unused.
 //          void    *data     : Extra data needed. In this case, it is a
 //          statModel<LL,PR> object,
-//							   which is used to compute the
-//negative penalized likelihood
+//							   which is used to
+//compute the negative penalized likelihood
 //////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 double equality_constraint(unsigned n, const double *b, double *grad,
@@ -310,8 +312,10 @@ double inequality_constraint(unsigned n, const double *b, double *grad,
 
 ////////////////////////////////////////////////////////////
 // Function: inequality_constraint_general(unsigned n,
-//											const double
-//*b, 											double *grad, 										    void *data)
+//											const
+// double *b,
+// double *grad,
+// void *data)
 // Purpose: Many BMR calculations require functions of parameters to be greater
 // than zero
 //         this sets up this requirement (e.g. log(f(k)) where f(k) is a
@@ -343,7 +347,7 @@ optimizationResult
 findMAX_W_EQUALITY(dBMDModel<LL, PR> *M, Eigen::MatrixXd start,
                    const bool isExtra, // true if it is false if it is added
                    double BMD, double BMR) {
-
+  // Rcpp::Rcout << "in findMAX W Eq dBMDstatmod" << std::endl;
   optimizationResult oR;
   std::vector<double> vec_start(start.rows());
   for (size_t i = 0; i < vec_start.size(); i++) {
@@ -428,7 +432,7 @@ findMAX_W_EQUALITY(dBMDModel<LL, PR> *M, Eigen::MatrixXd start,
   }
 
   double minf;
-
+  nlopt::result result = nlopt::FAILURE;
   nlopt::opt opt(nlopt::LN_AUGLAG, M->nParms());
 
   nlopt::opt local_opt(nlopt::LD_LBFGS,
@@ -470,7 +474,6 @@ findMAX_W_EQUALITY(dBMDModel<LL, PR> *M, Eigen::MatrixXd start,
   local_opt.set_initial_step(init);
 
   ///////////////////////////////////////////////
-  nlopt::result result = nlopt::FAILURE;
   opt.add_equality_constraint(equality_constraint<LL, PR>, &info, 1e-4);
   opt.set_min_objective(neg_pen_likelihood<LL, PR>, M);
   // ofstream file;
@@ -511,6 +514,9 @@ findMAX_W_EQUALITY(dBMDModel<LL, PR> *M, Eigen::MatrixXd start,
       // file << "\tline " << __LINE__ << ": invalid arg, opt_iter= " <<
       // opt_iter << endl; flush(file); cerr << "Invalid Argument" << endl;
       good_opt = false;
+    } catch (const std::runtime_error &exc) {
+      // Rcpp::Rcout << "NLOPT result: " << result << std::endl;
+      throw exc;
     } catch (const std::exception &exc) {
       good_opt = false;
       // cerr << "Std Exeption" << endl;
@@ -525,7 +531,6 @@ findMAX_W_EQUALITY(dBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 
     // file.close();
   }
-
   Eigen::Map<Eigen::MatrixXd> d(x.data(), M->nParms(), 1); // return values
   oR.result = result;
   oR.functionV = minf;
@@ -704,8 +709,11 @@ findMAX(dBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 
 ///////////////////////////////////////////////////////////////////////////////
 // Function fit_profileLogic(dBMDModel<LL, PR>  *M,
-//						 bool isExtra,		// true if it is
-//false if it is added 						 double BMR, 		                 double BMDchange, 						 double totalChange)
+//						 bool isExtra,		// true if
+//it is
+// false if it is added 						 double
+// BMR, double BMDchange, 						 double
+// totalChange)
 // Purpose: This function fits a the profile likelihood using standard logic
 // Input  : dBMDModel<LL, PR>  *M - Dichotomous BMD model
 //		   bool isExtra          - true if it is extra risk
@@ -713,12 +721,12 @@ findMAX(dBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 //		   double BMR            - BMR [0,1]
 //	       double BMDchange      - %Change in the BMD to increment each time
 //		   double totalChange    - totalChange in penalized likelihood
-//before one stops
+// before one stops
 //  Output: Returns a list of vectors.  The first item is the fit information.
 //                                      The second item is the parameter
 //                                      optimization values.
-//									   The third item is the
-//list of parameter optimization values including the
+//									   The third item
+//is the list of parameter optimization values including the
 //                                      fixed parameter value.
 //                                      On an error there is only one item in
 //                                      the list indicating the return code.
@@ -807,10 +815,11 @@ fit_profileLogic(dBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 
 ///////////////////////////////////////////////////////////////////////////////
 // Function profile_BMDNC(dBMDModel<LL, PR>  *M,
-//						 bool isExtra,		// true if it is
-//false if it is added 						 double BMR, 		                 double BMDchange, 						 double totalChange, 						 bool
-//robust)
-// Purpose: This function iteratively changes the BMD by a BMDchange%
+//						 bool isExtra,		// true if
+//it is
+// false if it is added 						 double
+// BMR, double BMDchange, double totalChange, bool robust) Purpose: This
+// function iteratively changes the BMD by a BMDchange%
 //          until a total change in the penalized likelihood is found.
 // Input  : dBMDModel<LL, PR>  *M - Dichotomous BMD model
 //		   bool isExtra          - true if it is extra risk
@@ -818,7 +827,7 @@ fit_profileLogic(dBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 //		   double BMR            - BMR [0,1]
 //	       double BMDchange      - %Change in the BMD to increment each time
 //		   double totalChange    - totalChange in penalized likelihood
-//before one stops
+// before one stops
 //          bool   robust         - true if we do a robust search of the
 //          optimization space, false otherwise
 ////////////////////////////////////////////////////////////////////////////////

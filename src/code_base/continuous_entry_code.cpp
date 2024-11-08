@@ -501,10 +501,10 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   switch (CM) {
   case cont_model::hill:
     Xd = X_gradient_cont<lognormalHILL_BMD_NC>(estimate, Y, X, suff_stat);
-    Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     cv_t = X_cov_cont<lognormalHILL_BMD_NC>(estimate, Y, X, suff_stat);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    pr = pr.block(0, 0, 4, 4);
+    pr = pr.block(0, 0, 4, 4).eval();
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -517,10 +517,10 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     break;
   case cont_model::exp_aerts:
     Xd = X_gradient_cont<lognormalEXP_aerts_BMD_NC>(estimate, Y, X, suff_stat);
-    Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     cv_t = X_cov_cont<lognormalEXP_aerts_BMD_NC>(estimate, Y, X, suff_stat);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    pr = pr.block(0, 0, 4, 4);
+    pr = pr.block(0, 0, 4, 4).eval();
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -533,10 +533,10 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     break;
   case cont_model::LMS:
     Xd = X_gradient_cont<lognormalLMS_BMD_NC>(estimate, Y, X, suff_stat);
-    Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     cv_t = X_cov_cont<lognormalLMS_BMD_NC>(estimate, Y, X, suff_stat);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    pr = pr.block(0, 0, 4, 4);
+    pr = pr.block(0, 0, 4, 4).eval();
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -549,10 +549,10 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     break;
   case cont_model::gamma_efsa:
     Xd = X_gradient_cont<lognormalGAMMA_efsa_BMD_NC>(estimate, Y, X, suff_stat);
-    Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     cv_t = X_cov_cont<lognormalGAMMA_efsa_BMD_NC>(estimate, Y, X, suff_stat);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    pr = pr.block(0, 0, 4, 4);
+    pr = pr.block(0, 0, 4, 4).eval();
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -565,10 +565,10 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     break;
   case cont_model::invexp_aerts:
     Xd = X_gradient_cont<lognormalIEXP_aerts_BMD_NC>(estimate, Y, X, suff_stat);
-    Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     cv_t = X_cov_cont<lognormalIEXP_aerts_BMD_NC>(estimate, Y, X, suff_stat);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    pr = pr.block(0, 0, 4, 4);
+    pr = pr.block(0, 0, 4, 4).eval();
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -615,10 +615,10 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     break;
   case cont_model::hill_aerts:
     Xd = X_gradient_cont<lognormalHILL_aerts_BMD_NC>(estimate, Y, X, suff_stat);
-    Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     cv_t = X_cov_cont<lognormalHILL_aerts_BMD_NC>(estimate, Y, X, suff_stat);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    pr = pr.block(0, 0, 4, 4);
+    pr = pr.block(0, 0, 4, 4).eval();
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -666,11 +666,11 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::lognormal_aerts:
     Xd = X_gradient_cont<lognormalLOGNORMAL_aerts_BMD_NC>(estimate, Y, X,
                                                           suff_stat);
-    Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     cv_t =
         X_cov_cont<lognormalLOGNORMAL_aerts_BMD_NC>(estimate, Y, X, suff_stat);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    pr = pr.block(0, 0, 4, 4);
+    pr = pr.block(0, 0, 4, 4).eval();
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -719,11 +719,11 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::logistic_aerts:
     Xd = X_gradient_cont<lognormalLOGISTIC_aerts_BMD_NC>(estimate, Y, X,
                                                          suff_stat);
-    Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     cv_t =
         X_cov_cont<lognormalLOGISTIC_aerts_BMD_NC>(estimate, Y, X, suff_stat);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    pr = pr.block(0, 0, 4, 4);
+    pr = pr.block(0, 0, 4, 4).eval();
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -737,10 +737,10 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::probit_aerts:
     Xd = X_gradient_cont<lognormalPROBIT_aerts_BMD_NC>(estimate, Y, X,
                                                        suff_stat);
-    Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     cv_t = X_cov_cont<lognormalPROBIT_aerts_BMD_NC>(estimate, Y, X, suff_stat);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    pr = pr.block(0, 0, 4, 4);
+    pr = pr.block(0, 0, 4, 4).eval();
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -795,10 +795,10 @@ double compute_lognormal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
                                                      NORMAL_EXP5_DOWN);
     }
 
-    Eigen::MatrixXd temp_Xd = Xd.block(0, 0, Xd.rows(), 4);
+    Eigen::MatrixXd temp_Xd = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_Xd;
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_Xd = pr.block(0, 0, 4, 4);
+    temp_Xd = pr.block(0, 0, 4, 4).eval();
     pr = temp_Xd;
     if (fabs(pr.diagonal().array().sum()) == 0) {
       DOF = 4.0;
@@ -856,11 +856,11 @@ double compute_normal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     break;
   case cont_model::hill:
     Xd = X_gradient_cont_norm<normalHILL_BMD_NC>(estimate, Y, X, suff_stat, CV);
-    temp_block = Xd.block(0, 0, Xd.rows(), 4);
+    temp_block = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_block;
     cv_t = X_cov_cont_norm<normalHILL_BMD_NC>(estimate, Y, X, suff_stat, CV);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_block = pr.block(0, 0, 4, 4);
+    temp_block = pr.block(0, 0, 4, 4).eval();
     pr = temp_block;
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
@@ -876,12 +876,12 @@ double compute_normal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::exp_aerts:
     Xd = X_gradient_cont_norm<normalEXP_aerts_BMD_NC>(estimate, Y, X, suff_stat,
                                                       CV);
-    temp_block = Xd.block(0, 0, Xd.rows(), 4);
+    temp_block = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_block;
     cv_t =
         X_cov_cont_norm<normalEXP_aerts_BMD_NC>(estimate, Y, X, suff_stat, CV);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_block = pr.block(0, 0, 4, 4);
+    temp_block = pr.block(0, 0, 4, 4).eval();
     pr = temp_block;
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
@@ -896,11 +896,11 @@ double compute_normal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     break;
   case cont_model::LMS:
     Xd = X_gradient_cont_norm<normalLMS_BMD_NC>(estimate, Y, X, suff_stat, CV);
-    temp_block = Xd.block(0, 0, Xd.rows(), 4);
+    temp_block = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_block;
     cv_t = X_cov_cont_norm<normalLMS_BMD_NC>(estimate, Y, X, suff_stat, CV);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_block = pr.block(0, 0, 4, 4);
+    temp_block = pr.block(0, 0, 4, 4).eval();
     pr = temp_block;
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
@@ -916,12 +916,12 @@ double compute_normal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::gamma_efsa:
     Xd = X_gradient_cont_norm<normalGAMMA_efsa_BMD_NC>(estimate, Y, X,
                                                        suff_stat, CV);
-    temp_block = Xd.block(0, 0, Xd.rows(), 4);
+    temp_block = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_block;
     cv_t =
         X_cov_cont_norm<normalGAMMA_efsa_BMD_NC>(estimate, Y, X, suff_stat, CV);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_block = pr.block(0, 0, 4, 4);
+    temp_block = pr.block(0, 0, 4, 4).eval();
     pr = temp_block;
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
@@ -937,12 +937,12 @@ double compute_normal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::invexp_aerts:
     Xd = X_gradient_cont_norm<normalIEXP_aerts_BMD_NC>(estimate, Y, X,
                                                        suff_stat, CV);
-    temp_block = Xd.block(0, 0, Xd.rows(), 4);
+    temp_block = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_block;
     cv_t =
         X_cov_cont_norm<normalIEXP_aerts_BMD_NC>(estimate, Y, X, suff_stat, CV);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_block = pr.block(0, 0, 4, 4);
+    temp_block = pr.block(0, 0, 4, 4).eval();
     pr = temp_block;
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
@@ -958,12 +958,12 @@ double compute_normal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::hill_aerts:
     Xd = X_gradient_cont_norm<normalHILL_aerts_BMD_NC>(estimate, Y, X,
                                                        suff_stat, CV);
-    temp_block = Xd.block(0, 0, Xd.rows(), 4);
+    temp_block = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_block;
     cv_t =
         X_cov_cont_norm<normalHILL_aerts_BMD_NC>(estimate, Y, X, suff_stat, CV);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_block = pr.block(0, 0, 4, 4);
+    temp_block = pr.block(0, 0, 4, 4).eval();
     pr = temp_block;
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
@@ -979,12 +979,12 @@ double compute_normal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::lognormal_aerts:
     Xd = X_gradient_cont_norm<normalLOGNORMAL_aerts_BMD_NC>(estimate, Y, X,
                                                             suff_stat, CV);
-    temp_block = Xd.block(0, 0, Xd.rows(), 4);
+    temp_block = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_block;
     cv_t = X_cov_cont_norm<normalLOGNORMAL_aerts_BMD_NC>(estimate, Y, X,
                                                          suff_stat, CV);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_block = pr.block(0, 0, 4, 4);
+    temp_block = pr.block(0, 0, 4, 4).eval();
     pr = temp_block;
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
@@ -1000,12 +1000,12 @@ double compute_normal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::logistic_aerts:
     Xd = X_gradient_cont_norm<normalLOGISTIC_aerts_BMD_NC>(estimate, Y, X,
                                                            suff_stat, CV);
-    temp_block = Xd.block(0, 0, Xd.rows(), 4);
+    temp_block = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_block;
     cv_t = X_cov_cont_norm<normalLOGISTIC_aerts_BMD_NC>(estimate, Y, X,
                                                         suff_stat, CV);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_block = pr.block(0, 0, 4, 4);
+    temp_block = pr.block(0, 0, 4, 4).eval();
     pr = temp_block;
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
@@ -1021,12 +1021,12 @@ double compute_normal_dof(Eigen::MatrixXd Y, Eigen::MatrixXd X,
   case cont_model::probit_aerts:
     Xd = X_gradient_cont_norm<normalPROBIT_aerts_BMD_NC>(estimate, Y, X,
                                                          suff_stat, CV);
-    temp_block = Xd.block(0, 0, Xd.rows(), 4);
+    temp_block = Xd.block(0, 0, Xd.rows(), 4).eval();
     Xd = temp_block;
     cv_t = X_cov_cont_norm<normalPROBIT_aerts_BMD_NC>(estimate, Y, X, suff_stat,
                                                       CV);
     pr = X_logPrior<IDPrior>(estimate, prior);
-    temp_block = pr.block(0, 0, 4, 4);
+    temp_block = pr.block(0, 0, 4, 4).eval();
     pr = temp_block;
 
     if (fabs(pr.diagonal().array().sum()) == 0) {
@@ -2310,7 +2310,7 @@ void estimate_ma_laplace(continuousMA_analysis *MA, continuous_analysis *CA,
   }
   // std::vector<bmd_analysis> b(MA->nmodels);
   bmd_analysis *b = new bmd_analysis[MA->nmodels];
-#pragma omp parallel for
+// #pragma omp parallel for
   for (int i = 0; i < MA->nmodels; i++) {
     std::vector<bool> fixedB;
     std::vector<double> fixedV;
@@ -3635,7 +3635,7 @@ void estimate_ma_MCMC(continuousMA_analysis *MA, continuous_analysis *CA,
   unsigned int samples = CA->samples;
   unsigned int burnin = CA->burnin;
 
-#pragma omp parallel for
+// #pragma omp parallel for
   for (int i = 0; i < MA->nmodels; i++) {
     std::vector<bool> fixedB;
     std::vector<double> fixedV;
@@ -4217,7 +4217,6 @@ void estimate_ma_MCMC(continuousMA_analysis *MA, continuous_analysis *CA,
 void estimate_sm_laplace(continuous_analysis *CA, continuous_model_result *res,
                          bool isFast) {
   // standardize the data
-
   int n_rows = CA->n;
   int n_cols = CA->suff_stat ? 3 : 1;
   bool tempsa = CA->suff_stat;
@@ -4347,6 +4346,7 @@ void estimate_sm_laplace(continuous_analysis *CA, continuous_model_result *res,
           CA->disttype != distribution::normal_ncv, CA->isIncreasing,
           temp_init);
     }
+
     RescaleContinuousModel<IDPrior>((cont_model)CA->model, &tprior, &init_opt,
                                     1.0, divisor, CA->isIncreasing,
                                     CA->disttype == distribution::log_normal,
@@ -5265,7 +5265,6 @@ void estimate_sm_mcmc(continuous_analysis *CA, continuous_model_result *res,
  */
 void estimate_log_normal_aod(continuous_analysis *CA,
                              continuous_deviance *aod) {
-
   // standardize the data
   int n_rows = CA->n;
   int n_cols = CA->suff_stat ? 3 : 1;
@@ -5303,15 +5302,14 @@ void estimate_log_normal_aod(continuous_analysis *CA,
     aod->A1 = std::numeric_limits<double>::infinity();
     aod->A2 = std::numeric_limits<double>::infinity();
     aod->A3 = std::numeric_limits<double>::infinity();
-    return;
   } else {
     Y_LN = SSTAT_LN;
     Eigen::MatrixXd temp = Y_LN.col(2);
     Y_LN.col(2) = Y_LN.col(1);
     Y_LN.col(1) = temp;
     log_normal_AOD_fits(Y_LN, UX, can_be_suff, aod);
-    return;
   }
+  return;
 }
 
 /*
@@ -5360,16 +5358,15 @@ void estimate_normal_aod(continuous_analysis *CA, continuous_deviance *aod) {
     aod->A1 = std::numeric_limits<double>::infinity();
     aod->A2 = std::numeric_limits<double>::infinity();
     aod->A3 = std::numeric_limits<double>::infinity();
-
-    return;
   } else {
     Y_N = SSTAT;
     Eigen::MatrixXd temp = Y_N.col(2);
     Y_N.col(2) = Y_N.col(1);
     Y_N.col(1) = temp;
     normal_AOD_fits(Y_N, UX, can_be_suff, aod);
-    return;
   }
+
+  return;
 }
 
 void estimate_normal_variance(continuous_analysis *CA, double *v_c,

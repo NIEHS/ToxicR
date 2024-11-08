@@ -1,4 +1,3 @@
-#include "seeder.h"
+#include <seeder.h>
 
-Seeder* Seeder::instance = nullptr;
-std::mutex Seeder::instanceMutex;
+THREAD_LOCAL gsl_rng* Seeder::rng = nullptr;

@@ -9,6 +9,5 @@
 void setseedGSL(int s) {
   Seeder *seeder = Seeder::getInstance();
   seeder->setSeed(s);
-  nlopt_srand(s);
   return;
 }

@@ -151,7 +151,7 @@ void rescale_var_matrix(Eigen::MatrixXd *var, Eigen::MatrixXd parms,
 }
 void rescale_dichotomous_model(mcmcSamples *v, dich_model model,
                                double max_dose) {
-  // rescale the dichotomous to the origional values
+  // rescale the dichotomous to the original values
 
   for (int i = 0; i < v->samples.cols(); i++) {
     Eigen::MatrixXd temp = v->samples.col(i);
@@ -162,6 +162,21 @@ void rescale_dichotomous_model(mcmcSamples *v, dich_model model,
 
   rescale_var_matrix(&v->map_cov, v->map_estimate, (dich_model)model, max_dose);
   rescale(&v->map_estimate, (dich_model)model, max_dose);
+}
+
+void rescale_dichotomous_model(bmd_analysis *a, dichotomous_model_result *v,
+                               dich_model model, double max_dose,
+                               bool do_a_rescale) {
+
+  if (do_a_rescale) {
+    rescale_var_matrix(&a->COV, a->MAP_ESTIMATE, model, max_dose);
+    rescale(&a->MAP_ESTIMATE, model, max_dose);
+  }
+  // rescale the dichotomous to the original values
+  v->bmd *= max_dose;
+  for (int i = 0; i < v->dist_numE; i++) {
+    v->bmd_dist[i] *= max_dose;
+  }
 }
 
 void transfer_dichotomous_model(bmd_analysis a,
@@ -331,6 +346,7 @@ void estimate_sm_laplace(dichotomous_analysis *DA,
 
   switch ((dich_model)DA->model) {
   case dich_model::d_hill:
+    // Rcpp::Rcout << "In hill model dich" << std::endl;
     a = bmd_analysis_DNC<dich_hillModelNC, IDPrior>(
         Y, D, prior, fixedB, fixedV, DA->degree, DA->BMR, DA->BMD_type,
         DA->alpha * 0.5, 0.02);
@@ -340,10 +356,9 @@ void estimate_sm_laplace(dichotomous_analysis *DA,
     pr = Xd.transpose() * cv_t * Xd + pr;
     Xd = Xd * pr.inverse() * Xd.transpose() * cv_t;
     res->model_df = Xd.diagonal().array().sum();
-
+    // Rcpp::Rcout << "model_df: " << res->model_df << std::endl;
     break;
   case dich_model::d_gamma:
-
     a = bmd_analysis_DNC<dich_gammaModelNC, IDPrior>(
         Y, D, prior, fixedB, fixedV, DA->degree, DA->BMR, DA->BMD_type,
         DA->alpha * 0.5, 0.02);
@@ -436,22 +451,48 @@ void estimate_sm_laplace(dichotomous_analysis *DA,
     pr = Xd.transpose() * cv_t * Xd + pr;
     Xd = Xd * pr.inverse() * Xd.transpose() * cv_t;
     res->model_df = Xd.diagonal().array().sum();
+    break;
   default:
     break;
   }
 
+  int nan_count = 0;
+  for (int i = 0; i < res->dist_numE; i++) {
+    if (std::isnan(res->bmd_dist[i])) {
+      nan_count += 1;
+    }
+  }
+  // Rcpp::Rcout << "bmd_dist before rescale: " << nan_count << "/" <<
+  // res->dist_numE << std::endl;
   if (do_a_rescale) {
     rescale_var_matrix(&a.COV, a.MAP_ESTIMATE, (dich_model)DA->model, max_dose);
 
     rescale(&a.MAP_ESTIMATE, (dich_model)DA->model, max_dose);
   }
-
   transfer_dichotomous_model(a, res);
-  res->bmd *= max_dose;
+    res->bmd *= max_dose;
   // rescale the BMD
   for (int i = 0; i < res->dist_numE; i++) {
     res->bmd_dist[i] *= max_dose;
   }
+
+  // rescale_dichotomous_model(&a, res, (dich_model)DA->model, max_dose,
+  //                           do_a_rescale);
+
+  // res->bmd *= max_dose;
+  // // rescale the BMD
+  // for (int i = 0; i < res->dist_numE; i++) {
+  //   res->bmd_dist[i] *= max_dose;
+  // }
+
+  nan_count = 0;
+  for (int i = 0; i < res->dist_numE; i++) {
+    if (std::isnan(res->bmd_dist[i])) {
+      nan_count += 1;
+    }
+  }
+  // Rcpp::Rcout << "bmd_dist after rescale: " << nan_count << "/" <<
+  // res->dist_numE << std::endl;
 
   res->model = DA->model;
   return;
@@ -460,7 +501,7 @@ void estimate_sm_laplace(dichotomous_analysis *DA,
 void estimate_ma_MCMC(dichotomousMA_analysis *MA, dichotomous_analysis *DA,
                       dichotomousMA_result *res, ma_MCMCfits *ma) {
 
-#pragma omp parallel for
+  // #pragma omp parallel for
   for (int i = 0; i < MA->nmodels; i++) {
     dichotomous_analysis temp = *DA; // copy over the initial stuff
     temp.prior = MA->priors[i];
@@ -604,7 +645,7 @@ void estimate_ma_MCMC(dichotomousMA_analysis *MA, dichotomous_analysis *DA,
 void estimate_ma_laplace(dichotomousMA_analysis *MA, dichotomous_analysis *DA,
                          dichotomousMA_result *res) {
 
-#pragma omp parallel for
+  // #pragma omp parallel for
   for (int i = 0; i < MA->nmodels; i++) {
     dichotomous_analysis temp = *DA; // copy over the initial stuff
     temp.prior = MA->priors[i];

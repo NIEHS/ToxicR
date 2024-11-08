@@ -373,21 +373,25 @@ optimizationResult cfindMAX_W_EQUALITY(cBMDModel<LL, PR> *M,
     ///////////////////////////////////////////////
 
     opt_iter++;              // iterate the optimization try counter
-    result = nlopt::FAILURE; // Avoid uninit var exception checking result after
-                             // NLOPT exception
+    result = nlopt::FAILURE; // Avoid uninit var exception checking result
+                             // after NLOPT exception
     try {
       result = opt.optimize(x, minf);
       good_opt = true;
-    } catch (nlopt::roundoff_limited &exc) {
+    } catch (nlopt::roundoff_limited2 &exc) {
       good_opt = false;
       // cout << "Error Round off" << endl;
     } catch (nlopt::forced_stop &exc) {
       good_opt = false;
       // cout << "Error Forced stop" << endl;
     } catch (const std::invalid_argument &exc) {
+      // Rcpp::Rcout << "NLOPT result code: " << result << std::endl;
       good_opt = false;
       //	cout << "SHIT!!" << endl;
+    } catch (const std::runtime_error &exc) {
+      // Rcpp::Rcout << "NLOPT result code: " << result << std::endl;
     } catch (const std::exception &exc) {
+      // Rcpp::Rcout << "NLOPT result code: " << result << std::endl;
       good_opt = false;
       // cout << "Exception!!" << endl;
     }
@@ -610,11 +614,11 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
       // flush(file);
       good_opt = true;
       // opt_iter++;
-    } catch (nlopt::roundoff_limited &exc) {
+    } catch (nlopt::roundoff_limited2 &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
       //	cout << "Error Round off" << endl;
-    } catch (nlopt::forced_stop &exc) {
+    } catch (nlopt::forced_stop2 &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
       //	cout << "Error Forced stop" << endl;
@@ -665,7 +669,6 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 
   return oR;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 // Function profile_BMDNC(dBMDModel<LL, PR>  *M,
 //						 bool isExtra,		// true

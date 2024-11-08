@@ -117,339 +117,347 @@
 #' )
 #' 
 #' summary(model)
-single_continuous_fit <- function(D,Y,model_type="hill", fit_type = "laplace",
-                                   prior=NA, BMR_TYPE = "sd", 
+single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace",
+                                   prior = NA, BMR_TYPE = "sd",
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
-                                   alpha = 0.05, samples = 25000, degree=2,
+                                   alpha = 0.05, samples = 25000, degree = 2,
                                    burnin = 1000, BMD_priors = FALSE, ewald = FALSE,
-                                   transform = FALSE, BMD_TYPE = NA, threads = 2, seed = 12331){
-    Y <- as.matrix(Y) 
-    D <- as.matrix(D) 
-    
-    dis_type = which(distribution  == c("normal","normal-ncv","lognormal"))
-    
-    if (dis_type == 3){
-       is_neg = .check_negative_response(Y)
-       if (is_neg){
-         stop("Can't fit a negative response to the log-normal distribution.")
-       }
+                                   transform = FALSE, BMD_TYPE = NA, threads = 2, seed = 12331) {
+
+  # .setseedGSL(seed)
+  .set_threads(threads)
+  Y <- as.matrix(Y)
+  D <- as.matrix(D)
+
+  dis_type = which(distribution == c("normal", "normal-ncv", "lognormal"))
+
+  if (dis_type == 3) {
+    is_neg = .check_negative_response(Y)
+    if (is_neg) {
+      stop("Can't fit a negative response to the log-normal distribution.")
     }
-    
-    DATA <- cbind(D,Y);
-    test <-  .check_for_na(DATA)
-    Y = Y[test==TRUE,,drop=F]
-    D = D[test==TRUE,,drop=F]
-    DATA <- cbind(D,Y);
-   
-    
-    myD = Y; 
-    sstat = F # set sufficient statistics to false if there is only one column
-    if (ncol(Y) > 1){
-        sstat=T
+  }
+
+  DATA <- cbind(D, Y);
+  test <- .check_for_na(DATA)
+  Y = Y[test == TRUE,, drop = F]
+  D = D[test == TRUE,, drop = F]
+  DATA <- cbind(D, Y);
+
+
+  myD = Y;
+  sstat = F # set sufficient statistics to false if there is only one column
+  if (ncol(Y) > 1) {
+    sstat = T
+  }
+
+  if (!is.na(prior[1])) {
+    #parse the prior
+    if (!("BMD_Bayes_continuous_model" %in% class(prior))) {
+      stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
     }
-    
-    if (!is.na(prior[1])){
-      #parse the prior
-      if (!( "BMD_Bayes_continuous_model" %in% class(prior))){
-        stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
-      }
-      t_prior_result <- .parse_prior(prior)
-      distribution <- t_prior_result$distribution
-      model_type   <- t_prior_result$model
-      prior = t_prior_result$prior
-      PR = t_prior_result$prior
-    }else{
-      dmodel = which(model_type==.continuous_models)
-      
-      if (identical(dmodel, integer(0))){
-        stop('Please specify one of the following model types: \n
+    t_prior_result <- .parse_prior(prior)
+    distribution <- t_prior_result$distribution
+    model_type <- t_prior_result$model
+    prior = t_prior_result$prior
+    PR = t_prior_result$prior
+  } else {
+    dmodel = which(model_type == .continuous_models)
+
+    if (identical(dmodel, integer(0))) {
+      stop('Please specify one of the following model types: \n
             "hill","exp-3","exp-5","power","polynomial", "exp-aerts", "invexp-aerts", "gamma-aerts", "invgamma-aerts", "hill-aerts",
             "lomax-aerts", "invlomax-aerts", "lognormal-aerts", "logskew-aerts", "invlogskew-aerts", "logistic-aerts", "probit-aerts", "LMS",
             "gamma-efsa"')
+    }
+
+    PR = .bayesian_prior_continuous_default(model_type, distribution, degree)
+    #specify variance of last parameter to variance of response
+    if (distribution == "lognormal") {
+      if (ncol(Y) > 1) {
+        PR$priors[nrow(PR$priors), 2] = log(mean(Y[, 3]) ^ 2)
+      } else {
+        PR$priors[nrow(PR$priors), 2] = log(var(log(Y[, 1])))
       }
-
-      PR    = .bayesian_prior_continuous_default(model_type,distribution,degree)
-      #specify variance of last parameter to variance of response
-      if(distribution == "lognormal"){
-           if (ncol(Y)>1){
-               PR$priors[nrow(PR$priors),2]= log(mean(Y[,3])^2)
-           }else{
-               PR$priors[nrow(PR$priors),2] = log(var(log(Y[,1])))
-           }
-      }else{
-           if (ncol(Y)>1){
-                if (distribution == "normal"){
-                     PR$priors[nrow(PR$priors),2]   = log(mean(Y[,3])^2)
-                }else{
-                     PR$priors[nrow(PR$priors),2]   = log(abs(mean(Y[1,]))/mean(Y[,3])^2)
-                }
-           }else{ 
-                  if (distribution == "normal"){
-                    PR$priors[nrow(PR$priors),2]   = log(var(Y[,1]))
-                  }else{
-                    PR$priors[nrow(PR$priors),2]   = log(abs(mean(Y[,1]))/var(Y[,1]))
-                  }
-           }
+    } else {
+      if (ncol(Y) > 1) {
+        if (distribution == "normal") {
+          PR$priors[nrow(PR$priors), 2] = log(mean(Y[, 3]) ^ 2)
+        } else {
+          PR$priors[nrow(PR$priors), 2] = log(abs(mean(Y[1,])) / mean(Y[, 3]) ^ 2)
+        }
+      } else {
+        if (distribution == "normal") {
+          PR$priors[nrow(PR$priors), 2] = log(var(Y[, 1]))
+        } else {
+          PR$priors[nrow(PR$priors), 2] = log(abs(mean(Y[, 1])) / var(Y[, 1]))
+        }
       }
-      t_prior_result = create_continuous_prior(PR,model_type,distribution,degree)
-      PR = t_prior_result$prior
     }
-    dmodel = which(model_type==.continuous_models)
+    t_prior_result = create_continuous_prior(PR, model_type, distribution, degree)
+    PR = t_prior_result$prior
+  }
+  dmodel = which(model_type == .continuous_models)
 
-    fit_type = tolower(fit_type)
-    type_of_fit = which(fit_type == c('laplace','mle','mcmc'))
-    if (identical(type_of_fit,integer(0))){
-      stop("Please choose one of the following fit types: 'laplace','mle','mcmc.' ")
-    }
+  fit_type = tolower(fit_type)
+  type_of_fit = which(fit_type == c('laplace', 'mle', 'mcmc'))
+  if (identical(type_of_fit, integer(0))) {
+    stop("Please choose one of the following fit types: 'laplace','mle','mcmc.' ")
+  }
 
-    if(!is.na(BMD_TYPE)){
-      warning("BMD_TYPE is deprecated. Please use BMR_TYPE instead")
-    }else{
-      BMD_TYPE = BMR_TYPE
-    }
-    
-    rt = which(BMD_TYPE==c('abs','sd','rel','hybrid'))
-    
-    if (rt == 4){
-      rt = 6; 
-    }
+  if (!is.na(BMD_TYPE)) {
+    warning("BMD_TYPE is deprecated. Please use BMR_TYPE instead")
+  } else {
+    BMD_TYPE = BMR_TYPE
+  }
 
-    
-    if(identical(dis_type,integer(0))){
-      stop('Please specify the distribution as one of the following:\n
+  rt = which(BMD_TYPE == c('abs', 'sd', 'rel', 'hybrid'))
+
+  if (rt == 4) {
+    rt = 6;
+  }
+
+
+  if (identical(dis_type, integer(0))) {
+    stop('Please specify the distribution as one of the following:\n
             "normal","normal-ncv","lognormal"')
-    }
+  }
 
 
-    if (ncol(DATA)==4){
-      colnames(DATA) =  c("Dose","Resp","N","StDev")
-    }else if (ncol(DATA) == 2){
-      colnames(DATA) =  c("Dose","Resp")
-    }else{
-      stop("The data do not appear to be in the correct format.")
-    }
-    #permute the matrix to the internal C values
-    # Hill = 6, Exp3 = 3, Exp5 = 5, Power = 8, 
-    # FUNL = 10, aerts = 11-22
-    permuteMat = cbind(c(1,2,3,4,5,6,7:20),c(6,3,5,8,10,666, 11:24))
-    fitmodel = permuteMat[dmodel,2]
-    if (fitmodel == 10 && dis_type == 3){
-         stop("The FUNL model is currently not defined for Log-Normal distribution.")
-    }
-    if (fitmodel == 666 && dis_type == 3){
-         stop("Polynomial models are currently not defined for the Log-Normal distribution.")
-    }
-    if (fitmodel %in% 11:24 && fit_type == "mle"){
-      stop("Aerts models are currently not supported with the frequentist approach.")
-    }
-    if(any(PR[,1] >= 4)){
-      warning("Gamma and PERT priors are still under development and may be incorrect.")
-    }
-    
-    #Fit to determine direction. 
-    #This is done for the BMD estimate. 
-    model_data = list(); 
-    model_data$X = D; model_data$SSTAT = Y
-    if (sstat == T){
-      temp.fit <- lm(model_data$SSTAT[,1] ~ model_data$X,
-                     weights=(1/model_data$SSTAT[,3]^2)*model_data$SSTAT[,2])
-    }else{
-      temp.fit <- lm(model_data$SSTAT[,1]~model_data$X)
-    }
-    
-    is_increasing = F
-    if (coefficients(temp.fit)[2] > 0){
-      is_increasing = T
-    }
-    
-    if (!is_increasing){
-         if (BMD_TYPE == "rel"){
-              BMR = 1-BMR
-         }
-    }
+  if (ncol(DATA) == 4) {
+    colnames(DATA) = c("Dose", "Resp", "N", "StDev")
+  } else if (ncol(DATA) == 2) {
+    colnames(DATA) = c("Dose", "Resp")
+  } else {
+    stop("The data do not appear to be in the correct format.")
+  }
+  #permute the matrix to the internal C values
+  # Hill = 6, Exp3 = 3, Exp5 = 5, Power = 8, 
+  # FUNL = 10, aerts = 11-22
+  permuteMat = cbind(c(1, 2, 3, 4, 5, 6, 7:20), c(6, 3, 5, 8, 10, 666, 11:24))
+  fitmodel = permuteMat[dmodel, 2]
+  if (fitmodel == 10 && dis_type == 3) {
+    stop("The FUNL model is currently not defined for Log-Normal distribution.")
+  }
+  if (fitmodel == 666 && dis_type == 3) {
+    stop("Polynomial models are currently not defined for the Log-Normal distribution.")
+  }
+  if (fitmodel %in% 11:24 && fit_type == "mle") {
+    stop("Aerts models are currently not supported with the frequentist approach.")
+  }
+  if (any(PR[, 1] >= 4)) {
+    warning("Gamma and PERT priors are still under development and may be incorrect.")
+  }
 
-    #For MLE 
-    if (type_of_fit == 2){
-      .set_threads(threads)
-      PR = .MLE_bounds_continuous(model_type,distribution,degree, is_increasing)
-      PR = PR$priors
-    }
+  #Fit to determine direction. 
+  #This is done for the BMD estimate. 
+  model_data = list();
+  model_data$X = D;
+  model_data$SSTAT = Y
+  if (sstat == T) {
+    temp.fit <- lm(model_data$SSTAT[, 1] ~ model_data$X,
+                     weights = (1 / model_data$SSTAT[, 3] ^ 2) * model_data$SSTAT[, 2])
+  } else {
+    temp.fit <- lm(model_data$SSTAT[, 1] ~ model_data$X)
+  }
 
-    if (distribution == "lognormal"){
-      is_log_normal = TRUE
-    }else{
-      is_log_normal = FALSE
-    }
-    
-    if (distribution == "normal-ncv"){
-      constVar = FALSE
-      vt = 2;
-    }else{
-      vt = 1
-      constVar = TRUE
-    }
+  is_increasing = F
+  if (coefficients(temp.fit)[2] > 0) {
+    is_increasing = T
+  }
 
-    if(BMD_priors == TRUE){
-      #MLE differences (only for bounds)
-      if(type_of_fit == 2){
-        if(fitmodel == 8){ #power model has different lower bound on 3rd parameter
-          PR[3,4] <- 1
-        } 
-        if(fitmodel == 666){#polynomial model has many changes
-          if(distribution == "normal-ncv"){
-            temp <- nrow(PR) - 2 #NCV term
-            PR[temp, 5] <- 100 #UB on NCV parameter in 100
-            PR[2:(temp-1), 4] <- -10000
-            PR[2:(temp-1), 5] <- 10000
+  if (!is_increasing) {
+    if (BMD_TYPE == "rel") {
+      BMR = 1 - BMR
+    }
+  }
+
+  #For MLE 
+  if (type_of_fit == 2) {
+    PR = .MLE_bounds_continuous(model_type, distribution, degree, is_increasing)
+    PR = PR$priors
+  }
+
+  if (distribution == "lognormal") {
+    is_log_normal = TRUE
+  } else {
+    is_log_normal = FALSE
+  }
+
+  if (distribution == "normal-ncv") {
+    constVar = FALSE
+    vt = 2;
+  } else {
+    vt = 1
+    constVar = TRUE
+  }
+
+  if (BMD_priors == TRUE) {
+    #MLE differences (only for bounds)
+    if (type_of_fit == 2) {
+      if (fitmodel == 8) {
+        #power model has different lower bound on 3rd parameter
+        PR[3, 4] <- 1
+      }
+      if (fitmodel == 666) {
+        #polynomial model has many changes
+        if (distribution == "normal-ncv") {
+          temp <- nrow(PR) - 2 #NCV term
+          PR[temp, 5] <- 100 #UB on NCV parameter in 100
+          PR[2:(temp - 1), 4] <- -10000
+          PR[2:(temp - 1), 5] <- 10000
+        }
+        if (distribution == 'normal') {
+          PR[1, 4:5] <- c(-1000, 1000)
+          if (is_increasing) {
+            PR[2:(nrow(PR) - 1), 4] <- 0.00001
+            PR[2:(nrow(PR) - 1), 5] <- 18
+          } else {
+            PR[2:(nrow(PR) - 1), 5] <- -0.00001
+            PR[2:(nrow(PR) - 1), 4] <- -18
           }
-          if(distribution == 'normal'){
-            PR[1,4:5] <- c(-1000, 1000)
-            if(is_increasing){
-              PR[2:(nrow(PR)-1), 4] <- 0.00001
-              PR[2:(nrow(PR)-1), 5] <- 18
-            } else{
-              PR[2:(nrow(PR)-1), 5] <- -0.00001
-              PR[2:(nrow(PR)-1), 4] <- -18
-            }
-          }
-        }
-      } else{
-        if(fitmodel == 3){ #exp-3
-          PR[2,] <- c(2,0,6.9,0,10000)
-        }
-        if(fitmodel == 6){ #hill
-          PR[2,] <- c(1,0,1000,-10000, 10000)
-        }
-        if(fitmodel == 5){ #exp-5
-          PR[2,] <- c(1,0,1000,-10000, 10000)
-          if(distribution == "normal-ncv"){
-            PR[5, 3] <- 0.75
-            PR[6,4:5] <- c(-18, 18)
-          }
-        }
-        if(fitmodel == 8 & distribution == "normal-ncv"){ #power NCV
-          PR[2,] <- c(1,0,10, -10000, 10000)
         }
       }
+    } else {
+      if (fitmodel == 3) {
+        #exp-3
+        PR[2,] <- c(2, 0, 6.9, 0, 10000)
+      }
+      if (fitmodel == 6) {
+        #hill
+        PR[2,] <- c(1, 0, 1000, -10000, 10000)
+      }
+      if (fitmodel == 5) {
+        #exp-5
+        PR[2,] <- c(1, 0, 1000, -10000, 10000)
+        if (distribution == "normal-ncv") {
+          PR[5, 3] <- 0.75
+          PR[6, 4:5] <- c(-18, 18)
+        }
+      }
+      if (fitmodel == 8 & distribution == "normal-ncv") {
+        #power NCV
+        PR[2,] <- c(1, 0, 10, -10000, 10000)
+      }
     }
-    
+  }
 
-    if (identical(rt,integer(0))){
-    	 stop("Please specify one of the following BMRF types:
+
+  if (identical(rt, integer(0))) {
+    stop("Please specify one of the following BMRF types:
     		  'abs','sd','rel','hybrid'")
+  }
+
+  if (rt == 4) { rt = 6; }
+  #internally in Rcpp hybrid is coded as 6	
+
+  tmodel <- permuteMat[dmodel, 2]
+
+  options <- c(rt, BMR, point_p, alpha, is_increasing, constVar, burnin, samples, transform)
+
+  ## pick a distribution type 
+  if (is_log_normal) {
+    dist_type = 3 #log normal
+  } else {
+    if (constVar) {
+      dist_type = 1 # normal
+    } else {
+      dist_type = 2 # normal-ncv
     }
-    
-    if (rt == 4) {rt = 6;} #internally in Rcpp hybrid is coded as 6	
-    
-    tmodel <- permuteMat[dmodel,2] 
-    
-    options <- c(rt,BMR,point_p,alpha, is_increasing,constVar,burnin,samples,transform)
-    
-    ## pick a distribution type 
-    if (is_log_normal){
-      dist_type = 3 #log normal
-    }else{
-      if (constVar){
-          dist_type = 1 # normal
-      }else{
-          dist_type = 2 # normal-ncv
-      }
-    }
+  }
+
   ##  print(PR)
   # // return(PR)
-    if (fit_type == "mcmc"){
-      
-      .set_threads(threads)
-      rvals <- .run_continuous_single_mcmc(fitmodel,model_data$SSTAT,model_data$X,
-                                          PR ,options, is_log_normal, sstat, seed) 
-   
-      if (model_type == "exp-3"){
-        rvals$PARMS = rvals$PARMS[,-3]
-        rvals$mcmc_result$PARM_samples = rvals$mcmc_result$PARM_samples[,-3]
-      }
-   
-      rvals$bmd      <- c(rvals$fitted_model$bmd,NA,NA) 
-      
-      rvals$full_model <- rvals$fitted_model$full_model
-      rvals$parameters <- rvals$fitted_model$parameters
-      rvals$covariance <- rvals$fitted_model$covariance
-      rvals$maximum <- rvals$fitted_model$maximum
-      
-      rvals$prior    <- t_prior_result
-      rvals$bmd_dist <- rvals$fitted_model$bmd_dist
-      if (!identical(rvals$bmd_dist, numeric(0))){
-        temp_me = rvals$bmd_dist
-        #rarely gives error, so wrap in tryCatch: if fails, create 2x2 0 matrix
-        tryCatch({
-          temp_me = temp_me[!is.infinite(temp_me[,1]),]
-          temp_me = temp_me[!is.na(temp_me[,1]),]
-          temp_me = temp_me[!is.nan(temp_me[,1]),]
-        }, error = function(e) temp_me <- matrix(0, nrow = 2, ncol = 2))
-        #nrow can throw error too
-        if(is.null(nrow(temp_me))){
-          temp_me <- matrix(0, nrow = 2, ncol = 2)
-        }
-        if( nrow(temp_me) > 5){
-          te <- splinefun(temp_me[,2],temp_me[,1],method="monoH.FC",ties=mean)
-          rvals$bmd[2:3]  <- c(te(alpha),te(1-alpha))
-        }else{
-          rvals$bmd[2:3] <- c(NA,NA)
-        }
-      }
-      #if less than 10 unique jumps, warn that mixing was poor
-      if(length(unique(rvals$mcmc_result$BMD_samples)) < 10){
-        warning("MCMC did not mix well!", call. = FALSE)
-      }
-      
-      class(rvals) <- "BMDcont_fit_MCMC"; 
-      rvals$model  <- model_type
-      rvals$options <- options
-      rvals$data <- DATA
-      names(rvals$bmd) <- c("BMD","BMDL","BMDU")
-  
-      rvals$prior <- t_prior_result
-      rvals$transformed <- transform
-      class(rvals) <- "BMDcont_fit_MCMC"
-      rvals$fitted_model <- NULL
-      return(rvals)
-    }else{
-      
-      options[7] <- (ewald == TRUE)*1
-      .set_threads(threads)
-      rvals   <- .run_continuous_single(fitmodel,model_data$SSTAT,model_data$X,
-  						                          PR,options, dist_type, seed)
-     
-      rvals$bmd_dist = rvals$bmd_dist[!is.infinite(rvals$bmd_dist[,1]),,drop=F]
-      rvals$bmd_dist = rvals$bmd_dist[!is.na(rvals$bmd_dist[,1]),,drop=F]
-      rvals$bmd     <- c(rvals$bmd,NA,NA)
-      names(rvals$bmd) <- c("BMD","BMDL","BMDU")
-      if (fit_type == "laplace"){
-        rvals$prior    <- t_prior_result
-      }
-      if (!identical(rvals$bmd_dist, numeric(0))){
-        temp_me = rvals$bmd_dist
-        tryCatch({
-          temp_me = temp_me[!is.infinite(temp_me[,1]),]
-          temp_me = temp_me[!is.na(temp_me[,1]),]
-          temp_me = temp_me[!is.nan(temp_me[,1]),]
-        }, error = function(e) temp_me <- matrix(0, nrow = 2, ncol = 2))
-        #nrow can throw error too
-        if(is.null(nrow(temp_me))){
-          temp_me <- matrix(0, nrow = 2, ncol = 2)
-        }
-        if( nrow(temp_me) > 5){
-          te <- splinefun(temp_me[,2],temp_me[,1],method="monoH.FC",ties=mean)
-          rvals$bmd[2:3]  <- c(te(alpha),te(1-alpha))
-        }else{
-          rvals$bmd[2:3] <- c(NA,NA)
-        }
-      }
-      names(rvals$bmd) <- c("BMD","BMDL","BMDU")
-      rvals$model   <- model_type
-      rvals$options <- options
-      rvals$data    <- DATA
-      class(rvals)  <- "BMDcont_fit_maximized"
-      rvals$transformed <- transform
-      return (rvals)
+  if (fit_type == "mcmc") {
+    rvals <- .run_continuous_single_mcmc(fitmodel, model_data$SSTAT, model_data$X,
+                                          PR, options, is_log_normal, sstat, seed)
+
+    if (model_type == "exp-3") {
+      rvals$PARMS = rvals$PARMS[, -3]
+      rvals$mcmc_result$PARM_samples = rvals$mcmc_result$PARM_samples[, -3]
     }
+
+    rvals$bmd <- c(rvals$fitted_model$bmd, NA, NA)
+
+    rvals$full_model <- rvals$fitted_model$full_model
+    rvals$parameters <- rvals$fitted_model$parameters
+    rvals$covariance <- rvals$fitted_model$covariance
+    rvals$maximum <- rvals$fitted_model$maximum
+
+    rvals$prior <- t_prior_result
+    rvals$bmd_dist <- rvals$fitted_model$bmd_dist
+    if (!identical(rvals$bmd_dist, numeric(0))) {
+      temp_me = rvals$bmd_dist
+      #rarely gives error, so wrap in tryCatch: if fails, create 2x2 0 matrix
+      tryCatch({
+        temp_me = temp_me[!is.infinite(temp_me[, 1]),]
+        temp_me = temp_me[!is.na(temp_me[, 1]),]
+        temp_me = temp_me[!is.nan(temp_me[, 1]),]
+      }, error = function(e) temp_me <- matrix(0, nrow = 2, ncol = 2))
+      #nrow can throw error too
+      if (is.null(nrow(temp_me))) {
+        temp_me <- matrix(0, nrow = 2, ncol = 2)
+      }
+      if (nrow(temp_me) > 5) {
+        te <- splinefun(temp_me[, 2], temp_me[, 1], method = "monoH.FC", ties = mean)
+        rvals$bmd[2:3] <- c(te(alpha), te(1 - alpha))
+      } else {
+        rvals$bmd[2:3] <- c(NA, NA)
+      }
+    }
+    #if less than 10 unique jumps, warn that mixing was poor
+    if (length(unique(rvals$mcmc_result$BMD_samples)) < 10) {
+      warning("MCMC did not mix well!", call. = FALSE)
+    }
+
+    class(rvals) <- "BMDcont_fit_MCMC";
+    rvals$model <- model_type
+    rvals$options <- options
+    rvals$data <- DATA
+    names(rvals$bmd) <- c("BMD", "BMDL", "BMDU")
+
+    rvals$prior <- t_prior_result
+    rvals$transformed <- transform
+    class(rvals) <- "BMDcont_fit_MCMC"
+    rvals$fitted_model <- NULL
+    return(rvals)
+  } else {
+
+    options[7] <- (ewald == TRUE) * 1
+    rvals <- .run_continuous_single(fitmodel, model_data$SSTAT, model_data$X,
+                                        PR, options, dist_type, seed)
+
+    rvals$bmd_dist = rvals$bmd_dist[!is.infinite(rvals$bmd_dist[, 1]),, drop = F]
+    rvals$bmd_dist = rvals$bmd_dist[!is.na(rvals$bmd_dist[, 1]),, drop = F]
+    rvals$bmd <- c(rvals$bmd, NA, NA)
+    names(rvals$bmd) <- c("BMD", "BMDL", "BMDU")
+    if (fit_type == "laplace") {
+      rvals$prior <- t_prior_result
+    }
+    if (!identical(rvals$bmd_dist, numeric(0))) {
+      temp_me = rvals$bmd_dist
+      tryCatch({
+        temp_me = temp_me[!is.infinite(temp_me[, 1]),]
+        temp_me = temp_me[!is.na(temp_me[, 1]),]
+        temp_me = temp_me[!is.nan(temp_me[, 1]),]
+      }, error = function(e) temp_me <- matrix(0, nrow = 2, ncol = 2))
+      #nrow can throw error too
+      if (is.null(nrow(temp_me))) {
+        temp_me <- matrix(0, nrow = 2, ncol = 2)
+      }
+      if (nrow(temp_me) > 5) {
+        te <- splinefun(temp_me[, 2], temp_me[, 1], method = "monoH.FC", ties = mean)
+        rvals$bmd[2:3] <- c(te(alpha), te(1 - alpha))
+      } else {
+        rvals$bmd[2:3] <- c(NA, NA)
+      }
+    }
+    names(rvals$bmd) <- c("BMD", "BMDL", "BMDU")
+    rvals$model <- model_type
+    rvals$options <- options
+    rvals$data <- DATA
+    class(rvals) <- "BMDcont_fit_maximized"
+    rvals$transformed <- transform
+    return(rvals)
+  }
 }
