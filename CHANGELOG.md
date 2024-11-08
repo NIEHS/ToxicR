@@ -1,4 +1,8 @@
 # Changes
+## Version 23.10.1.3
+## The following cumulative fixes are in version 23.10.1.3
+- Modify nlopt to avoid issues with LLVM-clang incompatibilities
+- Disable OpenMP temporarily to get approved for CRAN 
 ## Version 23.10.1.2.4 
 ## The following cumulative fixes are in version 23.10.1.2.4
 - Add the ability to set a seed for nlopt and GSL to allow for consistent results
