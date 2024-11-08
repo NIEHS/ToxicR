@@ -1,4 +1,8 @@
 # Changes
+## Version 23.10.1.4
+## The following cumulative fixes are in version 23.10.1.2.4
+- Update nlopt source code to avoid std::runtime_exception due to LLVM-clang incompatibility
+- Remove OpenMP temporarily to get a stable version published to CRAN
 ## Version 23.10.1.2.4 
 ## The following cumulative fixes are in version 23.10.1.2.4
 - Add the ability to set a seed for nlopt and GSL to allow for consistent results
