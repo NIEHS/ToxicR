@@ -379,10 +379,10 @@ optimizationResult cfindMAX_W_EQUALITY(cBMDModel<LL, PR> *M,
       result = opt.optimize(x, minf);
       good_opt = true;
     #if defined(_WIN32) || defined(__APPLE__)
-    } catch (nlopt::roundoff_limited2 &exc) {
+    } catch (nlopt::roundoff_limited &exc) {
       good_opt = false;
     #else 
-    } catch (nlopt::roundoff_limited &exc) {
+    } catch (nlopt::roundoff_limited2 &exc) {
       good_opt = false;
     #endif
     } catch (nlopt::forced_stop &exc) {
