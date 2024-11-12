@@ -1,7 +1,5 @@
 # Configure Script for ToxicR
 # Modified 4/27/2022
-# Configure Script for ToxicR
-# Modified 4/27/2022
 
 AC_INIT([ToxicR], 1.0.1)  dnl Package version
 
@@ -11,15 +9,21 @@ CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 AC_LANG(C++)
 AC_PROG_CPP
 
-#determine the OS
-AC_MSG_CHECKING([Is OPENMP avaialble? ])
+# Determine the OS
+AC_MSG_CHECKING([Is OPENMP available?])
 OS_FLAG="$(uname)"
-if test x"${OS_FLAG}" == x"Darwin";then
+if test x"${OS_FLAG}" == x"Darwin"; then
      AC_MSG_RESULT([no])
      OPENMP="-DNO_OMP"
+     OSFLAG="-D__APPLE__"
+elif test x"${OS_FLAG}" == x"Linux"; then
+     AC_MSG_RESULT([yes])
+     OPENMP="\$(SHLIB_OPENMP_CXXFLAGS)"
+     OSFLAG=""
 else
      AC_MSG_RESULT([yes])
-     OPENMP="\$(SHLIB_OPENMP_CXXFLAGS) "
+     OPENMP="\$(SHLIB_OPENMP_CXXFLAGS)"
+     OSFLAG="-D__WIN32"
 fi
 
 AC_PATH_PROG([GSL_CONFIG], [gsl-config])
@@ -35,14 +39,14 @@ else
                  sudo apt install gsl 
                  To install GSL in Fedora Type:
                  sudo yum -y install gsl
-                 To iinstall GSL on macOS using homebrew type: 
+                 To install GSL on macOS using homebrew type: 
                  brew install gsl
                  ])
 fi
 
 ## Can we use pkg-config?
 AC_PATH_PROG(have_pkg_config, pkg-config, no)
-AC_MSG_CHECKING([Is pkg-config avaialble? ])
+AC_MSG_CHECKING([Is pkg-config available?])
 if test x"${have_pkg_config}" != x"no"; then
      AC_MSG_RESULT([yes])
      AC_MSG_CHECKING([if pkg-config knows NLopt])
@@ -58,24 +62,12 @@ if test x"${have_pkg_config}" != x"no"; then
                  AC_SUBST([NLOPT_LIBS],    "${nlopt_libs}")   
             else
                 AC_MSG_RESULT([no])
-                #if it is macOS just try link and use nlopt generically
-              need_to_build="yes"
+                need_to_build="yes"
             fi
     else
         AC_MSG_RESULT([no])
-            #if it is macOS just try link and use nlopt generically
-            if test x"${OS_FLAG}" == x"Darwin";then
-                    AC_MSG_RESULT([>= 2.6.0])
-                    nlopt_include=""
-                    nlopt_libs="-lnlopt"
-                    AC_SUBST([NLOPT_INCLUDE], "${nlopt_include}")
-                    AC_SUBST([NLOPT_LIBS],    "${nlopt_libs}")   
-            else
-                 need_to_build="yes"
-            fi
-       
+        need_to_build="yes"
     fi
-               
 else
     AC_MSG_RESULT([no])
     need_to_build="yes"
@@ -85,14 +77,12 @@ fi
 if test x"${need_to_build}" != x"no"; then
     AC_PATH_PROG(have_cmake, cmake, no)
   
-    if test x"${have_cmake}" == x"no"; then
-       . src/scripts/cmake_config.sh
+    if test x"${have_cmake}" == x"no"; then 
+       . src/scripts/cmake_install.sh
        if test -z "${CMAKE_BIN}"; then
           ## also error to end configure here
           AC_MSG_ERROR([Could not find 'cmake'.])
        fi
-    else
-        . src/scripts/cmake_install.sh
     fi
     ## 'uname -m' on M1 give x86_64 which is ... not helping
     machine=`"${R_HOME}/bin/Rscript" -e 'cat(Sys.info()[["machine"]])'`
@@ -107,6 +97,7 @@ SUBDIR_SOURCES="$(cd src/ && ls {code_base,polyK}/*.cpp | tr '\n' ' ')"
 SRC_SOURCES="$( cd src/ && ls *.cpp | tr '\n' ' ')"
 
 AC_SUBST(OPENMP)
+AC_SUBST(OSFLAG)
 AC_SUBST(SRC_SOURCES)
 AC_SUBST(SUBDIR_SOURCES)
 AC_SUBST([NLOPT_CPPFLAGS],["${nlopt_include}"])
