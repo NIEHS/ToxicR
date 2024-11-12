@@ -6,14 +6,14 @@ jobs:
     clang-test:
         runs-on: ubuntu-24.0.4
         strategy:
-            fail-fast: false
-            matrix:
-                compiler:
-                    - llvm-16
-                    - llvm-17
-                    - llvm-18
-                    - llvm-19
-                    - llvm-20
+          fail-fast: false
+          matrix:
+            compiler:
+                - llvm-16.0.6
+                - llvm-17.0.6
+                - llvm-18.1.8
+                - llvm-19.1.0
+                - llvm-20.0.0
         steps:
           - uses: actions/checkout@v3
           - name: Cache
@@ -51,6 +51,9 @@ jobs:
             with:
               compiler: ${{ matrix.compiler }}
               cmake: true
+              cache-tools: true
+              llvm: true
+              make: true
           - uses: r-lib/actions/setup-r-dependencies@v2
             with:
               extra-packages: any::rcmdcheck, any::roxygen2
