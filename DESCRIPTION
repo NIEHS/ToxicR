@@ -1,7 +1,7 @@
 Package: ToxicR
 Type: Package
 Title: Analyzing Toxicology Dose-Response Data
-Version: 23.10.1.4
+Version: 24.10.1.4
 Date: 2024-11-12
 Authors@R: 
     c(
