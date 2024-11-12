@@ -378,9 +378,13 @@ optimizationResult cfindMAX_W_EQUALITY(cBMDModel<LL, PR> *M,
     try {
       result = opt.optimize(x, minf);
       good_opt = true;
+    #if defined(_WIN32) || defined(__APPLE__)
     } catch (nlopt::roundoff_limited2 &exc) {
       good_opt = false;
-      // cout << "Error Round off" << endl;
+    #else 
+    } catch (nlopt::roundoff_limited &exc) {
+      good_opt = false;
+    #endif
     } catch (nlopt::forced_stop &exc) {
       good_opt = false;
       // cout << "Error Forced stop" << endl;
