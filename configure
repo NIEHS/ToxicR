@@ -3495,7 +3495,7 @@ fi
 
 
     if test x"${have_cmake}" == x"no"; then
-       . src/cmake_install.sh
+       . src/scripts/cmake_install.sh
        if test -z "${CMAKE_BIN}"; then
           ## also error to end configure here
           as_fn_error $? "Could not find 'cmake'." "$LINENO" 5

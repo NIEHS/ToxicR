@@ -780,7 +780,7 @@ optimizationResult findMAP(statModel<LL, PR> *M, Eigen::MatrixXd startV,
 
     } // catch
 
-#ifdef _WIN32 || defined(__APPLE__)
+#if defined(_WIN32) || defined(__APPLE__)
     catch (nlopt::roundoff_limited &exce) {
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
       // Rcpp::Rcout << "Roundoff_limited nlopt: " << exce.what() <<
