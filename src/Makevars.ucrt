@@ -1,4 +1,4 @@
-PKG_CXXFLAGS=-I./code_base -I./include @OSFLAG@ $(SHLIB_OPENMP_CXXFLAGS) -I$(R_TOOLS_SOFT)/include/nlopt -I$(R_TOOLS_SOFT)/include/gsl -DR_COMPILATION -ftree-vectorize -Os -DNO_OMP -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+PKG_CXXFLAGS=-I./code_base -I./include $(SHLIB_OPENMP_CXXFLAGS) -I$(R_TOOLS_SOFT)/include/nlopt -I$(R_TOOLS_SOFT)/include/gsl -DR_COMPILATION -ftree-vectorize -Os -DNO_OMP -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
 PKG_LIBS=$(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS) -lgsl -lgslcblas -lnlopt
 # Debug / clear eigen warnings from compilation 
 #PKG_CXXFLAGS+=-Wno-ignored-attributes -DToxicR_DEBUG
