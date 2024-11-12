@@ -1,6 +1,6 @@
 # Changes
-## Version 23.10.1.3
-## The following cumulative fixes are in version 23.10.1.3
+## Version 23.10.1.4
+## The following cumulative fixes are in version 23.10.1.4
 - Modify nlopt to avoid issues with LLVM-clang incompatibilities
 - Disable OpenMP temporarily to get approved for CRAN 
 ## Version 23.10.1.2.4 
