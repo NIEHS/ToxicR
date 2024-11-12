@@ -50,7 +50,7 @@ jobs:
             uses: aminya/setup-cpp@v1
             with:
               compiler: ${{ matrix.compiler }}
-                cmake: true
+              cmake: true
           - uses: r-lib/actions/setup-r-dependencies@v2
             with:
               extra-packages: any::rcmdcheck, any::roxygen2
