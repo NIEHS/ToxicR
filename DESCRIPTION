@@ -1,7 +1,7 @@
 Package: ToxicR
 Type: Package
 Title: Analyzing Toxicology Dose-Response Data
-Version: 24.1.1.2.4
+Version: 24.1.1.4
 Date: 2024-08-24
 Authors@R: 
     c(
@@ -80,9 +80,9 @@ LinkingTo: Rcpp, RcppEigen, RcppGSL
 RoxygenNote: 7.3.2
 Encoding: UTF-8
 VignetteBuilder: knitr
-Suggests: plotly (>= 4.9.2.1), rmarkdown, actuar (>= 3.2-0),ggpubr (>=
+Suggests: plotly (>= 4.9.2.1), rmarkdown, ggpubr (>=
         0.4.0), testthat (>= 3.1.0),gridExtra (>= 2.3), VIM (>= 6.1.1),
-        knitr (>= 1.36), modules
+        knitr (>= 1.36), modules, actuar (>= 3.2-0)
 NeedsCompilation: yes
 Packaged: 2024-04-12 20:00:54 UTC; shail.choksi
 Author: Matt Wheeler [aut, cre] (<https://orcid.org/0000-0002-8242-2391>),

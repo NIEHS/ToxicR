@@ -261,7 +261,7 @@ double cBMDModel<LL, PR>::returnBMD(Eigen::MatrixXd theta, contbmd BMDType,
 //          void    *data     : Extra data needed. In this case, it is a
 //          statModel<LL,PR> object,
 //							   which is used to
-//compute the negative penalized likelihood
+// compute the negative penalized likelihood
 //////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 double cequality_constraint(unsigned n, const double *b, double *grad,
@@ -373,21 +373,25 @@ optimizationResult cfindMAX_W_EQUALITY(cBMDModel<LL, PR> *M,
     ///////////////////////////////////////////////
 
     opt_iter++;              // iterate the optimization try counter
-    result = nlopt::FAILURE; // Avoid uninit var exception checking result after
-                             // NLOPT exception
+    result = nlopt::FAILURE; // Avoid uninit var exception checking result
+                             // after NLOPT exception
     try {
       result = opt.optimize(x, minf);
       good_opt = true;
-    } catch (nlopt::roundoff_limited &exc) {
+    } catch (nlopt::roundoff_limited2 &exc) {
       good_opt = false;
       // cout << "Error Round off" << endl;
     } catch (nlopt::forced_stop &exc) {
       good_opt = false;
       // cout << "Error Forced stop" << endl;
     } catch (const std::invalid_argument &exc) {
+      // Rcpp::Rcout << "NLOPT result code: " << result << std::endl;
       good_opt = false;
       //	cout << "SHIT!!" << endl;
+    } catch (const std::runtime_error &exc) {
+      // Rcpp::Rcout << "NLOPT result code: " << result << std::endl;
     } catch (const std::exception &exc) {
+      // Rcpp::Rcout << "NLOPT result code: " << result << std::endl;
       good_opt = false;
       // cout << "Exception!!" << endl;
     }
@@ -439,7 +443,7 @@ optimizationResult cfindMAX_W_EQUALITY(cBMDModel<LL, PR> *M,
 //          void    *data     : Extra data needed. In this case, it is a
 //          statModel<LL,PR> object,
 //							   which is used to
-//compute the negative penalized likelihood
+// compute the negative penalized likelihood
 //////////////////////////////////////////////////////////////////
 template <class LL, class PR>
 double neg_pen_likelihood_contbound(unsigned n, const double *b, double *grad,
@@ -567,12 +571,12 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
   opt.set_maxeval(20000);
 
   nlopt::opt opt3(nlopt::LN_SBPLX, vecSize);
-  opt.set_initial_step(1e-4);
-  opt.set_min_objective(neg_pen_likelihood_contbound<LL, PR>, &info);
-  opt.set_lower_bounds(lb);
-  opt.set_upper_bounds(ub);
-  opt.set_xtol_abs(5e-4);
-  opt.set_maxeval(20000);
+  opt3.set_initial_step(1e-4);
+  opt3.set_min_objective(neg_pen_likelihood_contbound<LL, PR>, &info);
+  opt3.set_lower_bounds(lb);
+  opt3.set_upper_bounds(ub);
+  opt3.set_xtol_abs(5e-4);
+  opt3.set_maxeval(20000);
   ///////////////////////////////////////////////////////////////////////////////
 
   //	if(M->modelling_type() == cont_model::gamma_aerts){
@@ -588,27 +592,24 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
       switch (opt_iter) {
       case 0:
         opt_iter++;
-        result =
-            opt2.optimize(x, minf); // fastest algorithm first
-                                    //				cout << "huh1";
+        // fastest algorithm first
+        result = opt2.optimize(x, minf);
         break;
       case 1:
         opt_iter++;
-        result =
-            opt3.optimize(x, minf); // second fastest algorithm next
-                                    //				cout << "huh2";
+        // second fastest algorithm next
+        result = opt3.optimize(x, minf);
         break;
       default:
         opt_iter++;
-        result = opt.optimize(
-            x,
-            minf); // most stable one third -- but slower
-                   //				cout << "huh3 " << result;
+        // most stable one third -- but slower
+        result = opt.optimize(x, minf);
       }
       // file << "result= " << result << ", minf= " << minf << endl;
       // flush(file);
       good_opt = true;
-      // opt_iter++;
+// opt_iter++;
+#ifdef _WIN32 || defined(__APPLE__)
     } catch (nlopt::roundoff_limited &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
@@ -616,7 +617,17 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
     } catch (nlopt::forced_stop &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
-      //	cout << "Error Forced stop" << endl;
+//	cout << "Error Forced stop" << endl;
+#else
+    } catch (nlopt::roundoff_limited2 &exc) {
+      good_opt = false;
+      DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
+      //	cout << "Error Round off" << endl;
+    } catch (nlopt::forced_stop2 &exc) {
+      good_opt = false;
+      DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
+//	cout << "Error Forced stop" << endl;
+#endif
     } catch (const std::invalid_argument &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter
@@ -660,11 +671,10 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
 
   return oR;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 // Function profile_BMDNC(dBMDModel<LL, PR>  *M,
-//						 bool isExtra,		// true if
-//it is
+//						 bool isExtra,		// true
+// if it is
 // false if it is added 						 double
 // BMR, double BMDchange, double totalChange, bool robust) Purpose: This
 // function iteratively changes the BMD by a BMDchange%

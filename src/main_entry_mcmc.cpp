@@ -142,6 +142,7 @@ List run_dichotomous_single_mcmc(NumericVector model, Eigen::MatrixXd Y,
                                  NumericVector options, int seed) {
   Seeder *seeder = Seeder::getInstance();
   seeder->setSeed(seed);
+  // Rcpp::Rcout << "In Run dichotomous single mcmc and set seed" << std::endl;
   dichotomous_analysis mcmcAnal;
   mcmcAnal.BMD_type = eExtraRisk; // (options[0]==1)?eExtraRisk:eAddedRisk;
   mcmcAnal.BMR = options[0];
@@ -221,8 +222,10 @@ List run_continuous_single_mcmc(NumericVector model, Eigen::MatrixXd Y,
                                 Eigen::MatrixXd D, Eigen::MatrixXd priors,
                                 NumericVector options, bool is_logNormal,
                                 bool suff_stat, int seed) {
+
   Seeder *seeder = Seeder::getInstance();
   seeder->setSeed(seed);
+  // Rcpp::Rcout << "In Run continuous single mcmc and set seed" << std::endl;
   unsigned int samples = (unsigned int)options[7];
   unsigned int burnin = (unsigned int)options[6];
   double tail_p = (double)options[2];
@@ -300,15 +303,15 @@ List run_continuous_single_mcmc(NumericVector model, Eigen::MatrixXd Y,
 
   cp_prior(priors, mcmcAnal->prior);
   ////////////////////////////////////
-
   continuous_model_result *res =
       new_continuous_model_result(mcmcAnal->model, mcmcAnal->parms, 200);
 
   estimate_sm_mcmc(mcmcAnal, res, output);
 
   double v_c, v_nc, v_pow;
-  estimate_normal_variance(mcmcAnal, &v_c, &v_nc, &v_pow);
 
+  estimate_normal_variance(mcmcAnal, &v_c, &v_nc, &v_pow);
+  
   NumericVector v_inform(3);
   v_inform[0] = v_c;
   v_inform[1] = v_nc;

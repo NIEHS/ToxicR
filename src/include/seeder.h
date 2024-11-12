@@ -3,8 +3,16 @@
 #ifndef SEEDER
 #define SEEDER
 
-#ifndef NO_OMP
-#include <omp.h>
+// Check for MinGW or MSVC (both support __declspec(thread))
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#define THREAD_LOCAL __declspec(thread)
+
+// Check for GCC or Clang on non-Windows systems
+#elif defined(__GNUC__) || defined(__clang__)
+#define THREAD_LOCAL thread_local
+
+#else
+#define THREAD_LOCAL // Fallback for unsupported compilers
 #endif
 #include <Rcpp.h>
 #include <gsl/gsl_randist.h>
@@ -12,37 +20,22 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <nlopt.hpp>
 
 class Seeder {
 private:
-  gsl_rng *r = nullptr;
-  static Seeder *instance;
-  static std::mutex instanceMutex;
-  int max_threads;
-  std::mutex seedMutex;
-  Seeder() {}
+  THREAD_LOCAL static gsl_rng *rng;
+  const gsl_rng_type *T = gsl_rng_mt19937;
+  int currentSeed = 0;
 
-public:
-  int currentSeed;
-  std::vector<gsl_rng*> rngs;
-  const gsl_rng_type * T;
+  Seeder() {}
   Seeder(Seeder const &) = delete;
   Seeder &operator=(Seeder const &) = delete;
-  static Seeder *getInstance() {
-    std::lock_guard<std::mutex> lock(instanceMutex);
-    if (!instance) {
-      instance = new Seeder();
-      #ifndef NO_OMP
-      instance->max_threads = omp_get_num_threads();
-      #else 
-      instance->max_threads = 1;
-      #endif
-      instance->T = gsl_rng_mt19937;
-      instance->currentSeed = 0;
-      instance->rngs.reserve(instance->max_threads);
-    }
 
-    return instance;
+public:
+  static Seeder *getInstance() {
+    static Seeder instance;
+    return &instance;
   }
 
   void reset_max_threads(int threads) {
@@ -67,8 +60,8 @@ public:
   }
 
   ~Seeder() {
-    for(int i = 0; i < max_threads; i++) {
-      gsl_rng_free(rngs[i]);
+    if (rng) {
+      gsl_rng_free(rng);
     }
   }
 
@@ -76,67 +69,37 @@ public:
     if (seed < 0) {
       Rcpp::stop("Error: Seed must be a positive integer.");
     }
-    
-    #ifndef NO_OMP
-    if(rngs.empty()) {
-      #pragma omp parallel for
-      for (int i = 0; i < max_threads; i++) {
-        int thread_num = omp_get_thread_num();
-        thread_local gsl_rng* r_local = gsl_rng_alloc(T);
-        gsl_rng_set(r_local, seed);
-        rngs[thread_num] = r_local;
-      }
+    if (!rng) {
+      rng = gsl_rng_alloc(T);
     }
-    else {
-      #pragma omp parallel for
-      for (int i = 0; i < max_threads; i++) {
-        int thread_num = omp_get_thread_num();
-        gsl_rng_free(rngs[thread_num]);
-        thread_local gsl_rng* r_local = gsl_rng_alloc(gsl_rng_mt19937);
-        gsl_rng_set(r_local, seed);
-        rngs[thread_num] = r_local;
-      }
-    }
-    #else // MacOs or non-OpenMP architecture
-    int thread_num = 0; // master thread
-    gsl_rng_free(rngs[thread_num]);
-    gsl_rng* r_local = gsl_rng_alloc(gsl_rng_mt19937);
-    gsl_rng_set(r_local, seed);
-    rngs[thread_num] = r_local;
-    #endif
+    gsl_rng_set(rng, seed);
+    // Rcpp::Rcout << "GSL seed set to: " << seed << std::endl;
+    nlopt_srand(seed);
+    currentSeed = seed;
   }
   
   double get_uniform() {
-    double r_val;
-    #ifndef NO_OMP
-    int thread_num = omp_get_thread_num();
-    #else 
-    int thread_num = 0;
-    #endif
-    r_val = gsl_rng_uniform(rngs[thread_num]);
-    return r_val;
+    if (!rng) {
+      Rcpp::warning("Error: RNG not initialized.");
+      setSeed(currentSeed);
+    }
+    return gsl_rng_uniform(rng);
   }
 
   double get_gaussian_ziggurat() {
-    double r_val;
-    #ifndef NO_OMP
-    int thread_num = omp_get_thread_num();
-    #else 
-    int thread_num = 0;
-    #endif
-    r_val = gsl_ran_gaussian_ziggurat(rngs[thread_num], 1.0);
-    return r_val;
+    if (!rng) {
+      Rcpp::warning("Error: RNG not initialized.");
+      setSeed(currentSeed);
+    }
+    return gsl_ran_gaussian_ziggurat(rng, 1.0);
   }
 
   double get_ran_flat() {
-    double r_val;
-    #ifndef NO_OMP
-    int thread_num = omp_get_thread_num();
-    #else 
-    int thread_num = 0;
-    #endif
-    r_val = gsl_ran_flat(rngs[thread_num], -1, 1);
-    return r_val;
+    if (!rng) {
+      Rcpp::warning("Error: RNG not initialized.");
+      setSeed(currentSeed);
+    }
+    return gsl_ran_flat(rng, -1, 1);
   }
 };
 #endif

@@ -91,6 +91,8 @@ if test x"${need_to_build}" != x"no"; then
           ## also error to end configure here
           AC_MSG_ERROR([Could not find 'cmake'.])
        fi
+    else
+        . src/scripts/cmake_install.sh
     fi
     ## 'uname -m' on M1 give x86_64 which is ... not helping
     machine=`"${R_HOME}/bin/Rscript" -e 'cat(Sys.info()[["machine"]])'`

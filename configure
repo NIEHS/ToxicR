@@ -619,6 +619,7 @@ GSL_CPPFLAGS
 NLOPT_CPPFLAGS
 SUBDIR_SOURCES
 SRC_SOURCES
+OSFLAG
 OPENMP
 have_cmake
 NLOPT_LIBS
@@ -3275,18 +3276,25 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-#determine the OS
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Is OPENMP avaialble? " >&5
-printf %s "checking Is OPENMP avaialble? ... " >&6; }
+# Determine the OS
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Is OPENMP available?" >&5
+printf %s "checking Is OPENMP available?... " >&6; }
 OS_FLAG="$(uname)"
-if test x"${OS_FLAG}" == x"Darwin";then
+if test x"${OS_FLAG}" == x"Darwin"; then
      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
      OPENMP="-DNO_OMP"
+     OSFLAG="-D__APPLE__"
+elif test x"${OS_FLAG}" == x"Linux"; then
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+     OPENMP="\$(SHLIB_OPENMP_CXXFLAGS)"
+     OSFLAG=""
 else
      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
-     OPENMP="\$(SHLIB_OPENMP_CXXFLAGS) "
+     OPENMP="\$(SHLIB_OPENMP_CXXFLAGS)"
+     OSFLAG="-D__WIN32"
 fi
 
 # Extract the first word of "gsl-config", so it can be a program name with args.
@@ -3347,7 +3355,7 @@ else
                  sudo apt install gsl
                  To install GSL in Fedora Type:
                  sudo yum -y install gsl
-                 To iinstall GSL on macOS using homebrew type:
+                 To install GSL on macOS using homebrew type:
                  brew install gsl
                  " "$LINENO" 5
 fi
@@ -3399,8 +3407,8 @@ printf "%s\n" "no" >&6; }
 fi
 
 
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Is pkg-config avaialble? " >&5
-printf %s "checking Is pkg-config avaialble? ... " >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Is pkg-config available?" >&5
+printf %s "checking Is pkg-config available?... " >&6; }
 if test x"${have_pkg_config}" != x"no"; then
      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
@@ -3424,28 +3432,13 @@ printf "%s\n" ">= 2.6.0" >&6; }
             else
                 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-                #if it is macOS just try link and use nlopt generically
-              need_to_build="yes"
+                need_to_build="yes"
             fi
     else
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-            #if it is macOS just try link and use nlopt generically
-            if test x"${OS_FLAG}" == x"Darwin";then
-                    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: >= 2.6.0" >&5
-printf "%s\n" ">= 2.6.0" >&6; }
-                    nlopt_include=""
-                    nlopt_libs="-lnlopt"
-                    NLOPT_INCLUDE="${nlopt_include}"
-
-                    NLOPT_LIBS="${nlopt_libs}"
-
-            else
-                 need_to_build="yes"
-            fi
-
+        need_to_build="yes"
     fi
-
 else
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
@@ -3502,7 +3495,7 @@ fi
 
 
     if test x"${have_cmake}" == x"no"; then
-       . src/scripts/cmake_config.sh
+       . src/cmake_install.sh
        if test -z "${CMAKE_BIN}"; then
           ## also error to end configure here
           as_fn_error $? "Could not find 'cmake'." "$LINENO" 5
@@ -3520,6 +3513,7 @@ fi
 
 SUBDIR_SOURCES="$(cd src/ && ls {code_base,polyK}/*.cpp | tr '\n' ' ')"
 SRC_SOURCES="$( cd src/ && ls *.cpp | tr '\n' ' ')"
+
 
 
 

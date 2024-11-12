@@ -29,10 +29,12 @@
 // #pragma GCC diagnostic ignored "-Wignored-attributes"
 // #include <RcppEigen.h>
 // #pragma GCC diagnostic pop
-// #else
+#ifdef R_COMPILATION
 #include <RcppEigen.h>
-// #endif
 #include <RcppGSL.h>
+#else
+#include <Eigen/Dense>
+#endif
 
 #include <cmath>
 #include <limits>
@@ -318,6 +320,7 @@ List run_continuous_ma_laplace(List model_priors, NumericVector model_type,
                                Eigen::MatrixXd X, NumericVector options, int seed) {
   Seeder *seeder = Seeder::getInstance();
   seeder->setSeed(seed);
+  // Rcpp::Rcout << "In run_continuous_ma_laplace and set seed" << std::endl;
   bool is_increasing = (bool)options[4];
   // double alpha = (double)options[3];
   double tail_p = (double)options[2];
@@ -435,6 +438,7 @@ List run_continuous_ma_mcmc(List model_priors, NumericVector model_type,
                             Eigen::MatrixXd X, NumericVector options, int seed) {
   Seeder *seeder = Seeder::getInstance();
   seeder->setSeed(seed);
+  // Rcpp::Rcout << "In run_continuous_ma_mcmc and set seed" << std::endl;
   unsigned int burnin = (unsigned int)options[6];
   bool is_increasing = (bool)options[4];
   // double alpha = (double)options[3];
@@ -540,6 +544,7 @@ List run_ma_dichotomous(Eigen::MatrixXd data, List priors, NumericVector models,
                         NumericVector options1, IntegerVector options2, int seed) {
   Seeder *seeder = Seeder::getInstance();
   seeder->setSeed(seed);
+  // Rcpp::Rcout << "In run_ma_dichotomous and set seed" << std::endl;
   dichotomous_analysis Anal;
   Anal.BMD_type = (options2[2] == 1) ? eExtraRisk : eAddedRisk;
   Anal.BMR = options1[0];
