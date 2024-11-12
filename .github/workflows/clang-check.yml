@@ -4,7 +4,7 @@ on:
 
 jobs:
     clang-test:
-        runs-on: ubuntu-24.0.4
+        runs-on: ubuntu-latest
         strategy:
           fail-fast: false
           matrix:
