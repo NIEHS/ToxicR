@@ -609,7 +609,7 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
       // flush(file);
       good_opt = true;
 // opt_iter++;
-#ifdef _WIN32 || defined(__APPLE__)
+#if defined(_WIN32) || defined(__APPLE__)
     } catch (nlopt::roundoff_limited &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
