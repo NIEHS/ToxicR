@@ -15,48 +15,47 @@ jobs:
                     - llvm-19
                     - llvm-20
         steps:
-            - uses: actions/checkout@v3
-            - name: Cache
-                uses: actions/cache@v3
-                with:
-                path: |
-                    ./build/
-                    ~/vcpkg
-                    ~/.cache/vcpkg/archives
-                    ${{ env.LOCALAPPDATA }}/vcpkg/archives
-                    ${{ env.APPDATA }}/vcpkg/archives
-                    ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
-                    ~/.cache/ccache
-                    ~/.ccache
-                    ~/.config/ccache
-                    ~/Library/Caches/ccache
-                    ${{ env.LOCALAPPDATA }}/ccache
-                    ${{ env.XDG_CACHE_HOME }}/ccache
-                key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt', './vcpkg.json') }}
-                restore-keys: |
-                    ${{ runner.os }}-${{ env.BUILD_TYPE }}-
-            - uses: r-lib/actions/setup-r@v2
+          - uses: actions/checkout@v3
+          - name: Cache
+            uses: actions/cache@v3
             with:
-                r-version: ${{matrix.r}}
-            - uses: awalsh128/cache-apt-pkgs-action@latest
-            if: runner.os == 'Linux'
+            path: |
+                ./build/
+                ~/vcpkg
+                ~/.cache/vcpkg/archives
+                ${{ env.LOCALAPPDATA }}/vcpkg/archives
+                ${{ env.APPDATA }}/vcpkg/archives
+                ${{ env.XDG_CACHE_HOME }}/vcpkg/archives
+                ~/.cache/ccache
+                ~/.ccache
+                ~/.config/ccache
+                ~/Library/Caches/ccache
+                ${{ env.LOCALAPPDATA }}/ccache
+                ${{ env.XDG_CACHE_HOME }}/ccache
+            key: ${{ runner.os }}-${{ matrix.compiler }}-${{ env.BUILD_TYPE }}-${{ hashFiles('**/CMakeLists.txt', './vcpkg.json') }}
+            restore-keys: |
+                ${{ runner.os }}-${{ env.BUILD_TYPE }}-
+          - uses: r-lib/actions/setup-r@v2
             with:
-                packages: | 
+              r-version: ${{matrix.r}}
+          - uses: awalsh128/cache-apt-pkgs-action@latest
+            with:
+              packages: | 
                 cmake cmake-data gsl dh-elpa-helper libcmark-gfm-extensions0.29.0.gfm.3 
                 libcmark-gfm0.29.0.gfm.3 libcurl4-openssl-dev libjsoncpp25 librhash0 
                 pandoc pandoc-data texlive-latex-base texlive-latex-recommended 
                 texlive-fonts-recommended
                 version: 1.0
-            - name: Setup Cpp (C++ / C)
-              uses: aminya/setup-cpp@v1
-              with:
-                compiler: ${{ matrix.compiler }}
-                cmake: true
-            - uses: r-lib/actions/setup-r-dependencies@v2
+          - name: Setup Cpp (C++ / C)
+            uses: aminya/setup-cpp@v1
             with:
-                extra-packages: any::rcmdcheck, any::roxygen2
-                needs: check
-            - name: Build and Check ToxicR
+              compiler: ${{ matrix.compiler }}
+                cmake: true
+          - uses: r-lib/actions/setup-r-dependencies@v2
+            with:
+              extra-packages: any::rcmdcheck, any::roxygen2
+              needs: check
+          - name: Build and Check ToxicR
             run: |
                 r_output=$(R CMD build .)
                 package_name=$(echo "$r_output" | sed -n "s/.*building ‘\([^’]*\.tar\.gz\)’.*/\1/p")
