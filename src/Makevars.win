@@ -1,4 +1,4 @@
-PKG_CPPFLAGS=$(SHLIB_OPENMP_CXXFLAGS) -I../windows/gsl-2.7/include -I../windows/nlopt-2.7.1/include  -I./ -I./code_base  -I./include -DR_COMPILATION -ftree-vectorize -Os -femulated-tls -DNO_OMP -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+PKG_CXXFLAGS=$(SHLIB_OPENMP_CXXFLAGS) -I../windows/gsl-2.7/include -I../windows/nlopt-2.7.1/include -I./ -I./code_base -I./include -DR_COMPILATION -ftree-vectorize -Os -femulated-tls -DNO_OMP -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
 PKG_LIBS=$(SHLIB_OPENMP_CXXFLAGS) -L../windows/nlopt-2.7.1/lib${R_ARCH}${CRT}  -L../windows/gsl-2.7/lib${R_ARCH}${CRT} -lgsl -lgslcblas -lnlopt
 # Debug / clear eigen warnings from compilation 
 #PKG_CPPFLAGS += -Wno-ignored-attributes -DToxicR_DEBUG -g -O0
