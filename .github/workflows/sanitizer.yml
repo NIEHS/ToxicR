@@ -81,7 +81,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Check with UBSAN and ASAN
-        run: rcmdcheck::rcmdcheck(build_args = "--no-build-vignettes", args = c("--no-codoc", "--no-examples", "--no-manual", "--ignore-vignettes"), error_on = "warning", check_dir = "check")
+        run: rcmdcheck::rcmdcheck(error_on = "warning", check_dir = "check")
         shell: Rscript {0}
         
       - name: Upload check results
