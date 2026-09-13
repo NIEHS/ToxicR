@@ -46,8 +46,11 @@ bool PolyKPrepareClass::SetupStudy(std::vector<double> dose,
 void PolyKPrepareClass::prepare() {
 
   // These arrays are indexed by dose level
-  std::vector<double> tumorSum(MAX_DOSE_LEVELS,
-                               0.0); //* = new double[MAX_DOSE_LEVELS];
+  // doseIdx is 1-based, so this needs the same MAX_DOSE_LEVELS + 1 slots its
+  // siblings m_Scale, m_NumAnimals and the three Poly denominators get. With
+  // MAX_DOSE_LEVELS dose groups doseIdx reaches MAX_DOSE_LEVELS, which was one
+  // past the end here while every array beside it was still in bounds.
+  std::vector<double> tumorSum(MAX_DOSE_LEVELS + 1, 0.0);
 
   // initialize output variables
   dmax = -1;
